@@ -8,10 +8,6 @@
             From intelligent automation to enterprise-scale AI systems, we deliver 
             cutting-edge solutions that transform how organizations operate and innovate.
           </p>
-          <button class="cta-mini-btn">
-            Explore Solutions
-            <span class="btn-arrow">→</span>
-          </button>
         </div>
       </div>
     </div>
@@ -26,6 +22,7 @@
               :key="cIdx" 
               class="tech-tag-card"
               :style="{ backgroundColor: card.color }"
+              @click="handleCardClick(row, card)"
             >
               <div class="tag-content">
                 <div class="tag-icon">
@@ -88,10 +85,25 @@
 </template>
 
 <script setup>
+import { inject } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const openContactModal = inject('openContactModal')
+
+const handleCardClick = (row, card) => {
+  if (row.link) {
+    router.push(row.link)
+  } else if (openContactModal) {
+    openContactModal()
+  }
+}
+
 const strips = [
   {
     direction: 'to-left',
     speed: '30s',
+    link: '/services/ai-work',
     cards: [
       { title: 'Agentic AI', desc: 'Autonomous', color: '#007AFF', icon: 'cpu' },
       { title: 'Chat/LLM', desc: 'Conversation', color: '#34C759', icon: 'message-circle' },
@@ -105,6 +117,7 @@ const strips = [
   {
     direction: 'to-right',
     speed: '25s',
+    link: '/services/ai-service',
     cards: [
       { title: 'Analytics', desc: 'Insights', color: '#E6007E', icon: 'bar-chart' },
       { title: 'Multi-Modal', desc: 'Cross-media', color: '#5AC8FA', icon: 'grid' },
@@ -118,6 +131,7 @@ const strips = [
   {
     direction: 'to-left',
     speed: '35s',
+    link: '/services/ai-enterprise',
     cards: [
       { title: 'Visualizer', desc: 'Data Imaging', color: '#8E44AD', icon: 'eye' },
       { title: '3D Design', desc: 'Spatial', color: '#FF2D70', icon: 'box' },
@@ -133,7 +147,7 @@ const strips = [
 <style scoped>
 .service-showcase {
   background: var(--bg-primary);
-  padding: 10rem 0;
+  padding: 0 0 10rem;
   overflow: hidden;
   position: relative;
 }
@@ -174,26 +188,6 @@ const strips = [
   opacity: 0.8;
 }
 
-.cta-mini-btn {
-  background: #635BFF;
-  color: white;
-  border: none;
-  padding: 0.9rem 1.8rem;
-  border-radius: 50px;
-  font-weight: 750;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.btn-arrow { transition: transform 0.3s ease; }
-.cta-mini-btn:hover { transform: translateY(-4px); box-shadow: 0 15px 30px rgba(99, 91, 255, 0.3); }
-.cta-mini-btn:hover .btn-arrow { transform: translateX(5px); }
 
 /* Strips Container */
 .strips-container {
@@ -362,7 +356,7 @@ const strips = [
 
 /* Mobile */
 @media (max-width: 768px) {
-  .service-showcase { padding: 5rem 0 4rem; }
+  .service-showcase { padding: 0 0 4rem; }
   .showcase-header { 
     padding: 0 5%; 
     margin-bottom: 3rem; 
@@ -382,10 +376,6 @@ const strips = [
   }
   .hide-mobile { display: none; }
   .header-desc-row { gap: 1.5rem; }
-  .cta-mini-btn { 
-    padding: 0.75rem 1.5rem;
-    font-size: 0.9rem;
-  }
   .strips-container { gap: 1.2rem; }
   .marquee-track { gap: 1.2rem; padding-right: 1.2rem; }
   .tech-tag-card { 
@@ -401,7 +391,7 @@ const strips = [
 
 /* Small Mobile */
 @media (max-width: 480px) {
-  .service-showcase { padding: 4rem 0 3rem; }
+  .service-showcase { padding: 0 0 3rem; }
   /* Fastest on small mobile */
   .marquee-row:nth-child(1) .marquee-content { animation-duration: 18s !important; }
   .marquee-row:nth-child(2) .marquee-content { animation-duration: 15s !important; }

@@ -1,4 +1,16 @@
+@font-face {
+  font-family: 'Zalthiel';
+  src: url('/fonts/Zalthiel-regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
+  --font-main: 'Zalthiel', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: var(--font-main);
+  --font-body: var(--font-main);
+  --font-accent: var(--font-main);
   /* Light Theme Variables */
   --bg-primary: #ffffff;
   --bg-secondary: #f6f9fc;
@@ -40,12 +52,54 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+}
+
+h1 {
+  font-size: clamp(3rem, 10vw, 5.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+
+h2 {
+  font-size: clamp(2.5rem, 8vw, 4.2rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+h3 {
+  font-size: clamp(2rem, 6vw, 3rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+h4 {
+  font-size: clamp(1.75rem, 5vw, 2.4rem);
+  line-height: 1.3;
+}
+
+h5 {
+  font-size: clamp(1.5rem, 4vw, 1.8rem);
+}
+
+h6 {
+  font-size: clamp(1.25rem, 3vw, 1.4rem);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  margin-bottom: 1.5rem;
 }
 
 #app {

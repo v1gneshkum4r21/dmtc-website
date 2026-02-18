@@ -18,37 +18,51 @@
           <span class="section-tag">WHY DREAMACTIC</span>
           <h2>The Perks of <span class="text-gradient">High Velocity</span></h2>
         </div>
-        <div class="benefits-grid">
-          <div class="benefit-card">
-            <div class="icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-              </svg>
+        <div class="benefits-carousel-wrapper">
+          <button class="carousel-nav prev" @click="scrollBenefits('left')" aria-label="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+
+          <div class="benefits-grid" ref="benefitsGrid">
+            <div class="benefit-card">
+              <div class="icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+              </div>
+              <h4>Competitive Compensation</h4>
+              <p>Top-of-market salaries, significant equity grants, and comprehensive benefits including health, dental, vision, and 401(k) matching.</p>
             </div>
-            <h4>Competitive Compensation</h4>
-            <p>Top-of-market salaries, significant equity grants, and comprehensive benefits including health, dental, vision, and 401(k) matching.</p>
-          </div>
-          <div class="benefit-card">
-            <div class="icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M12 6v6l4 2"/>
-              </svg>
+            <div class="benefit-card">
+              <div class="icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 6v6l4 2"/>
+                </svg>
+              </div>
+              <h4>Cutting-Edge Research</h4>
+              <p>Work on problems published in top-tier conferences. Access to state-of-the-art compute infrastructure and the latest AI models.</p>
             </div>
-            <h4>Cutting-Edge Research</h4>
-            <p>Work on problems published in top-tier conferences. Access to state-of-the-art compute infrastructure and the latest AI models.</p>
-          </div>
-          <div class="benefit-card">
-            <div class="icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
-              </svg>
+            <div class="benefit-card">
+              <div class="icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+              </div>
+              <h4>World-Class Team</h4>
+              <p>Collaborate with former researchers and engineers from Google DeepMind, OpenAI, Microsoft Research, and leading AI labs worldwide.</p>
             </div>
-            <h4>World-Class Team</h4>
-            <p>Collaborate with former researchers and engineers from Google DeepMind, OpenAI, Microsoft Research, and leading AI labs worldwide.</p>
           </div>
+
+          <button class="carousel-nav next" @click="scrollBenefits('right')" aria-label="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
         </div>
       </div>
     </section>
@@ -60,18 +74,32 @@
           <span class="section-tag">OPEN ROLES</span>
           <h2>Current <span class="text-gradient">Opportunities</span></h2>
         </div>
-        <div class="roles-grid">
-          <div v-for="role in roles" :key="role.title" class="role-card">
-            <div class="role-info">
-              <h3>{{ role.title }}</h3>
-              <div class="role-meta">
-                <span>{{ role.team }}</span>
-                <span class="dot"></span>
-                <span>{{ role.location }}</span>
+        <div class="roles-carousel-wrapper">
+          <button class="carousel-nav prev" @click="scrollRoles('left')" aria-label="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+
+          <div class="roles-grid" ref="rolesGrid">
+            <div v-for="role in roles" :key="role.title" class="role-card">
+              <div class="role-info">
+                <h3>{{ role.title }}</h3>
+                <div class="role-meta">
+                  <span>{{ role.team }}</span>
+                  <span class="dot"></span>
+                  <span>{{ role.location }}</span>
+                </div>
               </div>
+              <button class="secondary-btn" @click="openJobModal(role.title)">Apply Now</button>
             </div>
-            <button class="secondary-btn">Apply Now</button>
           </div>
+
+          <button class="carousel-nav next" @click="scrollRoles('right')" aria-label="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
         </div>
         <div class="no-roles-notice">
           <p>Don't see a role? Send your resume to <a href="mailto:careers@dreamactic.ai" class="link">careers@dreamactic.ai</a></p>
@@ -99,20 +127,51 @@
 </template>
 
 <script setup>
-import { onMounted, inject } from 'vue'
+import { ref, onMounted, inject } from 'vue'
+import { jobsAPI } from '@/services/api'
 
 const openContactModal = inject('openContactModal')
+const openJobModal = inject('openJobModal')
 
-const roles = [
+const roles = ref([
   { title: 'Senior ML Engineer – Agent Orchestration', team: 'Core Platform', location: 'San Francisco / Remote (US)' },
   { title: 'Research Scientist – Multi-Agent Systems', team: 'AI Research', location: 'San Francisco' },
   { title: 'Full-Stack Engineer – Voice Infrastructure', team: 'EchoAI', location: 'Hybrid' },
   { title: 'Product Manager – Enterprise Solutions', team: 'Product', location: 'San Francisco' },
   { title: 'DevOps Engineer – AI Infrastructure', team: 'Platform', location: 'Remote (Global)' }
-]
+])
+
+const fetchJobs = async () => {
+  try {
+    const data = await jobsAPI.getAll()
+    if (data && data.length > 0) {
+      roles.value = data
+    }
+  } catch (err) {
+    console.error('Failed to fetch jobs:', err)
+  }
+}
+
+const benefitsGrid = ref(null)
+const rolesGrid = ref(null)
+
+const scrollBenefits = (direction) => {
+  if (!benefitsGrid.value) return
+  const scrollAmount = 350
+  const scrollLeft = direction === 'left' ? -scrollAmount : scrollAmount
+  benefitsGrid.value.scrollBy({ left: scrollLeft, behavior: 'smooth' })
+}
+
+const scrollRoles = (direction) => {
+  if (!rolesGrid.value) return
+  const scrollAmount = 350
+  const scrollLeft = direction === 'left' ? -scrollAmount : scrollAmount
+  rolesGrid.value.scrollBy({ left: scrollLeft, behavior: 'smooth' })
+}
 
 onMounted(() => {
   window.scrollTo(0, 0)
+  fetchJobs()
 })
 </script>
 
@@ -396,5 +455,110 @@ onMounted(() => {
   .role-card { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
   .page-title { font-size: 3.5rem; }
   .cta-card h2 { font-size: 2.5rem; }
+}
+
+@media (max-width: 768px) {
+  .section-header h2 {
+    font-size: 2.5rem;
+  }
+
+  /* Benefits Carousel for Mobile */
+  .benefits-carousel-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .carousel-nav {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    z-index: 10;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .carousel-nav.prev { left: -10px; }
+  .carousel-nav.next { right: -10px; }
+
+  .carousel-nav svg {
+    width: 20px;
+    height: 20px;
+    color: var(--text-primary);
+  }
+
+  .benefits-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 1.5rem;
+    padding: 0 1rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    grid-template-columns: none;
+  }
+
+  .benefits-grid::-webkit-scrollbar { display: none; }
+
+  .benefit-card {
+    flex: 0 0 85%;
+    scroll-snap-align: center;
+    padding: 2.5rem 2rem;
+    border-radius: 32px;
+    height: auto;
+  }
+
+  /* Roles Carousel for Mobile */
+  .roles-carousel-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .roles-carousel-wrapper .carousel-nav {
+    display: flex; /* Override base */
+  }
+
+  .roles-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 1rem;
+    padding: 0 1rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-direction: row; /* Override desktop column */
+  }
+
+  .roles-grid::-webkit-scrollbar { display: none; }
+
+  .role-card {
+    flex: 0 0 85%;
+    scroll-snap-align: center;
+    padding: 2rem;
+    border-radius: 24px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .role-info h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .role-meta {
+    justify-content: center;
+    font-size: 0.85rem;
+  }
 }
 </style>

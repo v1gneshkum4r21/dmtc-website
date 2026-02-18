@@ -14,13 +14,27 @@
     <!-- Hub Navigation/Filter -->
     <section class="hub-explorer">
       <div class="section-container">
-        <div class="category-grid">
-          <div v-for="cat in categories" :key="cat.name" class="category-card">
-            <div class="icon-box" v-html="cat.icon"></div>
-            <h3>{{ cat.name }}</h3>
-            <p>{{ cat.desc }}</p>
-            <span class="item-count">{{ cat.count }} Resources</span>
+        <div class="category-carousel-wrapper">
+          <button class="carousel-nav prev" @click="scrollCategories('left')" aria-label="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+
+          <div class="category-grid" ref="categoryGrid">
+            <div v-for="cat in categories" :key="cat.name" class="category-card">
+              <div class="icon-box" v-html="cat.icon"></div>
+              <h3>{{ cat.name }}</h3>
+              <p>{{ cat.desc }}</p>
+              <span class="item-count">{{ cat.count }} Resources</span>
+            </div>
           </div>
+
+          <button class="carousel-nav next" @click="scrollCategories('right')" aria-label="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
         </div>
       </div>
     </section>
@@ -32,22 +46,36 @@
           <span class="section-tag">FEATURED CONTENT</span>
           <h2>Latest from the <span class="text-gradient">Hub</span></h2>
         </div>
-        <div class="resources-grid">
-          <div v-for="res in resources" :key="res.title" class="res-card">
-            <div class="res-image-placeholder">
-              <span class="res-type">{{ res.type }}</span>
-            </div>
-            <div class="res-content">
-              <h4>{{ res.title }}</h4>
-              <p>{{ res.desc }}</p>
-              <button class="text-btn">
-                Read More
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-              </button>
+        <div class="resources-carousel-wrapper">
+          <button class="carousel-nav prev" @click="scrollResources('left')" aria-label="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+
+          <div class="resources-grid" ref="resourcesGrid">
+            <div v-for="res in resources" :key="res.title" class="res-card">
+              <div class="res-image-placeholder">
+                <span class="res-type">{{ res.type }}</span>
+              </div>
+              <div class="res-content">
+                <h4>{{ res.title }}</h4>
+                <p>{{ res.desc }}</p>
+                <button class="text-btn">
+                  Read More
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
+
+          <button class="carousel-nav next" @click="scrollResources('right')" aria-label="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
         </div>
       </div>
     </section>
@@ -71,7 +99,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const categories = [
   { 
@@ -99,6 +127,23 @@ const resources = [
   { type: 'CASE STUDY', title: 'How Global Insurance Reduced Claims Processing Time by 78%', desc: 'Real-world implementation of EchoAI voice agents and workflow automation at a Fortune 100 insurance company.' },
   { type: 'TUTORIAL', title: 'Building Production-Ready Voice Agents in 30 Minutes', desc: 'Hands-on guide to deploying your first EchoAI voice agent with authentication, streaming, and error handling.' }
 ]
+
+const categoryGrid = ref(null)
+const resourcesGrid = ref(null)
+
+const scrollCategories = (direction) => {
+  if (!categoryGrid.value) return
+  const scrollAmount = 350
+  const scrollLeft = direction === 'left' ? -scrollAmount : scrollAmount
+  categoryGrid.value.scrollBy({ left: scrollLeft, behavior: 'smooth' })
+}
+
+const scrollResources = (direction) => {
+  if (!resourcesGrid.value) return
+  const scrollAmount = 350
+  const scrollLeft = direction === 'left' ? -scrollAmount : scrollAmount
+  resourcesGrid.value.scrollBy({ left: scrollLeft, behavior: 'smooth' })
+}
 
 onMounted(() => {
   window.scrollTo(0, 0)
@@ -407,5 +452,107 @@ onMounted(() => {
   .resources-grid { grid-template-columns: 1fr; }
   .subscribe-form { flex-direction: column; }
   .page-title { font-size: 3.5rem; }
+}
+
+@media (max-width: 768px) {
+  .section-header h2 {
+    font-size: 2.5rem;
+  }
+
+  /* Category Carousel for Mobile */
+  .category-carousel-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .carousel-nav {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    z-index: 10;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .carousel-nav.prev { left: -10px; }
+  .carousel-nav.next { right: -10px; }
+
+  .carousel-nav svg {
+    width: 20px;
+    height: 20px;
+    color: var(--text-primary);
+  }
+
+  .category-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 1.5rem;
+    padding: 0 1rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    grid-template-columns: none;
+  }
+
+  .category-grid::-webkit-scrollbar { display: none; }
+
+  .category-card {
+    flex: 0 0 85%;
+    scroll-snap-align: center;
+    padding: 2.5rem 2rem;
+    border-radius: 32px;
+    height: auto;
+  }
+
+  /* Resources Carousel for Mobile */
+  .resources-carousel-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .resources-carousel-wrapper .carousel-nav {
+    display: flex;
+  }
+
+  .resources-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 1.5rem;
+    padding: 0 1rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    grid-template-columns: none;
+  }
+
+  .resources-grid::-webkit-scrollbar { display: none; }
+
+  .res-card {
+    flex: 0 0 85%;
+    scroll-snap-align: center;
+    border-radius: 24px;
+  }
+
+  .res-content {
+    padding: 2rem;
+  }
+
+  .res-content h4 {
+    font-size: 1.15rem;
+  }
+
+  .res-content p {
+    font-size: 0.9rem;
+  }
 }
 </style>

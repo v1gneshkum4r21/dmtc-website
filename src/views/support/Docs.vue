@@ -24,13 +24,27 @@
           <span class="section-tag">GET STARTED</span>
           <h2>Quick <span class="text-gradient">Launch</span></h2>
         </div>
-        <div class="docs-grid">
-          <div v-for="guide in quickStart" :key="guide.title" class="doc-card">
-            <div class="icon-box" v-html="guide.icon"></div>
-            <h3>{{ guide.title }}</h3>
-            <p>{{ guide.desc }}</p>
-            <span class="read-more">View Guide</span>
+        <div class="docs-carousel-wrapper">
+          <button class="carousel-nav prev" @click="scrollDocs('left')" aria-label="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+
+          <div class="docs-grid" ref="docsGrid">
+            <div v-for="guide in quickStart" :key="guide.title" class="doc-card">
+              <div class="icon-box" v-html="guide.icon"></div>
+              <h3>{{ guide.title }}</h3>
+              <p>{{ guide.desc }}</p>
+              <span class="read-more">View Guide</span>
+            </div>
           </div>
+
+          <button class="carousel-nav next" @click="scrollDocs('right')" aria-label="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
         </div>
       </div>
     </section>
@@ -101,7 +115,7 @@
 </template>
 
 <script setup>
-import { onMounted, inject } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 
 const openContactModal = inject('openContactModal')
 
@@ -122,6 +136,15 @@ const quickStart = [
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>'
   }
 ]
+
+const docsGrid = ref(null)
+
+const scrollDocs = (direction) => {
+  if (!docsGrid.value) return
+  const scrollAmount = 350
+  const scrollLeft = direction === 'left' ? -scrollAmount : scrollAmount
+  docsGrid.value.scrollBy({ left: scrollLeft, behavior: 'smooth' })
+}
 
 onMounted(() => {
   window.scrollTo(0, 0)
@@ -436,5 +459,83 @@ onMounted(() => {
   .docs-grid { grid-template-columns: 1fr; }
   .api-grid { grid-template-columns: 1fr; }
   .page-title { font-size: 3.5rem; }
+}
+
+@media (max-width: 768px) {
+  .section-header h2 {
+    font-size: 2.5rem;
+  }
+
+  /* Docs Carousel for Mobile */
+  .docs-carousel-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .carousel-nav {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    z-index: 10;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .carousel-nav.prev { left: -10px; }
+  .carousel-nav.next { right: -10px; }
+
+  .carousel-nav svg {
+    width: 20px;
+    height: 20px;
+    color: var(--text-primary);
+  }
+
+  .docs-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 1.5rem;
+    padding: 0 1rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    grid-template-columns: none;
+  }
+
+  .docs-grid::-webkit-scrollbar { display: none; }
+
+  .doc-card {
+    flex: 0 0 85%;
+    scroll-snap-align: center;
+    padding: 2.5rem 2rem;
+    border-radius: 32px;
+    height: auto;
+  }
+
+  .api-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .api-text h2 {
+    font-size: 2rem;
+  }
+
+  .api-text p {
+    font-size: 1rem;
+  }
+
+  .code-box {
+    font-size: 0.85rem;
+    padding: 1.5rem;
+  }
 }
 </style>

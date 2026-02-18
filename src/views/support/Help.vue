@@ -20,15 +20,29 @@
     <!-- Help Categories -->
     <section class="help-categories">
       <div class="section-container">
-        <div class="categories-grid">
-          <div v-for="cat in helpCategories" :key="cat.name" class="help-card">
-            <div class="help-icon" v-html="cat.icon"></div>
-            <h3>{{ cat.name }}</h3>
-            <p>{{ cat.desc }}</p>
-            <ul class="help-links">
-              <li v-for="link in cat.links" :key="link">{{ link }}</li>
-            </ul>
+        <div class="categories-carousel-wrapper">
+          <button class="carousel-nav prev" @click="scrollCategories('left')" aria-label="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+
+          <div class="categories-grid" ref="categoriesGrid">
+            <div v-for="cat in helpCategories" :key="cat.name" class="help-card">
+              <div class="help-icon" v-html="cat.icon"></div>
+              <h3>{{ cat.name }}</h3>
+              <p>{{ cat.desc }}</p>
+              <ul class="help-links">
+                <li v-for="link in cat.links" :key="link">{{ link }}</li>
+              </ul>
+            </div>
           </div>
+
+          <button class="carousel-nav next" @click="scrollCategories('right')" aria-label="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
         </div>
       </div>
     </section>
@@ -70,7 +84,7 @@
 </template>
 
 <script setup>
-import { onMounted, inject } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 
 const openContactModal = inject('openContactModal')
 
@@ -100,6 +114,15 @@ const faqs = [
   { q: 'Can I bring my own AI models or use custom LLMs?', a: 'Yes, our platform is model-agnostic. You can integrate your own fine-tuned models, connect to any LLM endpoint, or combine multiple models in a single workflow. We provide adapter interfaces for OpenAI, Anthropic, Cohere, and custom hosted models.' },
   { q: 'What happens if an agent encounters an error or ambiguous situation?', a: 'Our platform includes configurable fallback behaviors, automatic retry logic with exponential backoff, and human-in-the-loop escalation triggers. You can define custom error handlers and set confidence thresholds for when agents should request human review.' }
 ]
+
+const categoriesGrid = ref(null)
+
+const scrollCategories = (direction) => {
+  if (!categoriesGrid.value) return
+  const scrollAmount = 350
+  const scrollLeft = direction === 'left' ? -scrollAmount : scrollAmount
+  categoriesGrid.value.scrollBy({ left: scrollLeft, behavior: 'smooth' })
+}
 
 onMounted(() => {
   window.scrollTo(0, 0)
@@ -365,5 +388,77 @@ onMounted(() => {
 @media (max-width: 1024px) {
   .categories-grid { grid-template-columns: 1fr; }
   .page-title { font-size: 3.5rem; }
+}
+
+@media (max-width: 768px) {
+  .section-header h2 {
+    font-size: 2.5rem;
+  }
+
+  /* Categories Carousel for Mobile */
+  .categories-carousel-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .carousel-nav {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    z-index: 10;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .carousel-nav.prev { left: -10px; }
+  .carousel-nav.next { right: -10px; }
+
+  .carousel-nav svg {
+    width: 20px;
+    height: 20px;
+    color: var(--text-primary);
+  }
+
+  .categories-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 1.5rem;
+    padding: 0 1rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    grid-template-columns: none;
+  }
+
+  .categories-grid::-webkit-scrollbar { display: none; }
+
+  .help-card {
+    flex: 0 0 85%;
+    scroll-snap-align: center;
+    padding: 2.5rem 2rem;
+    border-radius: 32px;
+    height: auto;
+  }
+
+  .help-card h3 {
+    font-size: 1.25rem;
+  }
+
+  .help-card p {
+    font-size: 0.95rem;
+  }
+
+  .help-links li {
+    font-size: 0.85rem;
+  }
 }
 </style>

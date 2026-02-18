@@ -771,7 +771,7 @@ const formatContent = (c) => c ? c.split('\n\n').map(p => `<p>${p.replace(/\n/g,
 
 /* Insights Section */
 .insights-section {
-  padding: 5rem 5% 10rem;
+  padding: 0 5% 10rem;
 }
 
 .insights-grid {

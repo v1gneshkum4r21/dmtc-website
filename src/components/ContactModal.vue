@@ -766,9 +766,83 @@ input:focus, .dropdown-trigger.is-active, textarea:focus {
 }
 
 @media (max-width: 950px) {
-  .modal-layout { grid-template-columns: 1fr; }
+  .modal-card {
+    max-width: 600px;
+    border-radius: 30px;
+  }
+  .modal-layout { 
+    grid-template-columns: 1fr; 
+    min-height: auto;
+  }
   .modal-info-sidebar { display: none; }
-  .modal-form-section { padding: 3rem 2rem; }
+  .modal-form-section { padding: 4rem 2.5rem 3rem; }
   .form-grid { grid-template-columns: 1fr; }
+  .form-header h2 { font-size: 2rem; }
+}
+
+@media (max-width: 600px) {
+  .modal-overlay {
+    padding: 0.75rem;
+  }
+  .modal-card {
+    max-height: 96vh;
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    /* Removed overflow: hidden to allow very small screens to scroll if absolutely necessary, 
+       but aiming for no-scroll on 375x812 */
+  }
+  .modal-layout {
+    flex: 1;
+  }
+  .modal-form-section {
+    padding: 2.5rem 1.25rem 1.5rem;
+  }
+  .header-badge, .form-header p {
+    display: none; /* Hide for vertical space */
+  }
+  .form-header h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+    text-align: center;
+  }
+  .close-btn {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    padding: 0;
+  }
+  .form-group {
+    margin-bottom: 0.8rem;
+  }
+  .form-group label {
+    font-size: 0.65rem;
+    margin-bottom: 0.4rem;
+  }
+  input, .dropdown-trigger, textarea {
+    padding: 0.7rem 0.9rem;
+    font-size: 0.9rem;
+    border-radius: 12px;
+  }
+  textarea {
+    min-height: 80px; /* Reduced height */
+  }
+  .submit-btn {
+    padding: 1rem;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    border-radius: 14px;
+  }
+}
+
+@media (max-width: 400px) {
+  .modal-form-section {
+    padding: 2.2rem 1rem 1.2rem;
+  }
+  .form-header h2 {
+    font-size: 1.35rem;
+  }
 }
 </style>

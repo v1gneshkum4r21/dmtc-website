@@ -5,7 +5,7 @@
         <!-- Logo & Mission -->
         <div class="footer-brand">
           <div class="logo">
-            <span class="logo-box">DREAMACTIC</span>
+            <img :src="logoSrc" alt="DREAMACTIC" class="logo-img" />
           </div>
           <p class="brand-tagline">
             Orchestrating the Agentic Future. Bridging the gap between advanced AI orchestration and human creativity.
@@ -88,8 +88,16 @@
 </template>
 
 <script setup>
-import { inject } from 'vue'
+import { inject, computed, defineProps } from 'vue'
 const openContactModal = inject('openContactModal')
+
+const props = defineProps({
+  isDarkMode: Boolean
+})
+
+const logoSrc = computed(() => {
+  return props.isDarkMode ? '/logo/120226_LogoV2_02.svg' : '/logo/120226_LogoV2_01.svg'
+})
 </script>
 
 <style scoped>
@@ -115,15 +123,12 @@ const openContactModal = inject('openContactModal')
   border-bottom: 1px solid var(--grid-color);
 }
 
-.footer-brand .logo-box {
-  background: var(--text-primary);
-  color: var(--bg-primary);
-  padding: 0.2rem 0.6rem;
-  border-radius: 4px;
-  font-weight: 800;
-  font-size: 1.1rem;
-  display: inline-block;
+.logo-img {
+  height: clamp(16px, 2vw, 20px);
+  width: auto;
+  display: block;
   margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
 }
 
 .brand-tagline {
@@ -296,6 +301,10 @@ const openContactModal = inject('openContactModal')
   .footer-newsletter {
     grid-column: span 2;
   }
+
+  .logo-img {
+    height: 16px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -312,6 +321,10 @@ const openContactModal = inject('openContactModal')
   .bottom-content {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .logo-img {
+    height: 14px;
   }
 }
 </style>

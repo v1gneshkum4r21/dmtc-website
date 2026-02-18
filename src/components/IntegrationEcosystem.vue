@@ -174,7 +174,7 @@ const row3 = [
 
 
 .integration-ecosystem {
-  padding: 8rem 0 50px 0; /* Updated bottom padding as requested */
+  padding: 0 0 50px 0; /* Updated bottom padding as requested */
   background-color: var(--bg-primary); /* White in Light, Dark in Dark */
   position: relative;
   overflow: hidden;

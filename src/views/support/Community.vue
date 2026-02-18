@@ -28,13 +28,27 @@
           <span class="section-tag">CHANNELS</span>
           <h2>Where We <span class="text-gradient">Connect</span></h2>
         </div>
-        <div class="channels-grid">
-          <div v-for="channel in channels" :key="channel.name" class="channel-card">
-            <div class="channel-icon" v-html="channel.icon"></div>
-            <h3>{{ channel.name }}</h3>
-            <p>{{ channel.desc }}</p>
-            <button class="secondary-btn">{{ channel.action }}</button>
+        <div class="channels-carousel-wrapper">
+          <button class="carousel-nav prev" @click="scrollChannels('left')" aria-label="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+
+          <div class="channels-grid" ref="channelsGrid">
+            <div v-for="channel in channels" :key="channel.name" class="channel-card">
+              <div class="channel-icon" v-html="channel.icon"></div>
+              <h3>{{ channel.name }}</h3>
+              <p>{{ channel.desc }}</p>
+              <button class="secondary-btn">{{ channel.action }}</button>
+            </div>
           </div>
+
+          <button class="carousel-nav next" @click="scrollChannels('right')" aria-label="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
         </div>
       </div>
     </section>
@@ -42,13 +56,20 @@
     <!-- Events Section -->
     <section class="events-section">
       <div class="section-container">
-        <div class="events-box">
-          <div class="events-text">
-            <span class="section-tag">EVENTS</span>
-            <h2>Global <span class="text-gradient">Meetups</span></h2>
-            <p>From technical webinars to in-person orchestration hackathons, we are building a global network of agentic experts.</p>
-          </div>
-          <div class="events-list">
+        <div class="events-text">
+          <span class="section-tag">EVENTS</span>
+          <h2>Global <span class="text-gradient">Meetups</span></h2>
+          <p>From technical webinars to in-person orchestration hackathons, we are building a global network of agentic experts.</p>
+        </div>
+        
+        <div class="events-list-carousel-wrapper">
+          <button class="carousel-nav prev" @click="scrollEvents('left')" aria-label="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+
+          <div class="events-list" ref="eventsList">
              <div v-for="event in events" :key="event.title" class="event-item">
                <span class="event-date">{{ event.date }}</span>
                <div class="event-info">
@@ -57,6 +78,12 @@
                </div>
              </div>
           </div>
+
+          <button class="carousel-nav next" @click="scrollEvents('right')" aria-label="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
         </div>
       </div>
     </section>
@@ -81,7 +108,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const channels = [
   { 
@@ -109,6 +136,23 @@ const events = [
   { title: 'Multi-Agent Workshop Series', date: 'Every Thursday', location: 'Online' },
   { title: 'Enterprise AI Roundtable', date: 'Quarterly', location: 'Major Cities' }
 ]
+
+const channelsGrid = ref(null)
+const eventsList = ref(null)
+
+const scrollChannels = (direction) => {
+  if (!channelsGrid.value) return
+  const scrollAmount = 350
+  const scrollLeft = direction === 'left' ? -scrollAmount : scrollAmount
+  channelsGrid.value.scrollBy({ left: scrollLeft, behavior: 'smooth' })
+}
+
+const scrollEvents = (direction) => {
+  if (!eventsList.value) return
+  const scrollAmount = 350
+  const scrollLeft = direction === 'left' ? -scrollAmount : scrollAmount
+  eventsList.value.scrollBy({ left: scrollLeft, behavior: 'smooth' })
+}
 
 onMounted(() => {
   window.scrollTo(0, 0)
@@ -400,5 +444,121 @@ onMounted(() => {
   .events-box { grid-template-columns: 1fr; }
   .event-item { flex-direction: column; align-items: flex-start; gap: 1rem; }
   .page-title { font-size: 3.5rem; }
+}
+
+@media (max-width: 768px) {
+  .section-header h2 {
+    font-size: 2.5rem;
+  }
+
+  /* Channels Carousel for Mobile */
+  .channels-carousel-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .carousel-nav {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    z-index: 10;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .carousel-nav.prev { left: -10px; }
+  .carousel-nav.next { right: -10px; }
+
+  .carousel-nav svg {
+    width: 20px;
+    height: 20px;
+    color: var(--text-primary);
+  }
+
+  .channels-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 1.5rem;
+    padding: 0 1rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    grid-template-columns: none;
+  }
+
+  .channels-grid::-webkit-scrollbar { display: none; }
+
+  .channel-card {
+    flex: 0 0 85%;
+    scroll-snap-align: center;
+    padding: 2.5rem 2rem;
+    border-radius: 32px;
+    height: auto;
+  }
+
+  .events-text h2 {
+    font-size: 2rem;
+  }
+
+  .events-text p {
+    font-size: 1rem;
+  }
+
+  .stats-row {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* Events Carousel for Mobile */
+  .events-list-carousel-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .events-list-carousel-wrapper .carousel-nav {
+    display: flex;
+  }
+
+  .events-list {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 1.5rem;
+    padding: 0 1rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-direction: row;
+  }
+
+  .events-list::-webkit-scrollbar { display: none; }
+
+  .event-item {
+    flex: 0 0 85%;
+    scroll-snap-align: center;
+    padding: 2rem;
+    border-radius: 24px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .event-date {
+    min-width: auto;
+    font-size: 1rem;
+  }
+
+  .event-info h4 {
+    font-size: 1.15rem;
+  }
 }
 </style>

@@ -18,11 +18,25 @@
           <span class="section-tag">CORE DOMAINS</span>
           <h2>Focus <span class="text-gradient">Areas</span></h2>
         </div>
-        <div class="areas-grid">
-          <div v-for="area in areas" :key="area.name" class="area-card">
-            <h4>{{ area.name }}</h4>
-            <p>{{ area.desc }}</p>
+        <div class="areas-carousel-wrapper">
+          <button class="carousel-nav prev" @click="scrollAreas('left')" aria-label="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+
+          <div class="areas-grid" ref="areasGrid">
+            <div v-for="area in areas" :key="area.name" class="area-card">
+              <h4>{{ area.name }}</h4>
+              <p>{{ area.desc }}</p>
+            </div>
           </div>
+
+          <button class="carousel-nav next" @click="scrollAreas('right')" aria-label="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
         </div>
       </div>
     </section>
@@ -34,21 +48,35 @@
           <span class="section-tag">PUBLICATIONS</span>
           <h2>Peer-Reviewed <span class="text-gradient">Insights</span></h2>
         </div>
-        <div class="pub-list">
-          <div v-for="pub in publications" :key="pub.title" class="pub-item">
-            <div class="pub-meta">
-              <span class="pub-year">{{ pub.year }}</span>
-              <span class="pub-journal">{{ pub.journal }}</span>
+        <div class="publications-carousel-wrapper">
+          <button class="carousel-nav prev" @click="scrollPublications('left')" aria-label="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+
+          <div class="pub-list" ref="pubList">
+            <div v-for="pub in publications" :key="pub.title" class="pub-item">
+              <div class="pub-meta">
+                <span class="pub-year">{{ pub.year }}</span>
+                <span class="pub-journal">{{ pub.journal }}</span>
+              </div>
+              <h3>{{ pub.title }}</h3>
+              <p class="pub-authors">{{ pub.authors }}</p>
+              <button class="text-btn">
+                Download PDF
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </button>
             </div>
-            <h3>{{ pub.title }}</h3>
-            <p class="pub-authors">{{ pub.authors }}</p>
-            <button class="text-btn">
-              Download PDF
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </button>
           </div>
+
+          <button class="carousel-nav next" @click="scrollPublications('right')" aria-label="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
         </div>
       </div>
     </section>
@@ -73,7 +101,7 @@
 </template>
 
 <script setup>
-import { onMounted, inject } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 
 const openContactModal = inject('openContactModal')
 
@@ -103,6 +131,23 @@ const publications = [
     journal: 'AAAI 2024' 
   }
 ]
+
+const areasGrid = ref(null)
+const pubList = ref(null)
+
+const scrollAreas = (direction) => {
+  if (!areasGrid.value) return
+  const scrollAmount = 350
+  const scrollLeft = direction === 'left' ? -scrollAmount : scrollAmount
+  areasGrid.value.scrollBy({ left: scrollLeft, behavior: 'smooth' })
+}
+
+const scrollPublications = (direction) => {
+  if (!pubList.value) return
+  const scrollAmount = 350
+  const scrollLeft = direction === 'left' ? -scrollAmount : scrollAmount
+  pubList.value.scrollBy({ left: scrollLeft, behavior: 'smooth' })
+}
 
 onMounted(() => {
   window.scrollTo(0, 0)
@@ -370,5 +415,104 @@ onMounted(() => {
 @media (max-width: 1024px) {
   .areas-grid { grid-template-columns: 1fr; }
   .page-title { font-size: 3.5rem; }
+}
+
+@media (max-width: 768px) {
+  .section-header h2 {
+    font-size: 2.5rem;
+  }
+
+  /* Areas Carousel for Mobile */
+  .areas-carousel-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .carousel-nav {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    z-index: 10;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .carousel-nav.prev { left: -10px; }
+  .carousel-nav.next { right: -10px; }
+
+  .carousel-nav svg {
+    width: 20px;
+    height: 20px;
+    color: var(--text-primary);
+  }
+
+  .areas-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 1.5rem;
+    padding: 0 1rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    grid-template-columns: none;
+  }
+
+  .areas-grid::-webkit-scrollbar { display: none; }
+
+  .area-card {
+    flex: 0 0 85%;
+    scroll-snap-align: center;
+    padding: 2.5rem 2rem;
+    border-radius: 32px;
+    height: auto;
+  }
+
+  /* Publications Carousel for Mobile */
+  .publications-carousel-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .publications-carousel-wrapper .carousel-nav {
+    display: flex;
+  }
+
+  .pub-list {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 1.5rem;
+    padding: 0 1rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-direction: row;
+  }
+
+  .pub-list::-webkit-scrollbar { display: none; }
+
+  .pub-item {
+    flex: 0 0 85%;
+    scroll-snap-align: center;
+    padding: 2.5rem 2rem;
+    border-radius: 24px;
+  }
+
+  .pub-item h3 {
+    font-size: 1.4rem;
+  }
+
+  .pub-authors {
+    font-size: 0.95rem;
+  }
 }
 </style>

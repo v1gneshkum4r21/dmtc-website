@@ -16,7 +16,12 @@ from models import (
     UserCreate,
     ShowcaseItem,
     ShowcaseItemCreate,
-    ShowcaseItemUpdate
+    ShowcaseItemUpdate,
+    Job,
+    JobCreate,
+    JobUpdate,
+    JobApplication,
+    JobApplicationCreate
 )
 from database import (
     get_all_insights,
@@ -30,7 +35,16 @@ from database import (
     delete_showcase_item,
     get_user_by_username,
     create_user,
-    init_default_user
+    init_default_user,
+    get_all_jobs,
+    get_job_by_id,
+    create_job,
+    update_job,
+    delete_job,
+    create_job_application,
+    get_all_applications,
+    update_application_status,
+    delete_application
 )
 from auth import (
     verify_password,
@@ -64,7 +78,12 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     """Initialize default admin user on startup"""
-    await init_default_user()
+    try:
+        await init_default_user()
+        print("✅ MongoDB connected and default user initialized")
+    except Exception as e:
+        print(f"⚠️  MongoDB not available: {e}")
+        print("⚠️  Backend will run in limited mode (frontend-only features will work)")
 
 
 # Public endpoints
@@ -96,7 +115,30 @@ async def get_showcase():
     return items
 
 
-# Authentication endpoints
+@app.get("/api/jobs", response_model=List[Job])
+async def get_jobs():
+    """Get all active jobs (public endpoint)"""
+    jobs = await get_all_jobs(active_only=True)
+    return jobs
+
+
+@app.get("/api/jobs/{job_id}", response_model=Job)
+async def get_job(job_id: str):
+    """Get a single job by ID (public endpoint)"""
+    job = await get_job_by_id(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    return job
+
+
+@app.post("/api/jobs/apply", response_model=JobApplication)
+async def apply_for_job(application: JobApplicationCreate):
+    """Submit a job application (public endpoint)"""
+    new_app = await create_job_application(application)
+    return new_app
+ 
+ 
+ # Authentication endpoints
 @app.post("/api/auth/login", response_model=Token)
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     """Login endpoint to get JWT token"""
@@ -202,6 +244,120 @@ async def delete_existing_showcase_item(
     if not deleted:
         raise HTTPException(status_code=404, detail="Showcase item not found")
     return None
+
+
+@app.get("/api/admin/applications", response_model=List[JobApplication])
+async def get_applications_admin(
+    include_deleted: bool = False,
+    current_user = Depends(get_current_user)
+):
+    """Get all job applications (admin only)"""
+    apps = await get_all_applications(include_deleted=include_deleted)
+    return apps
+
+
+@app.patch("/api/admin/applications/{app_id}/status")
+async def update_app_status_admin(
+    app_id: str,
+    status_update: dict,
+    current_user = Depends(get_current_user)
+):
+    """Update application status with optional note (admin only)"""
+    status = status_update.get("status")
+    note = status_update.get("note")
+    if not status:
+        raise HTTPException(status_code=400, detail="Status is required")
+    
+    updated = await update_application_status(app_id, status, note)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Application not found")
+    return {"message": "Status updated successfully"}
+
+
+@app.delete("/api/admin/applications/{app_id}")
+async def delete_app_admin(
+    app_id: str,
+    permanent: bool = False,
+    current_user = Depends(get_current_user)
+):
+    """Delete application (admin only, supports soft/permanent delete)"""
+    try:
+        print(f"🗑️ Attempting to delete application: {app_id} (permanent={permanent})")
+        deleted = await delete_application(app_id, permanent=permanent)
+        if not deleted:
+            print(f"❌ Application {app_id} not found or deletion failed")
+            raise HTTPException(status_code=404, detail="Application not found")
+        print(f"✅ Application {app_id} deleted successfully")
+        return {"message": "Application deleted successfully"}
+    except Exception as e:
+        print(f"🔥 Error deleting application: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+ 
+ 
+ # Admin Jobs endpoints
+@app.get("/api/admin/jobs", response_model=List[Job])
+async def get_all_jobs_admin(
+    active_only: bool = False,
+    include_archived: bool = True,
+    current_user = Depends(get_current_user)
+):
+    """Get all jobs including inactive and archived (admin only)"""
+    jobs = await get_all_jobs(active_only=active_only, include_archived=include_archived)
+    return jobs
+
+
+@app.post("/api/admin/jobs", response_model=Job, status_code=status.HTTP_201_CREATED)
+async def create_new_job_admin(
+    job: JobCreate,
+    current_user = Depends(get_current_user)
+):
+    """Create a new job (admin only)"""
+    new_job = await create_job(job)
+    return new_job
+
+
+@app.put("/api/admin/jobs/{job_id}", response_model=Job)
+async def update_existing_job_admin(
+    job_id: str,
+    job: JobUpdate,
+    current_user = Depends(get_current_user)
+):
+    """Update an existing job (admin only)"""
+    updated_job = await update_job(job_id, job)
+    if not updated_job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    return updated_job
+
+
+@app.delete("/api/admin/jobs/{job_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_existing_job_admin(
+    job_id: str,
+    permanent: bool = False,
+    current_user = Depends(get_current_user)
+):
+    """Delete a job (admin only, supports archiving/soft-delete by default)"""
+    deleted = await delete_job(job_id, permanent=permanent)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Job not found")
+    return None
+
+
+@app.post("/api/upload")
+async def upload_file_public(
+    file: UploadFile = File(...)
+):
+    """Upload a file (public endpoint for resumes)"""
+    # Create a unique filename to prevent collisions
+    import uuid
+    file_ext = os.path.splitext(file.filename)[1]
+    unique_filename = f"{uuid.uuid4()}{file_ext}"
+    file_path = os.path.join(UPLOAD_DIR, unique_filename)
+    
+    # Save the file
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    return {"url": f"http://localhost:8000/uploads/{unique_filename}", "filename": file.filename}
 
 
 @app.post("/api/admin/upload")

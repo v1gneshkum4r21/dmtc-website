@@ -352,7 +352,7 @@ onUnmounted(() => {
     align-items: flex-end; /* Aligned to bottom of text */
     gap: 0.5rem;
     margin-bottom: 0.75rem;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-accent);
 }
 
 .landing-slide-number {

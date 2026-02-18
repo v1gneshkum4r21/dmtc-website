@@ -29,20 +29,34 @@
     <!-- Post Grid -->
     <section class="post-grid-section">
       <div class="section-container">
-        <div class="post-grid">
-          <div v-for="post in posts" :key="post.title" class="post-card">
-            <div class="post-thumbnail"></div>
-            <div class="post-content">
-              <div class="post-meta">
-                <span>{{ post.category }}</span>
-                <span class="dot"></span>
-                <span>{{ post.date }}</span>
+        <div class="posts-carousel-wrapper">
+          <button class="carousel-nav prev" @click="scrollPosts('left')" aria-label="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+
+          <div class="post-grid" ref="postGrid">
+            <div v-for="post in posts" :key="post.title" class="post-card">
+              <div class="post-thumbnail"></div>
+              <div class="post-content">
+                <div class="post-meta">
+                  <span>{{ post.category }}</span>
+                  <span class="dot"></span>
+                  <span>{{ post.date }}</span>
+                </div>
+                <h4>{{ post.title }}</h4>
+                <p>{{ post.desc }}</p>
+                <router-link to="#" class="read-link">Read More</router-link>
               </div>
-              <h4>{{ post.title }}</h4>
-              <p>{{ post.desc }}</p>
-              <router-link to="#" class="read-link">Read More</router-link>
             </div>
           </div>
+
+          <button class="carousel-nav next" @click="scrollPosts('right')" aria-label="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
         </div>
       </div>
     </section>
@@ -67,7 +81,7 @@
 </template>
 
 <script setup>
-import { onMounted, inject } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 
 const openContactModal = inject('openContactModal')
 
@@ -91,6 +105,15 @@ const posts = [
     desc: 'Beyond the hype—a quantitative analysis of where autonomous agents deliver real ROI, based on deployments at 50+ enterprise customers.' 
   }
 ]
+
+const postGrid = ref(null)
+
+const scrollPosts = (direction) => {
+  if (!postGrid.value) return
+  const scrollAmount = 350
+  const scrollLeft = direction === 'left' ? -scrollAmount : scrollAmount
+  postGrid.value.scrollBy({ left: scrollLeft, behavior: 'smooth' })
+}
 
 onMounted(() => {
   window.scrollTo(0, 0)
@@ -346,5 +369,83 @@ onMounted(() => {
   .featured-card { grid-template-columns: 1fr; }
   .post-grid { grid-template-columns: 1fr; }
   .page-title { font-size: 3.5rem; }
+}
+
+@media (max-width: 768px) {
+  /* Posts Carousel for Mobile */
+  .posts-carousel-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .carousel-nav {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    z-index: 10;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .carousel-nav.prev { left: -10px; }
+  .carousel-nav.next { right: -10px; }
+
+  .carousel-nav svg {
+    width: 20px;
+    height: 20px;
+    color: var(--text-primary);
+  }
+
+  .post-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 1.5rem;
+    padding: 0 1rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    grid-template-columns: none;
+  }
+
+  .post-grid::-webkit-scrollbar { display: none; }
+
+  .post-card {
+    flex: 0 0 85%;
+    scroll-snap-align: center;
+  }
+
+  .post-thumbnail {
+    height: 200px;
+    margin-bottom: 1.5rem;
+  }
+
+  .post-content h4 {
+    font-size: 1.25rem;
+  }
+
+  .post-content p {
+    font-size: 0.9rem;
+  }
+
+  .featured-info {
+    padding: 3rem 2rem;
+  }
+
+  .featured-info h2 {
+    font-size: 2rem;
+  }
+
+  .featured-info p {
+    font-size: 1rem;
+  }
 }
 </style>

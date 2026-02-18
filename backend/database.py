@@ -4,7 +4,7 @@ from typing import List, Optional
 from bson import ObjectId
 import os
 from dotenv import load_dotenv
-from models import InsightCreate, InsightUpdate, UserCreate
+from models import InsightCreate, InsightUpdate, UserCreate, JobCreate, JobUpdate, JobApplicationCreate
 from auth import get_password_hash
 
 load_dotenv()
@@ -20,6 +20,8 @@ db = client[DATABASE_NAME]
 insights_collection = db["insights"]
 users_collection = db["users"]
 showcase_collection = db["showcase"]
+jobs_collection = db["jobs"]
+applications_collection = db["applications"]
 
 
 # Helper function to convert ObjectId to string
@@ -64,6 +66,47 @@ def user_helper(user) -> dict:
         "email": user["email"],
         "role": user["role"],
         "createdAt": user["createdAt"]
+    }
+
+
+def job_helper(job) -> dict:
+    return {
+        "_id": str(job["_id"]),
+        "title": job["title"],
+        "team": job["team"],
+        "location": job["location"],
+        "description": job["description"],
+        "requirements": job["requirements"],
+        "company": job.get("company", "DREAMATIC"),
+        "tags": job.get("tags", ""),
+        "type": job.get("type", "Full-time"),
+        "active": job.get("active", True),
+        "isArchived": job.get("isArchived", False),
+        "createdAt": job["createdAt"],
+        "updatedAt": job["updatedAt"]
+    }
+
+
+def application_helper(app) -> dict:
+    return {
+        "_id": str(app["_id"]),
+        "name": app["name"],
+        "email": app["email"],
+        "phone": app["phone"],
+        "location": app["location"],
+        "experience": app["experience"],
+        "salary": app["salary"],
+        "linkedin": app["linkedin"],
+        "portfolio": app["portfolio"],
+        "notice": app["notice"],
+        "resume": app["resume"],
+        "message": app["message"],
+        "role": app["role"],
+        "jobId": app.get("jobId"),
+        "status": app.get("status", "Applied"),
+        "history": app.get("history", []),
+        "isDeleted": app.get("isDeleted", False),
+        "createdAt": app["createdAt"]
     }
 
 
@@ -191,6 +234,151 @@ async def delete_showcase_item(item_id: str) -> bool:
     return result.deleted_count == 1
 
 
+# Jobs CRUD operations
+async def get_all_jobs(active_only: bool = True, include_archived: bool = False) -> List[dict]:
+    """Retrieve all jobs"""
+    query = {}
+    if active_only:
+        query["active"] = True
+    if not include_archived:
+        query["isArchived"] = {"$ne": True}
+        
+    jobs = []
+    for job in jobs_collection.find(query).sort("createdAt", -1):
+        jobs.append(job_helper(job))
+    return jobs
+
+
+async def get_job_by_id(job_id: str) -> Optional[dict]:
+    """Retrieve a single job by ID"""
+    if not ObjectId.is_valid(job_id):
+        return None
+    job = jobs_collection.find_one({"_id": ObjectId(job_id)})
+    if job:
+        return job_helper(job)
+    return None
+
+
+async def create_job(job_data: JobCreate) -> dict:
+    """Create a new job"""
+    job_dict = job_data.model_dump()
+    job_dict["createdAt"] = datetime.utcnow()
+    job_dict["updatedAt"] = datetime.utcnow()
+    job_dict["isArchived"] = False
+    
+    result = jobs_collection.insert_one(job_dict)
+    new_job = jobs_collection.find_one({"_id": result.inserted_id})
+    return job_helper(new_job)
+
+
+async def update_job(job_id: str, job_data: JobUpdate) -> Optional[dict]:
+    """Update an existing job"""
+    if not ObjectId.is_valid(job_id):
+        return None
+    
+    update_data = {k: v for k, v in job_data.model_dump().items() if v is not None}
+    if not update_data:
+        return None
+    
+    update_data["updatedAt"] = datetime.utcnow()
+    
+    result = jobs_collection.update_one(
+        {"_id": ObjectId(job_id)},
+        {"$set": update_data}
+    )
+    
+    updated_job = jobs_collection.find_one({"_id": ObjectId(job_id)})
+    if updated_job:
+        return job_helper(updated_job)
+    return None
+
+
+async def delete_job(job_id: str, permanent: bool = False) -> bool:
+    """Soft delete or permanent delete a job"""
+    if not ObjectId.is_valid(job_id):
+        return False
+    
+    if permanent:
+        result = jobs_collection.delete_one({"_id": ObjectId(job_id)})
+        return result.deleted_count == 1
+    else:
+        result = jobs_collection.update_one(
+            {"_id": ObjectId(job_id)},
+            {"$set": {"isArchived": True, "updatedAt": datetime.utcnow()}}
+        )
+        return result.modified_count == 1
+
+
+# Application operations
+async def create_job_application(app_data: JobApplicationCreate) -> dict:
+    """Store a new job application"""
+    app_dict = app_data.model_dump()
+    app_dict["createdAt"] = datetime.utcnow()
+    app_dict["status"] = "Applied"
+    app_dict["isDeleted"] = False
+    app_dict["history"] = [
+        {
+            "status": "Applied",
+            "timestamp": datetime.utcnow(),
+            "note": "Initial application submission"
+        }
+    ]
+    
+    result = applications_collection.insert_one(app_dict)
+    new_app = applications_collection.find_one({"_id": result.inserted_id})
+    return application_helper(new_app)
+
+
+async def get_all_applications(include_deleted: bool = False) -> List[dict]:
+    """Retrieve all job applications (admin only)"""
+    query = {}
+    if not include_deleted:
+        query["isDeleted"] = {"$ne": True}
+        
+    apps = []
+    for app in applications_collection.find(query).sort("createdAt", -1):
+        apps.append(application_helper(app))
+    return apps
+
+async def update_application_status(app_id: str, status: str, note: Optional[str] = None) -> bool:
+    """Update the status of a job application and log to history"""
+    try:
+        from bson import ObjectId
+        history_entry = {
+            "status": status,
+            "timestamp": datetime.now(),
+            "note": note or f"Status updated to {status}"
+        }
+        
+        result = applications_collection.update_one(
+            {"_id": ObjectId(app_id)},
+            {
+                "$set": {"status": status, "updatedAt": datetime.now()},
+                "$push": {"history": history_entry}
+            }
+        )
+        return result.modified_count > 0
+    except:
+        return False
+
+
+async def delete_application(app_id: str, permanent: bool = False) -> bool:
+    """Soft delete or permanent delete a job application"""
+    try:
+        from bson import ObjectId
+        if permanent:
+            result = applications_collection.delete_one({"_id": ObjectId(app_id)})
+            return result.deleted_count > 0
+        else:
+            result = applications_collection.update_one(
+                {"_id": ObjectId(app_id)},
+                {"$set": {"isDeleted": True, "updatedAt": datetime.now()}}
+            )
+            return result.modified_count > 0
+    except:
+        return False
+
+
 # User operations
 async def get_user_by_username(username: str) -> Optional[dict]:
     """Retrieve a user by username"""
@@ -265,3 +453,38 @@ async def init_default_user():
         for item in initial_items:
             await create_showcase_item(item)
         print("Initialized default showcase items")
+
+    # Initialize jobs if empty
+    if jobs_collection.count_documents({}) == 0:
+        initial_jobs = [
+            {
+                "title": "Senior ML Engineer – Agent Orchestration",
+                "team": "Core Platform",
+                "location": "San Francisco / Remote (US)",
+                "description": "Lead the development of our core agent orchestration engine.",
+                "requirements": "5+ years of experience in ML, expertise in Python and PyTorch.",
+                "type": "Full-time",
+                "active": True
+            },
+            {
+                "title": "Research Scientist – Multi-Agent Systems",
+                "team": "AI Research",
+                "location": "San Francisco",
+                "description": "Conduct cutting-edge research on multi-agent collaboration and safety.",
+                "requirements": "PhD in AI/ML, publication record in top-tier conferences.",
+                "type": "Full-time",
+                "active": True
+            },
+            {
+                "title": "Full-Stack Engineer – Voice Infrastructure",
+                "team": "EchoAI",
+                "location": "Hybrid",
+                "description": "Build scalable infrastructure for real-time voice AI interactions.",
+                "requirements": "Proficiency in Vue.js, Node.js, and real-time streaming protocols.",
+                "type": "Full-time",
+                "active": True
+            }
+        ]
+        for job in initial_jobs:
+            await create_job(JobCreate(**job))
+        print("Initialized default jobs")

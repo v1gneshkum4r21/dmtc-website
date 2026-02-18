@@ -60,9 +60,46 @@ export const insightsAPI = {
 
 // Showcase API
 export const showcaseAPI = {
-    // Get all active showcase items
+    // Get all active showcase items. Attempt backend first, fall back to local demo data on error.
     getAll: async () => {
-        const response = await apiClient.get('/showcase')
+        try {
+            const response = await apiClient.get('/showcase')
+            return response.data
+        } catch (err) {
+            // If backend is unavailable (dev/demo), load local demo JSON fallback
+            try {
+                const mod = await import('../data/showcase-demo.json')
+                return mod.default || mod
+            } catch (e) {
+                // As last resort return empty array
+                console.warn('Failed to load showcase from backend and demo fallback:', e)
+                return []
+            }
+        }
+    }
+}
+// Jobs API
+export const jobsAPI = {
+    // Get all active jobs
+    getAll: async () => {
+        try {
+            const response = await apiClient.get('/jobs')
+            return response.data
+        } catch (err) {
+            console.warn('Failed to load jobs from backend:', err)
+            return []
+        }
+    },
+
+    // Get single job by ID
+    getById: async (id) => {
+        const response = await apiClient.get(`/jobs/${id}`)
+        return response.data
+    },
+
+    // Submit a job application
+    submitApplication: async (applicationData) => {
+        const response = await apiClient.post('/jobs/apply', applicationData)
         return response.data
     }
 }
@@ -165,12 +202,48 @@ export const adminAPI = {
     createUser: async (userData) => {
         const response = await apiClient.post('/admin/users', userData)
         return response.data
+    },
+
+    // Job Management
+    getAllJobs: async (params = {}) => {
+        const response = await apiClient.get('/admin/jobs', { params })
+        return response.data
+    },
+
+    createJob: async (jobData) => {
+        const response = await apiClient.post('/admin/jobs', jobData)
+        return response.data
+    },
+
+    updateJob: async (id, jobData) => {
+        const response = await apiClient.put(`/admin/jobs/${id}`, jobData)
+        return response.data
+    },
+
+    deleteJob: async (id, permanent = false) => {
+        await apiClient.delete(`/admin/jobs/${id}`, { params: { permanent } })
+    },
+
+    // Job Applications
+    getApplications: async (params = {}) => {
+        const response = await apiClient.get('/admin/applications', { params })
+        return response.data
+    },
+
+    updateApplicationStatus: async (id, status, note = '') => {
+        const response = await apiClient.patch(`/admin/applications/${id}/status`, { status, note })
+        return response.data
+    },
+
+    deleteApplication: async (id, permanent = false) => {
+        await apiClient.delete(`/admin/applications/${id}`, { params: { permanent } })
     }
 }
 
 export default {
     insights: insightsAPI,
     showcase: showcaseAPI,
+    jobs: jobsAPI,
     auth: authAPI,
     admin: adminAPI
 }

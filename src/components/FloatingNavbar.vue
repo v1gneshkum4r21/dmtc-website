@@ -1,15 +1,15 @@
 <template>
-  <nav class="floating-navbar" :class="{ 'is-open': isMobileMenuOpen }" @mouseleave="closeDropdown">
+  <nav ref="navbarRef" class="floating-navbar" :class="{ 'is-open': isMobileMenuOpen }" @mouseleave="closeDropdown">
     <div class="nav-content">
       <!-- Logo -->
       <router-link to="/" class="logo">
-        <span class="logo-box">DREAMACTIC</span>
+        <img :src="logoSrc" alt="DREAMACTIC" class="logo-img" />
       </router-link>
 
       <!-- Links -->
       <ul class="nav-links">
         <li class="nav-item" @mouseenter="openDropdown('services')">
-          <router-link to="/services/ai-work" :class="{ active: activeDropdown === 'services' }">Services</router-link>
+          <router-link to="/services/ai-work" :class="{ active: activeDropdown === 'services' || isServicesActive }">Services</router-link>
           
           <!-- SERVICES MEGA MENU -->
           <div class="mega-menu" :class="{ show: activeDropdown === 'services' }">
@@ -65,7 +65,7 @@
         </li>
 
         <li class="nav-item" @mouseenter="openDropdown('products')">
-          <router-link to="/products/superfiitter" :class="{ active: activeDropdown === 'products' }">Products</router-link>
+          <router-link to="/products/superfiitter" :class="{ active: activeDropdown === 'products' || isProductsActive }">Products</router-link>
           <div class="mega-menu" :class="{ show: activeDropdown === 'products' }">
              <router-link to="/products/superfiitter" class="mega-row row-lavender" @click="closeDropdown">
               <span class="mega-watermark">SuperFiitter</span>
@@ -103,7 +103,7 @@
         </li>
 
         <li class="nav-item" @mouseenter="openDropdown('company')">
-          <router-link to="/company/about" :class="{ active: activeDropdown === 'company' }">Company</router-link>
+          <router-link to="/company/about" :class="{ active: activeDropdown === 'company' || isCompanyActive }">Company</router-link>
           <div class="mega-menu" :class="{ show: activeDropdown === 'company' }">
             <router-link to="/company/about" class="mega-row row-lavender" @click="closeDropdown">
               <span class="mega-watermark">About</span>
@@ -156,7 +156,7 @@
           </div>
         </li>
         <li class="nav-item" @mouseenter="openDropdown('resources')">
-          <router-link to="/resources/hub" :class="{ active: activeDropdown === 'resources' }">Resources</router-link>
+          <router-link to="/resources/hub" :class="{ active: activeDropdown === 'resources' || isResourcesActive }">Resources</router-link>
           <div class="mega-menu" :class="{ show: activeDropdown === 'resources' }">
             <router-link to="/resources/hub" class="mega-row row-lavender" @click="closeDropdown">
               <span class="mega-watermark">Hub</span>
@@ -209,7 +209,7 @@
           </div>
         </li>
         <li class="nav-item" @mouseenter="openDropdown('support')">
-          <router-link to="/support/docs" :class="{ active: activeDropdown === 'support' }">Support</router-link>
+          <router-link to="/support/docs" :class="{ active: activeDropdown === 'support' || isSupportActive }">Support</router-link>
           <div class="mega-menu" :class="{ show: activeDropdown === 'support' }">
             <router-link to="/support/docs" class="mega-row row-lavender" @click="closeDropdown">
               <span class="mega-watermark">Docs</span>
@@ -451,8 +451,12 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits, inject } from 'vue'
+import { ref, defineProps, defineEmits, inject, computed, onMounted, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
 
+const navbarRef = ref(null)
+
+const route = useRoute()
 const openContactModal = inject('openContactModal')
 
 const props = defineProps({
@@ -464,6 +468,16 @@ const emit = defineEmits(['toggle-theme'])
 const activeDropdown = ref(null)
 const isMobileMenuOpen = ref(false)
 const openSection = ref(null)
+
+const isServicesActive = computed(() => route.path.startsWith('/services'))
+const isProductsActive = computed(() => route.path.startsWith('/products'))
+const isCompanyActive = computed(() => route.path.startsWith('/company'))
+const isResourcesActive = computed(() => route.path.startsWith('/resources'))
+const isSupportActive = computed(() => route.path.startsWith('/support'))
+
+const logoSrc = computed(() => {
+  return props.isDarkMode ? '/logo/120226_LogoV2_02.svg' : '/logo/120226_LogoV2_01.svg'
+})
 
 const openDropdown = (menu) => {
   if (window.innerWidth > 1050) {
@@ -485,6 +499,20 @@ const toggleMobileMenu = () => {
 const toggleSection = (section) => {
   openSection.value = openSection.value === section ? null : section
 }
+const handleClickOutside = (event) => {
+  if (isMobileMenuOpen.value && navbarRef.value && !navbarRef.value.contains(event.target)) {
+    isMobileMenuOpen.value = false
+    openSection.value = null
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('mousedown', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('mousedown', handleClickOutside)
+})
 </script>
 
 <style scoped>
@@ -532,22 +560,20 @@ const toggleSection = (section) => {
   align-items: center;
 }
 
-.logo-box {
-  background: var(--text-primary);
-  color: var(--bg-primary);
-  padding: 0.2rem 0.6rem;
-  border-radius: 4px;
-  font-weight: 800;
-  font-size: 0.9rem;
-  letter-spacing: 0.05em;
+.logo-img {
+  height: clamp(14px, 1.6vh, 18px);
+  width: auto;
+  display: block;
+  transition: all 0.3s ease;
 }
 
 .nav-links {
   display: flex;
-  gap: 1.5rem;
+  gap: 2rem;
   list-style: none;
   margin: 0;
   padding: 0;
+  margin-left: 1rem;
 }
 
 .nav-item {
@@ -584,7 +610,7 @@ const toggleSection = (section) => {
   transform: translateX(-50%) translateY(10px);
   width: 95%;
   max-width: 1026px;
-  background: #ffffff; /* Always white */
+  background: var(--bg-primary); /* Themed */
   border-radius: 12px;
   box-shadow: 
     0 50px 100px -20px rgba(50, 50, 93, 0.25), 
@@ -643,14 +669,14 @@ const toggleSection = (section) => {
   margin: 0 0 0.2rem 0;
   font-size: 0.9rem;
   font-weight: 700;
-  color: #0a2540; /* Always dark text */
-  font-family: 'Inter', sans-serif;
+  color: var(--text-primary);
+  font-family: var(--font-heading);
 }
 
 .row-text p {
   margin: 0;
   font-size: 0.8rem;
-  color: #425466; /* Always dark-grey text */
+  color: var(--text-secondary);
   line-height: 1.4;
 }
 
@@ -812,7 +838,7 @@ const toggleSection = (section) => {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  background: var(--bg-primary);
+  background: var(--bg-primary); /* Themed */
   border-radius: 0 0 24px 24px;
   width: 100%;
 }
@@ -824,12 +850,24 @@ const toggleSection = (section) => {
   padding-bottom: 1rem;
 }
 
+/* Custom Scrollbar for Mobile Drawer */
+.mobile-drawer.open::-webkit-scrollbar {
+  width: 5px;
+}
+.mobile-drawer.open::-webkit-scrollbar-track {
+  background: transparent;
+}
+.mobile-drawer.open::-webkit-scrollbar-thumb {
+  background: var(--glass-border);
+  border-radius: 10px;
+}
+
 .mobile-nav-list {
   padding: 1rem;
 }
 
 .mobile-nav-item {
-  border-bottom: 1px solid var(--glass-border);
+  border-bottom: none;
 }
 
 .mobile-nav-item:last-child {
@@ -844,7 +882,7 @@ const toggleSection = (section) => {
   padding: 1.2rem 0.5rem;
   background: none;
   border: none;
-  color: var(--text-primary);
+  color: var(--text-primary); /* Themed */
   font-weight: 700;
   font-size: 1rem;
   cursor: pointer;
@@ -854,7 +892,8 @@ const toggleSection = (section) => {
   width: 18px;
   height: 18px;
   transition: transform 0.3s ease;
-  opacity: 0.5;
+  opacity: 0.8;
+  color: var(--text-primary); /* Themed */
 }
 
 .chevron.rotate {
@@ -872,25 +911,31 @@ const toggleSection = (section) => {
   padding: 1rem;
   border-radius: 12px;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .mobile-sub-item h3 {
   margin: 0 0 0.2rem 0;
   font-size: 0.9rem;
   font-weight: 700;
-  color: #0a2540;
+  color: #0a2540; /* Always dark text inside cards */
 }
 
 .mobile-sub-item p {
   margin: 0;
   font-size: 0.8rem;
-  color: #425466;
+  color: #425466; /* Always grey text inside cards */
   opacity: 0.8;
 }
 
-.mobile-sub-item.lavender { background: #B8B2D1; }
-.mobile-sub-item.blue { background: #B5C7D3; }
-.mobile-sub-item.green { background: #B3D4C5; }
+.mobile-sub-item.lavender { background: #C4B5F7; }
+.mobile-sub-item.blue { background: #A8D8F0; }
+.mobile-sub-item.green { background: #A8E6C8; }
+
+/* Dark Mode Specific Adjustments for Cards - Removed to keep same as light theme */
+.dark-theme .mobile-nav-btn:focus {
+  outline: none;
+}
 
 /* ========================================
    HAMBURGER BUTTON
@@ -991,12 +1036,15 @@ const toggleSection = (section) => {
   .showcase-btn, .contact-us-btn {
     padding: 0.5rem;
   }
+
+  .logo-img {
+    height: 14px;
+  }
 }
 
 @media (max-width: 480px) {
-  .logo-box {
-    font-size: 0.75rem;
-    padding: 0.15rem 0.4rem;
+  .logo-img {
+    height: 12px;
   }
   
   .nav-actions {
@@ -1011,9 +1059,8 @@ const toggleSection = (section) => {
     padding: 0.3rem 1.2rem;
   }
   
-  .logo-box {
-    font-size: 0.8rem;
-    padding: 0.15rem 0.4rem;
+  .logo-img {
+    height: 12px;
   }
   
   .nav-links a {

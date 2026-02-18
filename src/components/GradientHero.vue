@@ -211,7 +211,7 @@
   padding: 0;
   background: transparent;
   color: var(--accent-primary);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-accent);
   font-size: 1.1rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -221,7 +221,7 @@
 }
 
 .hero-title {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-heading);
   font-size: clamp(3rem, 6vw, 5rem);
   font-weight: 800;
   color: var(--text-primary);
@@ -304,7 +304,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   /* Simulating logos with text for now */
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: var(--font-heading);
 }
 
 @media (max-width: 768px) {
