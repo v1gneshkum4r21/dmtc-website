@@ -669,14 +669,14 @@ onUnmounted(() => {
   margin: 0 0 0.2rem 0;
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: #0a2540; /* Always dark for legibility on pastel rows */
   font-family: var(--font-heading);
 }
 
 .row-text p {
   margin: 0;
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: #425466; /* Always dark for legibility on pastel rows */
   line-height: 1.4;
 }
 
