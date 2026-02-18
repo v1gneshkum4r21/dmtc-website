@@ -16,7 +16,7 @@ import Footer from './components/Footer.vue'
 import ContactModal from './components/ContactModal.vue'
 import JobApplicationModal from './components/JobApplicationModal.vue'
 
-const isDarkMode = ref(false)
+const isDarkMode = ref(true)
 const isContactModalOpen = ref(false)
 const isJobModalOpen = ref(false)
 const selectedRole = ref('')
@@ -56,11 +56,10 @@ const closeJobModal = () => {
 provide('openContactModal', openContactModal)
 provide('openJobModal', openJobModal)
 
-// Check for system preference
+// Set default theme on mount
 onMounted(() => {
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    // Optional: Start with dark if system is dark
-    // toggleTheme() 
+  if (isDarkMode.value) {
+    document.body.classList.add('dark-theme')
   }
 })
 </script>
