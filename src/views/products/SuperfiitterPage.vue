@@ -1,17 +1,13 @@
 <template>
   <div class="page-container">
     <!-- Hero Section -->
-    <section class="premium-hero superfiitter-gradient">
+    <section class="premium-hero superfiitter-gradient" v-if="pageConfig">
       <div class="hero-content">
         <div class="badge-wrapper">
-          <span class="hero-badge">AI VIRTUAL TRY-ON</span>
+          <span class="hero-badge">{{ pageConfig.hero_badge }}</span>
         </div>
-        <h1 class="hero-title">SuperFiitter <span class="text-gradient">Real-Time</span></h1>
-        <p class="hero-subtitle">
-          Transform online shopping into an immersive experience. 
-          SuperFiitter enables real-time rendering for deeper customer engagement 
-          and confident digital interaction.
-        </p>
+        <h1 class="hero-title" v-html="formatGradientTitle(pageConfig.hero_title)"></h1>
+        <p class="hero-subtitle">{{ pageConfig.hero_subtitle }}</p>
 
         <div class="hero-actions">
           <button class="primary-btn" @click="scrollToSolutions">
@@ -60,6 +56,7 @@
               :style="{ 
                 '--card-accent': solution.accent 
               }"
+              @click="handleSolutionContact(solution)"
             >
               <div class="card-glow"></div>
               <div class="sol-header">
@@ -100,44 +97,23 @@
           <p>Read our latest breakthroughs in multi-modal learning and automated production.</p>
         </div>
 
-        <div class="insights-grid">
-          <div v-for="insight in insights" :key="insight._id" class="insight-card" @click="openInsight(insight)">
-            <div class="insight-image">
-              <img v-if="insight.imageUrl" :src="insight.imageUrl" :alt="insight.title" class="card-img" />
-              <div v-else class="placeholder-img"></div>
-            </div>
-            <div class="insight-body">
-              <div class="insight-meta">Published: {{ formatDate(insight.createdAt) }}</div>
-              <h3>{{ insight.title }}</h3>
-              <p>{{ insight.excerpt }}</p>
-              <button class="read-btn">Read Article</button>
-            </div>
-          </div>
+        <InsightsCarousel 
+          v-if="!insightsLoading && insights.length > 0" 
+          :insights="insights" 
+          @open-insight="openInsight" 
+        />
+        <div v-else-if="insightsLoading" class="loading-insights">
+          <div class="spinner"></div>
+          <p>Loading Research...</p>
         </div>
       </div>
 
       <!-- Insight Reader Modal -->
-      <Transition name="fade-in">
-        <div v-if="selectedInsight" class="insight-modal-overlay" @click.self="closeInsight">
-          <div class="insight-modal-content">
-            <button class="close-modal-btn" @click="closeInsight">×</button>
-            
-            <div class="modal-header">
-              <div class="modal-meta">Published: {{ formatDate(selectedInsight.createdAt) }}</div>
-              <h2 class="modal-title">{{ selectedInsight.title }}</h2>
-              <div class="modal-author">By {{ selectedInsight.author || 'DREAMATIC Team' }}</div>
-            </div>
-
-            <div class="modal-image" v-if="selectedInsight.imageUrl">
-              <img :src="selectedInsight.imageUrl" :alt="selectedInsight.title" />
-            </div>
-
-            <div class="modal-body">
-              <div class="insight-full-content" v-html="formatContent(selectedInsight.content)"></div>
-            </div>
-          </div>
-        </div>
-      </Transition>
+      <InsightModal 
+        :is-open="!!selectedInsight" 
+        :insight="selectedInsight" 
+        @close="closeInsight" 
+      />
     </section>
 
     <!-- Final CTA -->
@@ -146,7 +122,11 @@
         <div class="cta-content">
           <h2>Ready to revolutionize your <span class="text-gradient">Fitting Experience</span>?</h2>
           <div class="cta-buttons">
-            <button class="primary-btn" @click="openContactModal">
+            <button class="primary-btn" @click="openDemoModal('demo', {
+              title: 'Schedule SuperFiitter Demo',
+              subtitle: 'Revolutionize your Fitting Experience with our immersive retail intelligence.',
+              message: 'I would like to request a demo for SuperFiitter to see how it can transform our digital retail experience.'
+            })">
               Request a Demo
               <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -161,8 +141,18 @@
 
 <script setup>
 import { ref, inject, onMounted } from 'vue'
+import { insightsAPI, pagesAPI } from '@/services/api'
 
-const openContactModal = inject('openContactModal')
+const openSolutionModal = inject('openSolutionModal')
+const openDemoModal = inject('openDemoModal')
+
+const handleSolutionContact = (solution) => {
+  openSolutionModal({
+    title: solution.title,
+    message: `Hello Dreamactic Team,\n\nI am interested in learning more about "${solution.title}" within the SuperFiitter platform. I'd like to understand how this can enhance our digital try-on experience.`,
+    accent: solution.accent || 'var(--accent-primary)'
+  })
+}
 
 const ecosystem = [
   { name: 'AWS', color: '#FF9900', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.5l1.65 6.07 6.13-.53-4.63 4.13 1.34 6.06L12 14.1l-4.49 3.13 1.34-6.06-4.63-4.13 6.13.53L12 1.5M12 24c6.627 0 12-5.373 12-12S18.627 0 12 0 0 5.373 0 12s5.373 12 12 12"/></svg>' }, 
@@ -180,40 +170,24 @@ const ecosystem = [
   { name: 'GraphQL', color: '#E10098', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.14 3.73l-4.14 7.17-4.14-7.17L2.43 5.43l5 8.66-5 8.66L7.86 20.27l4.14-7.17 4.14 7.17 5.43-3.14-5-8.66 5-8.66-5.43-3.14z"/></svg>' },
 ]
 
-const solutions = [
-  { 
-    id: 1, 
-    title: 'Real-Time Rendering', 
-    subtitle: 'Core Engine',
-    description: 'Instantaneous processing and visualization through high-performance rendering pipelines.',
-    features: ['60fps WebGL', 'Ray-tracing Support', 'Texture Streaming'],
-    accent: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)'
-  },
-  { 
-    id: 2, 
-    title: 'Motion Understanding', 
-    subtitle: 'Vision AI',
-    description: 'Advanced AI detects posture and movement to align products realistically across all frames.',
-    features: ['Pose Estimation', 'Cloth Simulation', 'Physics Engine'],
-    accent: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)'
-  },
-  { 
-    id: 3, 
-    title: 'Visual Fidelity', 
-    subtitle: 'Neural Texture',
-    description: 'High-resolution neural texture mapping that replicates fabric weight, translucency, and drape.',
-    features: ['Subsurface Scattering', 'Micro-details', 'Light Interaction'],
-    accent: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)'
-  },
-  { 
-    id: 4, 
-    title: 'Body Mapping', 
-    subtitle: 'Precision Fit',
-    description: 'Extracts precise body measurements from simple 2D images for accurate sizing recommendations.',
-    features: ['98% Accuracy', 'Privacy First', 'Instant Analysis'],
-    accent: 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+const solutions = ref([])
+
+// Dynamic Page Config
+const pageConfig = ref({
+  hero_badge: 'AI VIRTUAL TRY-ON',
+  hero_title: 'SuperFiitter Real-Time',
+  hero_subtitle: 'Transform online shopping into an immersive experience. SuperFiitter enables real-time rendering for deeper customer engagement and confident digital interaction.'
+})
+
+const formatGradientTitle = (title) => {
+  if (!title) return ''
+  const parts = title.split(' ')
+  if (parts.length > 1) {
+    const last = parts.pop()
+    return `${parts.join(' ')} <span class="text-gradient">${last}</span>`
   }
-]
+  return title
+}
 
 const solutionsGrid = ref(null)
 
@@ -247,6 +221,8 @@ const scrollToSolutions = () => {
 
 // Insights logic
 import { insightsAPI } from '@/services/api'
+import InsightsCarousel from '@/components/InsightsCarousel.vue'
+import InsightModal from '@/components/InsightModal.vue'
 const insights = ref([])
 const selectedInsight = ref(null)
 
@@ -263,13 +239,22 @@ const closeInsight = () => {
 const formatDate = (d) => d ? new Date(d).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A'
 const formatContent = (c) => c ? c.split('\n\n').map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('') : ''
 
+const insightsLoading = ref(false)
+
 onMounted(async () => {
   window.scrollTo(0, 0)
+  insightsLoading.value = true
   try {
-    // Attempt to load insights for 'superfiitter' (or fallback to 'ai-service' or similar if none yet)
+    const config = await pagesAPI.getConfig('superfiitter')
+    if (config) {
+      pageConfig.value = config
+      if (config.solutions) solutions.value = config.solutions
+    }
     insights.value = await insightsAPI.getAll('superfiitter') 
   } catch (err) {
-    console.error('Failed to load insights:', err)
+    console.error('Failed to load page context:', err)
+  } finally {
+    insightsLoading.value = false
   }
 })
 </script>
@@ -608,6 +593,7 @@ onMounted(async () => {
   transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   border: 1px solid var(--glass-border);
+  cursor: pointer;
 }
 
 .solution-card::before {
@@ -726,6 +712,7 @@ onMounted(async () => {
   margin-top: auto;
   opacity: 0.8;
   transition: opacity 0.3s ease;
+  cursor: pointer;
 }
 
 .solution-card:hover .sol-footer {
@@ -747,21 +734,6 @@ onMounted(async () => {
 /* Insights Section */
 .insights-section {
   padding: 0 5% 10rem;
-}
-
-.insights-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2.5rem;
-}
-
-.insight-card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 24px;
-  overflow: hidden;
-  transition: all 0.4s;
-  cursor: pointer;
 }
 
 .insight-card:hover {
@@ -842,96 +814,7 @@ onMounted(async () => {
 }
 
 /* Insight Modal */
-.insight-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
-  z-index: 2000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-}
-
-.insight-modal-content {
-  background: #0f0f11;
-  width: 100%;
-  max-width: 900px;
-  max-height: 90vh;
-  border-radius: 32px;
-  border: 1px solid var(--glass-border);
-  padding: 4rem;
-  overflow-y: auto;
-  position: relative;
-  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
-}
-
-.close-modal-btn {
-  position: absolute;
-  top: 2rem;
-  right: 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  color: var(--text-secondary);
-  font-size: 1.5rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s;
-}
-
-.close-modal-btn:hover {
-  background: #6366f1;
-  color: white;
-}
-
-.modal-header {
-  margin-bottom: 3rem;
-  text-align: center;
-}
-
-.modal-meta {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  margin-bottom: 1rem;
-}
-
-.modal-title {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  line-height: 1.1;
-  font-weight: 850;
-}
-
-.modal-author {
-  color: #6366f1;
-  font-weight: 600;
-}
-
-.modal-image {
-  width: 100%;
-  border-radius: 20px;
-  overflow: hidden;
-  margin-bottom: 3rem;
-  aspect-ratio: 16/9;
-}
-
-.modal-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.modal-body {
-  color: var(--text-secondary);
-  line-height: 1.8;
-  font-size: 1.1rem;
-}
+/* InsightModal styles are now handled in the component */
 
 /* Page CTA */
 .page-cta {

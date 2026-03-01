@@ -58,6 +58,21 @@ export const insightsAPI = {
     }
 }
 
+// Research API
+export const researchAPI = {
+    // Get all published publications
+    getAll: async () => {
+        const response = await apiClient.get('/research')
+        return response.data
+    },
+
+    // Get single publication by ID
+    getById: async (id) => {
+        const response = await apiClient.get(`/research/${id}`)
+        return response.data
+    }
+}
+
 // Showcase API
 export const showcaseAPI = {
     // Get all active showcase items. Attempt backend first, fall back to local demo data on error.
@@ -100,6 +115,30 @@ export const jobsAPI = {
     // Submit a job application
     submitApplication: async (applicationData) => {
         const response = await apiClient.post('/jobs/apply', applicationData)
+        return response.data
+    }
+}
+
+// Search API
+export const searchAPI = {
+    query: async (q) => {
+        const response = await apiClient.get('/search', { params: { q } })
+        return response.data
+    }
+}
+
+// Pages API (Public)
+export const pagesAPI = {
+    getAll: async () => {
+        try {
+            const response = await apiClient.get('/pages')
+            return response.data
+        } catch {
+            return []
+        }
+    },
+    getConfig: async (pageId) => {
+        const response = await apiClient.get(`/pages/${pageId}`)
         return response.data
     }
 }
@@ -225,7 +264,7 @@ export const adminAPI = {
     },
 
     // Job Applications
-    getApplications: async (params = {}) => {
+    getApplications: async (params = { include_deleted: true }) => {
         const response = await apiClient.get('/admin/applications', { params })
         return response.data
     },
@@ -235,15 +274,52 @@ export const adminAPI = {
         return response.data
     },
 
+    restoreApplication: async (id) => {
+        const response = await apiClient.post(`/admin/applications/${id}/restore`)
+        return response.data
+    },
+
     deleteApplication: async (id, permanent = false) => {
         await apiClient.delete(`/admin/applications/${id}`, { params: { permanent } })
+    },
+
+    // Research Management
+    getAllResearch: async () => {
+        const response = await apiClient.get('/admin/research')
+        return response.data
+    },
+
+    createResearch: async (paperData) => {
+        const response = await apiClient.post('/admin/research', paperData)
+        return response.data
+    },
+
+    updateResearch: async (id, paperData) => {
+        const response = await apiClient.put(`/admin/research/${id}`, paperData)
+        return response.data
+    },
+
+    deleteResearch: async (id) => {
+        await apiClient.delete(`/admin/research/${id}`)
+    },
+
+    // Page Management
+    updatePageConfig: async (page_id, config) => {
+        const response = await apiClient.post(`/admin/pages/${page_id}`, config)
+        return response.data
+    },
+    deletePageConfig: async (page_id) => {
+        await apiClient.delete(`/admin/pages/${page_id}`)
     }
 }
 
 export default {
     insights: insightsAPI,
+    research: researchAPI,
     showcase: showcaseAPI,
     jobs: jobsAPI,
+    search: searchAPI,
+    pages: pagesAPI,
     auth: authAPI,
     admin: adminAPI
 }

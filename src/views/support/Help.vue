@@ -1,48 +1,44 @@
 <template>
   <div class="page-container">
     <!-- Hero Section -->
-    <div class="page-hero help-hero">
+    <div class="premium-hero help-gradient">
       <div class="hero-content">
-        <div class="hero-badge">HELP CENTER</div>
-        <h1 class="page-title">We're Here to <span class="text-gradient">Help</span></h1>
-        <p class="page-description">
-          Comprehensive support resources for technical integration, account management, and platform optimization. Our enterprise support team responds to critical issues within 2 hours.
+        <div class="badge-wrapper">
+          <span class="hero-badge">HELP CENTER</span>
+        </div>
+        <h1 class="hero-title">We're Here to <span class="text-gradient">Help</span></h1>
+        <p class="hero-subtitle">
+          Comprehensive support resources for technical integration, account management, and platform optimization.
         </p>
-        <div class="search-bar">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-          </svg>
-          <input type="text" placeholder="Search for answers..." class="search-input">
+        <div class="search-vessel">
+          <div class="search-bar">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+            </svg>
+            <input type="text" placeholder="Search for answers..." class="search-input">
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Help Categories -->
     <section class="help-categories">
       <div class="section-container">
-        <div class="categories-carousel-wrapper">
-          <button class="carousel-nav prev" @click="scrollCategories('left')" aria-label="Previous">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M15 18l-6-6 6-6"/>
-            </svg>
-          </button>
-
-          <div class="categories-grid" ref="categoriesGrid">
-            <div v-for="cat in helpCategories" :key="cat.name" class="help-card">
+        <div class="categories-grid" ref="categoriesGrid" @mousemove="handleMouseMove">
+          <div 
+            v-for="cat in helpCategories" 
+            :key="cat.name" 
+            class="help-card glass-card"
+          >
+            <div class="card-glow"></div>
+            <div class="help-card-content">
               <div class="help-icon" v-html="cat.icon"></div>
               <h3>{{ cat.name }}</h3>
               <p>{{ cat.desc }}</p>
               <ul class="help-links">
-                <li v-for="link in cat.links" :key="link">{{ link }}</li>
+                <li v-for="link in cat.links" :key="link"><span>{{ link }}</span></li>
               </ul>
             </div>
           </div>
-
-          <button class="carousel-nav next" @click="scrollCategories('right')" aria-label="Next">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 18l6-6-6-6"/>
-            </svg>
-          </button>
         </div>
       </div>
     </section>
@@ -50,14 +46,17 @@
     <!-- FAQ Section -->
     <section class="faq-section">
       <div class="section-container">
-        <div class="section-header">
-          <span class="section-tag">FAQ</span>
+        <div class="section-header centered">
+          <div class="detail-badge">FAQ</div>
           <h2>Common <span class="text-gradient">Questions</span></h2>
         </div>
         <div class="faq-list">
-          <div v-for="faq in faqs" :key="faq.q" class="faq-item">
-            <h4>{{ faq.q }}</h4>
-            <p>{{ faq.a }}</p>
+          <div v-for="faq in faqs" :key="faq.q" class="faq-item glass-card mini">
+            <div class="faq-q">
+              <span class="q-glyph">?</span>
+              <h4>{{ faq.q }}</h4>
+            </div>
+            <p class="faq-a">{{ faq.a }}</p>
           </div>
         </div>
       </div>
@@ -65,14 +64,14 @@
 
     <!-- Final CTA -->
     <section class="page-cta">
-      <div class="cta-card">
-        <div class="cta-content">
-          <h2>Still have <span class="text-gradient">Questions</span>?</h2>
-          <p class="cta-desc">Our technical support team is available 24/7 for enterprise customers.</p>
-          <div class="cta-buttons">
-            <button class="primary-btn" @click="openContactModal">
-              Contact Support
-              <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <div class="cta-luxe-card sky-aura">
+        <div class="cta-luxe-content">
+          <h2 class="cta-luxe-title">Still have <span class="text-gradient">Questions</span>?</h2>
+          <p class="cta-luxe-subtitle">Our technical support team is available 24/7 for enterprise customers.</p>
+          <div class="cta-luxe-buttons">
+            <button class="btn-luxe-primary" @click="openContactModal">
+              <span>Contact Support</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
             </button>
@@ -117,11 +116,16 @@ const faqs = [
 
 const categoriesGrid = ref(null)
 
-const scrollCategories = (direction) => {
+const handleMouseMove = (e) => {
   if (!categoriesGrid.value) return
-  const scrollAmount = 350
-  const scrollLeft = direction === 'left' ? -scrollAmount : scrollAmount
-  categoriesGrid.value.scrollBy({ left: scrollLeft, behavior: 'smooth' })
+  const cards = categoriesGrid.value.querySelectorAll('.help-card')
+  cards.forEach(card => {
+    const rect = card.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 100
+    const y = ((e.clientY - rect.top) / rect.height) * 100
+    card.style.setProperty('--mouse-x', `${x}%`)
+    card.style.setProperty('--mouse-y', `${y}%`)
+  })
 }
 
 onMounted(() => {
@@ -130,21 +134,16 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container {
-  width: 100%;
-  min-height: 100vh;
-  background: var(--bg-primary);
-}
-
-.page-hero {
+/* Premium Hero */
+.premium-hero {
+  position: relative;
   padding: 12rem 5% 8rem;
   text-align: center;
-  position: relative;
   overflow: hidden;
   background: var(--bg-secondary);
 }
 
-.help-hero::before {
+.help-gradient::before {
   content: '';
   position: absolute;
   top: -50%;
@@ -153,15 +152,17 @@ onMounted(() => {
   height: 200%;
   background: radial-gradient(circle at center, rgba(14, 165, 233, 0.08) 0%, transparent 70%);
   z-index: 0;
+  pointer-events: none;
 }
 
 .hero-content {
   position: relative;
-  z-index: 1;
-  max-width: 900px;
+  z-index: 10;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
+.badge-wrapper { margin-bottom: 2rem; }
 .hero-badge {
   display: inline-block;
   padding: 0.5rem 1.25rem;
@@ -172,31 +173,39 @@ onMounted(() => {
   font-weight: 800;
   letter-spacing: 0.15em;
   color: #0ea5e9;
+}
+
+.hero-title {
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 850;
+  letter-spacing: -0.04em;
+  line-height: 1;
   margin-bottom: 2rem;
 }
 
-.page-title {
-  font-size: 5.5rem;
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  margin-bottom: 1.5rem;
-  background: linear-gradient(135deg, var(--text-primary) 0%, #0ea5e9 100%);
+.text-gradient {
+  background: linear-gradient(135deg, #0ea5e9 0%, #22d3ee 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.page-description {
-  font-size: 1.25rem;
+.hero-subtitle {
+  font-size: 1.4rem;
   color: var(--text-secondary);
   line-height: 1.6;
-  max-width: 750px;
+  max-width: 800px;
   margin: 0 auto 3rem;
 }
 
+.search-vessel {
+  display: flex;
+  justify-content: center;
+}
+
 .search-bar {
+  width: 100%;
   max-width: 500px;
-  margin: 0 auto;
   position: relative;
 }
 
@@ -208,14 +217,16 @@ onMounted(() => {
   width: 20px;
   height: 20px;
   color: var(--text-secondary);
+  opacity: 0.5;
 }
 
 .search-input {
   width: 100%;
   padding: 1.2rem 1.5rem 1.2rem 3.5rem;
-  border-radius: 16px;
+  border-radius: 20px;
   border: 1px solid var(--grid-color);
-  background: var(--bg-primary);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
   color: var(--text-primary);
   font-size: 1rem;
   transition: all 0.3s ease;
@@ -224,241 +235,224 @@ onMounted(() => {
 .search-input:focus {
   outline: none;
   border-color: #0ea5e9;
-  box-shadow: 0 0 20px rgba(14, 165, 233, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 30px rgba(14, 165, 233, 0.15);
 }
 
-.text-gradient {
-  background: linear-gradient(135deg, #0ea5e9 0%, #22d3ee 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.section-container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.section-tag {
-  color: #0ea5e9;
-  font-weight: 800;
-  font-size: 0.85rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  display: block;
-  margin-bottom: 1.5rem;
-}
-
-/* Categories */
-.help-categories {
-  padding: 8rem 5%;
-}
-
+/* Categories Section */
+.help-categories { padding: 8rem 5%; }
 .categories-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 2.5rem;
+}
+
+.glass-card {
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: blur(40px);
+  border: 1px solid var(--glass-border);
+  border-radius: 32px;
+  overflow: hidden;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .help-card {
-  padding: 3rem;
-  background: var(--bg-secondary);
+  padding: 3.5rem;
+  flex: 1 1 350px;
+  max-width: 400px;
+  text-align: left;
+}
+
+.help-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
   border-radius: 32px;
-  border: 1px solid var(--grid-color);
-  transition: all 0.4s ease;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.5), transparent);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.2;
 }
 
 .help-card:hover {
-  transform: translateY(-8px);
-  border-color: #0ea5e9;
+  transform: translateY(-10px);
+  border-color: rgba(14, 165, 233, 0.3);
 }
+
+.card-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(14, 165, 233, 0.15) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.help-card:hover .card-glow { opacity: 1; }
 
 .help-icon {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   color: #0ea5e9;
   margin-bottom: 2rem;
 }
 
-.help-card h3 {
-  font-size: 1.4rem;
-  margin-bottom: 1rem;
-  font-weight: 700;
-}
+.help-card h3 { font-size: 1.75rem; font-weight: 850; margin-bottom: 1.25rem; }
+.help-card p { color: var(--text-secondary); line-height: 1.6; margin-bottom: 2.5rem; }
 
-.help-card p {
-  color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 2rem;
-}
-
-.help-links {
-  list-style: none;
-  padding: 0;
-}
-
+.help-links { list-style: none; padding: 0; }
 .help-links li {
-  margin-bottom: 0.8rem;
-  font-weight: 700;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   color: #0ea5e9;
+  font-weight: 700;
   cursor: pointer;
-  font-size: 0.95rem;
+  transition: 0.3s;
 }
 
-/* FAQ */
-.faq-section {
-  padding: 8rem 5%;
-  background: var(--bg-secondary);
+.help-links li::before {
+  content: '→';
+  font-family: serif;
+  opacity: 0.5;
 }
 
-.section-header {
-  text-align: center;
-  margin-bottom: 5rem;
-}
+.help-links li:hover { transform: translateX(5px); color: #22d3ee; }
 
-.section-header h2 {
-  font-size: 3.5rem;
-  font-weight: 850;
+/* FAQ Section */
+.faq-section { padding: 10rem 5%; background: rgba(0,0,0,0.2); }
+.centered { text-align: center; margin-bottom: 6rem; }
+.detail-badge {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  background: rgba(14, 165, 233, 0.1);
+  color: #0ea5e9;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  margin-bottom: 2rem;
 }
 
 .faq-list {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.faq-item {
+  padding: 2.5rem;
+  transition: 0.4s;
+}
+
+.faq-q {
   display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
-.faq-item h4 {
-  font-size: 1.25rem;
-  font-weight: 800;
-  margin-bottom: 1rem;
+.q-glyph {
+  width: 32px;
+  height: 32px;
+  background: rgba(14, 165, 233, 0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0ea5e9;
+  font-weight: 900;
 }
 
-.faq-item p {
-  color: var(--text-secondary);
-  line-height: 1.7;
-}
+.faq-item h4 { font-size: 1.3rem; font-weight: 800; margin: 0; }
+.faq-a { color: var(--text-secondary); line-height: 1.8; padding-left: 3.5rem; }
 
-/* CTA */
-.page-cta {
-  padding: 8rem 5% 10rem;
-}
+/* Luxe Aura CTA System */
+.page-cta { padding: 12rem 5%; }
 
-.cta-card {
-  max-width: 1000px;
+.cta-luxe-card {
+  max-width: 1200px;
   margin: 0 auto;
-  background: var(--bg-secondary);
-  border-radius: 48px;
-  padding: 6rem 4rem;
+  position: relative;
+  padding: 8rem 4rem;
+  border-radius: 40px;
+  overflow: hidden;
   text-align: center;
-  border: 1px solid var(--grid-color);
-  box-shadow: var(--shadow-md);
+  background: #050505;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.5);
 }
 
-.cta-card h2 {
-  font-size: 3.5rem;
-  color: var(--text-primary);
-  font-weight: 850;
-  margin-bottom: 1rem;
+.sky-aura::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 120%, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
+  z-index: 0;
 }
 
-.cta-desc {
+.cta-luxe-content {
+  position: relative;
+  z-index: 10;
+}
+
+.cta-luxe-title {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  margin-bottom: 1.5rem;
+  line-height: 1;
+}
+
+.cta-luxe-subtitle {
   font-size: 1.25rem;
   color: var(--text-secondary);
-  margin-bottom: 3.5rem;
+  max-width: 600px;
+  margin: 0 auto 4rem;
+  line-height: 1.6;
 }
 
-.primary-btn {
-  padding: 1.1rem 2.5rem;
-  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-  color: white;
+.btn-luxe-primary {
+  position: relative;
+  padding: 1.25rem 3.5rem;
+  background: #fff;
+  color: #000;
   border: none;
-  border-radius: 14px;
-  font-size: 1.05rem;
-  font-weight: 700;
+  border-radius: 100px;
+  font-size: 1.1rem;
+  font-weight: 800;
   cursor: pointer;
-  transition: all 0.4s ease;
-  box-shadow: 0 10px 30px rgba(14, 165, 233, 0.2);
   display: inline-flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 1rem;
+  transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
 }
 
-@media (max-width: 1024px) {
-  .categories-grid { grid-template-columns: 1fr; }
-  .page-title { font-size: 3.5rem; }
+.btn-luxe-primary svg {
+  width: 20px;
+  transition: transform 0.4s ease;
+}
+
+.btn-luxe-primary:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(255, 255, 255, 0.2);
+}
+
+.btn-luxe-primary:hover svg {
+  transform: translateX(5px);
 }
 
 @media (max-width: 768px) {
-  .section-header h2 {
-    font-size: 2.5rem;
-  }
-
-  /* Categories Carousel for Mobile */
-  .categories-carousel-wrapper {
-    position: relative;
-    width: 100%;
-  }
-
-  .carousel-nav {
-    display: flex;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 48px;
-    height: 48px;
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    border-radius: 50%;
-    z-index: 10;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-
-  .carousel-nav.prev { left: -10px; }
-  .carousel-nav.next { right: -10px; }
-
-  .carousel-nav svg {
-    width: 20px;
-    height: 20px;
-    color: var(--text-primary);
-  }
-
-  .categories-grid {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    gap: 1.5rem;
-    padding: 0 1rem;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    grid-template-columns: none;
-  }
-
-  .categories-grid::-webkit-scrollbar { display: none; }
-
-  .help-card {
-    flex: 0 0 85%;
-    scroll-snap-align: center;
-    padding: 2.5rem 2rem;
-    border-radius: 32px;
-    height: auto;
-  }
-
-  .help-card h3 {
-    font-size: 1.25rem;
-  }
-
-  .help-card p {
-    font-size: 0.95rem;
-  }
-
-  .help-links li {
-    font-size: 0.85rem;
-  }
+  .cta-luxe-card { padding: 5rem 2rem; border-radius: 30px; }
+  .cta-luxe-title { font-size: 2.5rem; }
+  .btn-luxe-primary { width: 100%; justify-content: center; }
 }
 </style>

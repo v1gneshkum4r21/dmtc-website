@@ -115,10 +115,10 @@ const logoSrc = computed(() => {
 
 .footer-watermark {
   position: absolute;
-  top: -20%;
+  top: -5%;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 20vw;
+  font-size: clamp(4rem, 20vw, 22rem);
   font-weight: 900;
   color: var(--text-primary);
   opacity: 0.03;
@@ -126,6 +126,7 @@ const logoSrc = computed(() => {
   white-space: nowrap;
   letter-spacing: -0.05em;
   z-index: 1;
+  transition: all 0.5s ease;
 }
 
 .footer-main {
@@ -342,6 +343,10 @@ const logoSrc = computed(() => {
     grid-template-columns: repeat(2, 1fr);
     gap: 3rem;
   }
+  .footer-watermark {
+    font-size: 25vw;
+    top: -2%;
+  }
 }
 
 @media (max-width: 768px) {
@@ -398,6 +403,11 @@ const logoSrc = computed(() => {
   .legal-dots {
     gap: 1rem;
   }
+
+  .footer-watermark {
+    font-size: 30vw;
+    top: 5%;
+  }
 }
 
 @media (max-width: 480px) {
@@ -411,6 +421,12 @@ const logoSrc = computed(() => {
     border-bottom: 1px solid var(--grid-color);
     padding-bottom: 0.5rem;
     width: 100%;
+  }
+
+  .footer-watermark {
+    font-size: 35vw;
+    top: 10%;
+    opacity: 0.02;
   }
 }
 </style>

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import { navStore } from '@/store/navigation'
 
 const routes = [
     { path: '/', name: 'home', component: HomeView },
@@ -34,6 +35,18 @@ const routes = [
     // Admin
     { path: '/admin/insights', name: 'insights-admin', component: () => import('../views/admin/InsightsAdmin.vue') },
 
+    // Custom Dynamic Pages - matches /page-id (flat) or /:category/:id (nested)
+    {
+        path: '/p/:pageId',
+        name: 'custom-page-flat',
+        component: () => import('../views/DynamicView.vue')
+    },
+    {
+        path: '/:category/:id',
+        name: 'dynamic-page',
+        component: () => import('../views/DynamicView.vue')
+    },
+
     // Redirect any unknown routes to home
     { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
@@ -48,6 +61,24 @@ const router = createRouter({
             return { top: 0 }
         }
     }
+})
+
+// Router Guard for Navigation Matrix
+router.beforeEach((to, from, next) => {
+    // Check by route name first
+    if (navStore.matrix[to.name]) {
+        if (!navStore.matrix[to.name].visible) return next('/')
+        return next()
+    }
+
+    // For dynamic/custom pages — find by path match
+    const matchedPage = Object.values(navStore.matrix).find(p => p.path === to.path)
+    if (matchedPage) {
+        if (!matchedPage.visible) return next('/')
+        return next()
+    }
+
+    next()
 })
 
 export default router

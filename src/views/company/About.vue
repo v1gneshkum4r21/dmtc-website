@@ -1,16 +1,13 @@
 <template>
   <div class="page-container">
     <!-- Hero Section -->
-    <section class="premium-hero about-gradient">
+    <section class="premium-hero about-gradient" v-if="pageConfig">
       <div class="hero-content">
         <div class="badge-wrapper">
-          <span class="hero-badge">OUR MISSION</span>
+          <span class="hero-badge">{{ pageConfig.hero_badge }}</span>
         </div>
-        <h1 class="hero-title">Building the <span class="text-gradient">Agentic OS</span></h1>
-        <p class="hero-subtitle">
-          We are engineering the operating system for the next generation of work. 
-          Deploy, orchestrate, and scale autonomous AI agents that act as trusted team members across your entire enterprise.
-        </p>
+        <h1 class="hero-title" v-html="formatGradientTitle(pageConfig.hero_title)"></h1>
+        <p class="hero-subtitle">{{ pageConfig.hero_subtitle }}</p>
 
         <div class="hero-actions">
           <router-link to="/company/careers" class="primary-btn">
@@ -165,18 +162,10 @@
             We envision enterprises where AI agents act as trusted team members—making decisions, solving problems, and executing complex workflows with minimal human intervention.
           </p>
           
-          <div class="stats-row">
-            <div class="stat-item">
-              <span class="stat-val">99%</span>
-              <span class="stat-lbl">Reliability</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-val">10M+</span>
-              <span class="stat-lbl">Tasks Automated</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-val">Global</span>
-              <span class="stat-lbl">Infrastructure</span>
+          <div class="stats-row" v-if="pageConfig.stats">
+            <div class="stat-item" v-for="stat in pageConfig.stats" :key="stat.lbl">
+              <span class="stat-val">{{ stat.val }}</span>
+              <span class="stat-lbl">{{ stat.lbl }}</span>
             </div>
           </div>
         </div>
@@ -187,85 +176,33 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { pagesAPI } from '@/services/api'
 
-const approaches = [
-  {
-    title: 'Design',
-    description: 'We architect modular agentic workflows with explainability and human-in-the-loop precision at their core.',
-    accent: 'rgba(99, 102, 241, 0.1)',
-    icon: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>'
-  },
-  {
-    title: 'Deploy',
-    description: 'Our Agentic OS integrates seamlessly with your infrastructure, enabling production readiness in days.',
-    accent: 'rgba(59, 130, 246, 0.1)',
-    icon: '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>'
-  },
-  {
-    title: 'Scale',
-    description: 'Orchestrate global swarms of specialized agents that learn and adapt, delivering exponential efficiency.',
-    accent: 'rgba(16, 185, 129, 0.1)',
-    icon: '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>'
+const approaches = ref([])
+const values = ref([])
+const teamMembers = ref([])
+
+const pageConfig = ref({
+  hero_badge: 'OUR MISSION',
+  hero_title: 'Building the Agentic OS',
+  hero_subtitle: 'We are engineering the operating system for the next generation of work. Deploy, orchestrate, and scale autonomous AI agents that act as trusted team members across your entire enterprise.',
+  stats: [
+    { val: '99%', lbl: 'Reliability' },
+    { val: '10M+', lbl: 'Tasks Automated' },
+    { val: 'Global', lbl: 'Infrastructure' }
+  ]
+})
+
+const formatGradientTitle = (title) => {
+  if (!title) return ''
+  const parts = title.split(' ')
+  if (parts.length > 1) {
+    const last = parts.pop()
+    const secondLast = parts.pop()
+    return `${parts.join(' ')} <span class="text-gradient">${secondLast} ${last}</span>`
   }
-]
-
-const teamMembers = [
-  {
-    name: 'Dr. Amara Singh',
-    role: 'CEO & Co-Founder',
-    bio: 'Former Director of AI Strategy at Microsoft Azure. PhD in CS from Stanford.',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=300&h=300'
-  },
-  {
-    name: 'James Chen',
-    role: 'CTO & Co-Founder',
-    bio: 'Ex-Principal Engineer at Google DeepMind. Pioneer in multi-agent RL systems.',
-    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=300&h=300'
-  },
-  {
-    name: 'Sarah Zhang',
-    role: 'Chief Product Officer',
-    bio: 'Former VP of Product at Salesforce. Expert in enterprise AI automation.',
-    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=300&h=300'
-  }
-]
-
-
-
-const values = [
-  { 
-    id: 1, 
-    title: 'Agent-First', 
-    subtitle: 'Architecture',
-    description: 'We build systems where AI agents are first-class citizens, capable of independent decision-making and learning.',
-    features: ['Independent Reasoning', 'Outcome Learning', 'Human Collaboration'],
-    accent: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)'
-  },
-  { 
-    id: 2, 
-    title: 'Reliability', 
-    subtitle: 'Enterprise Grade',
-    description: 'Infrastructure built for mission-critical operations with uptime, security, and certifications that define industry standards.',
-    features: ['99.99% Uptime', 'SOC2 Compliance', 'Zero-Trust Security'],
-    accent: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)'
-  },
-  { 
-    id: 3, 
-    title: 'Responsible AI', 
-    subtitle: 'Ethical Core',
-    description: 'Integrating explainability, auditability, and ethical guardrails into every layer of our platform.',
-    features: ['Full Transparency', 'Bias Mitigation', 'Audit Trails'],
-    accent: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)'
-  },
-  { 
-    id: 4, 
-    title: 'Scalability', 
-    subtitle: 'Global Reach',
-    description: 'Designed to scale intelligence as easily as compute, handling millions of complex concurrent tasks.',
-    features: ['Elastic Compute', 'Global Edge', 'Infinite Scale'],
-    accent: 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
-  }
-]
+  return title
+}
 
 const solutionsGrid = ref(null)
 
@@ -307,8 +244,24 @@ const scrollTeam = (direction) => {
   teamGrid.value.scrollBy({ left: scrollLeft, behavior: 'smooth' })
 }
 
-onMounted(() => {
+onMounted(async () => {
   window.scrollTo(0, 0)
+  try {
+    const [aboutConfig, leadershipConfig] = await Promise.all([
+      pagesAPI.getConfig('about'),
+      pagesAPI.getConfig('leadership')
+    ])
+    if (aboutConfig) {
+      pageConfig.value = aboutConfig
+      if (aboutConfig.approaches) approaches.value = aboutConfig.approaches
+      if (aboutConfig.values) values.value = aboutConfig.values
+    }
+    if (leadershipConfig && leadershipConfig.team) {
+      teamMembers.value = leadershipConfig.team
+    }
+  } catch (err) {
+    console.error('Failed to load about page context:', err)
+  }
 })
 </script>
 

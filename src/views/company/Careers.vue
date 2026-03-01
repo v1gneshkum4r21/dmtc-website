@@ -1,108 +1,121 @@
 <template>
   <div class="page-container">
     <!-- Hero Section -->
-    <div class="page-hero careers-gradient">
+    <div class="premium-hero careers-gradient" v-if="pageConfig">
       <div class="hero-content">
-        <div class="hero-badge">CAREERS</div>
-        <h1 class="page-title">Build the Future of <span class="text-gradient">Enterprise AI</span></h1>
-        <p class="page-description">
-          Join a team solving some of the hardest problems in artificial intelligence—from real-time agent orchestration to neural architecture optimization. We offer competitive compensation, significant equity, and the opportunity to shape how Fortune 500 companies deploy autonomous AI at scale.
-        </p>
+        <div class="badge-wrapper">
+          <span class="hero-badge">{{ pageConfig.hero_badge }}</span>
+        </div>
+        <h1 class="hero-title" v-html="formatGradientTitle(pageConfig.hero_title)"></h1>
+        <p class="hero-subtitle">{{ pageConfig.hero_subtitle }}</p>
+        <div class="hero-actions">
+          <a href="#open-roles" class="primary-btn">
+            View Open Roles
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
       </div>
     </div>
 
-    <!-- Why Us Section -->
-    <section class="benefits-section">
+    <!-- Perks Section (Solutions Grid Style) -->
+    <section class="perks-section">
       <div class="section-container">
-        <div class="section-header">
-          <span class="section-tag">WHY DREAMACTIC</span>
+        <div class="section-header centered">
+          <div class="detail-badge">WHY DREAMATIC</div>
           <h2>The Perks of <span class="text-gradient">High Velocity</span></h2>
+          <p class="section-subtitle">We don't just build the future — we make sure you thrive while doing it.</p>
         </div>
-        <div class="benefits-carousel-wrapper">
-          <button class="carousel-nav prev" @click="scrollBenefits('left')" aria-label="Previous">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+        <div class="perks-grid-wrapper">
+          <button class="carousel-arrow carousel-arrow-left" @click="scrollPerks('left')" aria-label="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <path d="M15 18l-6-6 6-6"/>
             </svg>
           </button>
-
-          <div class="benefits-grid" ref="benefitsGrid">
-            <div class="benefit-card">
-              <div class="icon-box">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                </svg>
-              </div>
-              <h4>Competitive Compensation</h4>
-              <p>Top-of-market salaries, significant equity grants, and comprehensive benefits including health, dental, vision, and 401(k) matching.</p>
-            </div>
-            <div class="benefit-card">
-              <div class="icon-box">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <path d="M12 6v6l4 2"/>
-                </svg>
-              </div>
-              <h4>Cutting-Edge Research</h4>
-              <p>Work on problems published in top-tier conferences. Access to state-of-the-art compute infrastructure and the latest AI models.</p>
-            </div>
-            <div class="benefit-card">
-              <div class="icon-box">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                  <circle cx="9" cy="7" r="4"/>
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
-                </svg>
-              </div>
-              <h4>World-Class Team</h4>
-              <p>Collaborate with former researchers and engineers from Google DeepMind, OpenAI, Microsoft Research, and leading AI labs worldwide.</p>
-            </div>
-          </div>
-
-          <button class="carousel-nav next" @click="scrollBenefits('right')" aria-label="Next">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <button class="carousel-arrow carousel-arrow-right" @click="scrollPerks('right')" aria-label="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <path d="M9 18l6-6-6-6"/>
             </svg>
           </button>
+
+          <div class="perks-grid" ref="perksGrid" @mousemove="handlePerksMouseMove">
+            <div
+              v-for="(perk, index) in perks"
+              :key="index"
+              class="perk-card"
+              :style="{ '--card-accent': 'linear-gradient(135deg, #f59e0b 0%, #10b981 100%)' }"
+            >
+              <div class="card-glow"></div>
+              <div class="perk-icon-wrap">
+                <svg v-html="perk.icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="perk-icon"></svg>
+              </div>
+              <h3 class="perk-title">{{ perk.title }}</h3>
+              <p class="perk-desc">{{ perk.description }}</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Open Roles Placeholder -->
-    <section class="roles-section">
+    <!-- Open Roles Section -->
+    <section class="roles-section" id="open-roles">
       <div class="section-container">
-        <div class="section-header">
-          <span class="section-tag">OPEN ROLES</span>
+        <div class="section-header centered">
+          <div class="detail-badge">OPEN ROLES</div>
           <h2>Current <span class="text-gradient">Opportunities</span></h2>
         </div>
-        <div class="roles-carousel-wrapper">
-          <button class="carousel-nav prev" @click="scrollRoles('left')" aria-label="Previous">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+        <div class="roles-grid-wrapper">
+          <button class="carousel-arrow carousel-arrow-left" @click="scrollRoles('left')" aria-label="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <path d="M15 18l-6-6 6-6"/>
             </svg>
           </button>
-
-          <div class="roles-grid" ref="rolesGrid">
-            <div v-for="role in roles" :key="role.title" class="role-card">
-              <div class="role-info">
-                <h3>{{ role.title }}</h3>
-                <div class="role-meta">
-                  <span>{{ role.team }}</span>
-                  <span class="dot"></span>
-                  <span>{{ role.location }}</span>
-                </div>
-              </div>
-              <button class="secondary-btn" @click="openJobModal(role.title)">Apply Now</button>
-            </div>
-          </div>
-
-          <button class="carousel-nav next" @click="scrollRoles('right')" aria-label="Next">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <button class="carousel-arrow carousel-arrow-right" @click="scrollRoles('right')" aria-label="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <path d="M9 18l6-6-6-6"/>
             </svg>
           </button>
+
+          <div class="roles-list" ref="rolesGrid">
+            <div
+              v-for="role in roles"
+              :key="role._id || role.title"
+              class="role-card"
+            >
+              <div class="role-left">
+                <div class="role-type-badge">{{ role.type || 'Full-time' }}</div>
+                <div class="role-info">
+                  <h3 class="role-title">{{ role.title }}</h3>
+                  <div class="role-meta">
+                    <span>{{ role.team }}</span>
+                    <span class="meta-dot"></span>
+                    <span>{{ role.location }}</span>
+                  </div>
+                </div>
+              </div>
+              <button class="apply-btn" @click="openJobModal(role.title)">
+                Apply Now
+                <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </button>
+            </div>
+
+            <div v-if="roles.length === 0" class="no-roles">
+              <div class="no-roles-icon">💼</div>
+              <h3>No Openings Right Now</h3>
+              <p>We're always looking for great people. Send us your resume.</p>
+            </div>
+          </div>
         </div>
-        <div class="no-roles-notice">
-          <p>Don't see a role? Send your resume to <a href="mailto:careers@dreamactic.ai" class="link">careers@dreamactic.ai</a></p>
+
+        <div class="roles-footer">
+          <p>Don't see your role? Send your resume to
+            <a href="mailto:careers@dreamatic.ai" class="link">careers@dreamatic.ai</a>
+          </p>
         </div>
       </div>
     </section>
@@ -112,6 +125,7 @@
       <div class="cta-card">
         <div class="cta-content">
           <h2>Ready to revolutionize <span class="text-gradient">Work</span>?</h2>
+          <p class="cta-subtitle">We move fast, build boldly, and reward exceptional talent across every frontier.</p>
           <div class="cta-buttons">
             <button class="primary-btn" @click="openContactModal">
               Send an Inquiry
@@ -128,64 +142,88 @@
 
 <script setup>
 import { ref, onMounted, inject } from 'vue'
-import { jobsAPI } from '@/services/api'
+import { jobsAPI, pagesAPI } from '@/services/api'
 
 const openContactModal = inject('openContactModal')
 const openJobModal = inject('openJobModal')
 
-const roles = ref([
-  { title: 'Senior ML Engineer – Agent Orchestration', team: 'Core Platform', location: 'San Francisco / Remote (US)' },
-  { title: 'Research Scientist – Multi-Agent Systems', team: 'AI Research', location: 'San Francisco' },
-  { title: 'Full-Stack Engineer – Voice Infrastructure', team: 'EchoAI', location: 'Hybrid' },
-  { title: 'Product Manager – Enterprise Solutions', team: 'Product', location: 'San Francisco' },
-  { title: 'DevOps Engineer – AI Infrastructure', team: 'Platform', location: 'Remote (Global)' }
-])
-
-const fetchJobs = async () => {
-  try {
-    const data = await jobsAPI.getAll()
-    if (data && data.length > 0) {
-      roles.value = data
-    }
-  } catch (err) {
-    console.error('Failed to fetch jobs:', err)
-  }
-}
-
-const benefitsGrid = ref(null)
+const perks = ref([])
+const roles = ref([])
+const perksGrid = ref(null)
 const rolesGrid = ref(null)
 
-const scrollBenefits = (direction) => {
-  if (!benefitsGrid.value) return
-  const scrollAmount = 350
-  const scrollLeft = direction === 'left' ? -scrollAmount : scrollAmount
-  benefitsGrid.value.scrollBy({ left: scrollLeft, behavior: 'smooth' })
+const pageConfig = ref({
+  hero_badge: 'CAREERS',
+  hero_title: 'Build the Future of Enterprise AI',
+  hero_subtitle: 'Join a team solving some of the hardest problems in artificial intelligence—from real-time agent orchestration to neural architecture optimization. We offer competitive compensation, significant equity, and the opportunity to shape how Fortune 500 companies deploy autonomous AI at scale.'
+})
+
+const formatGradientTitle = (title) => {
+  if (!title) return ''
+  const parts = title.split(' ')
+  if (parts.length > 1) {
+    const last = parts.pop()
+    const secondLast = parts.pop()
+    return `${parts.join(' ')} <span class="text-gradient">${secondLast} ${last}</span>`
+  }
+  return title
+}
+
+const handlePerksMouseMove = (e) => {
+  if (!perksGrid.value) return
+  const cards = perksGrid.value.querySelectorAll('.perk-card')
+  cards.forEach(card => {
+    const rect = card.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 100
+    const y = ((e.clientY - rect.top) / rect.height) * 100
+    card.style.setProperty('--mouse-x', `${x}%`)
+    card.style.setProperty('--mouse-y', `${y}%`)
+    card.querySelector('.card-glow').style.opacity = '0.15'
+  })
+}
+
+const scrollPerks = (direction) => {
+  if (!perksGrid.value) return
+  const scrollAmount = perksGrid.value.offsetWidth * 0.85
+  perksGrid.value.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' })
 }
 
 const scrollRoles = (direction) => {
   if (!rolesGrid.value) return
-  const scrollAmount = 350
-  const scrollLeft = direction === 'left' ? -scrollAmount : scrollAmount
-  rolesGrid.value.scrollBy({ left: scrollLeft, behavior: 'smooth' })
+  const scrollAmount = 400
+  rolesGrid.value.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' })
 }
 
-onMounted(() => {
+onMounted(async () => {
   window.scrollTo(0, 0)
-  fetchJobs()
+  try {
+    const [careersConfig, jobsData] = await Promise.all([
+      pagesAPI.getConfig('careers'),
+      jobsAPI.getAll()
+    ])
+    if (careersConfig) {
+      pageConfig.value = careersConfig
+      if (careersConfig.perks) perks.value = careersConfig.perks
+    }
+    if (jobsData?.length) roles.value = jobsData
+  } catch (err) {
+    console.error('Failed to load careers page:', err)
+  }
 })
 </script>
 
 <style scoped>
 .page-container {
   width: 100%;
-  min-height: 100vh;
   background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
-.page-hero {
+/* ── Hero ─────────────────────────────────────────────────── */
+.premium-hero {
+  position: relative;
   padding: 12rem 5% 8rem;
   text-align: center;
-  position: relative;
   overflow: hidden;
   background: var(--bg-secondary);
 }
@@ -193,207 +231,356 @@ onMounted(() => {
 .careers-gradient::before {
   content: '';
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle at center, rgba(168, 85, 247, 0.08) 0%, transparent 70%);
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle at center, rgba(245, 158, 11, 0.07) 0%, transparent 70%);
   z-index: 0;
+  pointer-events: none;
 }
 
 .hero-content {
   position: relative;
-  z-index: 1;
-  max-width: 900px;
+  z-index: 10;
+  max-width: 1000px;
   margin: 0 auto;
 }
+
+.badge-wrapper { margin-bottom: 2rem; }
 
 .hero-badge {
   display: inline-block;
   padding: 0.5rem 1.25rem;
-  background: rgba(168, 85, 247, 0.1);
-  border: 1px solid rgba(168, 85, 247, 0.2);
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
   border-radius: 100px;
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0.15em;
-  color: #a855f7;
-  margin-bottom: 2rem;
+  color: #f59e0b;
 }
 
-.page-title {
-  font-size: 5.5rem;
-  font-weight: 900;
+.hero-title {
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 850;
   letter-spacing: -0.04em;
-  margin-bottom: 1.5rem;
-  background: linear-gradient(135deg, var(--text-primary) 0%, #a855f7 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.page-description {
-  font-size: 1.25rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  max-width: 750px;
-  margin: 0 auto;
+  line-height: 1;
+  margin-bottom: 2rem;
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, #a855f7 0%, #d946ef 100%);
+  background: linear-gradient(135deg, #f59e0b 0%, #10b981 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.section-container {
-  max-width: 1200px;
-  margin: 0 auto;
+.hero-subtitle {
+  font-size: 1.4rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto 3rem;
+  font-weight: 500;
 }
 
-.section-tag {
-  color: #a855f7;
+.hero-actions { display: flex; justify-content: center; gap: 1.5rem; }
+
+.primary-btn {
+  padding: 1.1rem 2.5rem;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 10px 30px rgba(245, 158, 11, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.primary-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: 0.6s;
+  z-index: 2;
+}
+
+.primary-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(245, 158, 11, 0.35);
+}
+
+.primary-btn:hover::before { left: 100%; }
+
+.btn-arrow {
+  width: 18px; height: 18px;
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.primary-btn:hover .btn-arrow { transform: translateX(5px); }
+
+/* ── Shared Layout ───────────────────────────────────────── */
+.section-container { max-width: 1200px; margin: 0 auto; }
+
+.centered { text-align: center; }
+
+.detail-badge {
+  font-family: var(--font-accent);
+  display: inline-block;
+  padding: 0.3rem 0.75rem;
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+  border-radius: 4px;
+  font-size: 0.7rem;
   font-weight: 800;
-  font-size: 0.85rem;
   letter-spacing: 0.15em;
-  text-transform: uppercase;
-  display: block;
   margin-bottom: 1.5rem;
 }
 
-/* Benefits Section */
-.benefits-section {
-  padding: 8rem 5%;
-}
-
-.section-header {
-  text-align: center;
-  margin-bottom: 5rem;
-}
-
 .section-header h2 {
-  font-size: 3.5rem;
-  font-weight: 850;
+  font-size: 3.2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.03em;
 }
 
-.benefits-grid {
+.section-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 560px;
+  margin: -0.5rem auto 0;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+/* Carousel arrows */
+.carousel-arrow {
+  display: none;
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  z-index: 10;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0; pointer-events: none;
+  align-items: center; justify-content: center;
+}
+.perks-grid-wrapper:hover .carousel-arrow,
+.roles-grid-wrapper:hover .carousel-arrow {
+  opacity: 1; pointer-events: auto;
+}
+.carousel-arrow:hover {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.3);
+  transform: translateY(-50%) scale(1.1);
+}
+.carousel-arrow svg { width: 24px; height: 24px; }
+.carousel-arrow-left { left: -24px; }
+.carousel-arrow-right { right: -24px; }
+.perks-grid-wrapper:hover .carousel-arrow-left,
+.roles-grid-wrapper:hover .carousel-arrow-left { left: 10px; }
+.perks-grid-wrapper:hover .carousel-arrow-right,
+.roles-grid-wrapper:hover .carousel-arrow-right { right: 10px; }
+
+/* ── Perks Section ──────────────────────────────────────── */
+.perks-section { padding: 4rem 5% 8rem; }
+
+.perks-grid-wrapper { position: relative; }
+
+.perks-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2.5rem;
+  gap: 2rem;
+  margin-top: 3rem;
 }
 
-.benefit-card {
-  padding: 3rem;
-  background: var(--bg-secondary);
+.perk-card {
+  position: relative;
+  padding: 3rem 2.5rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(40px);
   border-radius: 32px;
-  border: 1px solid var(--grid-color);
-  transition: all 0.4s ease;
-}
-
-.benefit-card:hover {
-  transform: translateY(-8px);
-  border-color: #a855f7;
-}
-
-.icon-box {
-  width: 48px;
-  height: 48px;
-  color: #a855f7;
-  margin-bottom: 2rem;
-}
-
-.benefit-card h4 {
-  font-size: 1.4rem;
-  margin-bottom: 1rem;
-  font-weight: 700;
-}
-
-.benefit-card p {
-  color: var(--text-secondary);
-  line-height: 1.6;
-}
-
-/* Roles Section */
-.roles-section {
-  padding: 8rem 5%;
-  background: var(--bg-secondary);
-}
-
-.roles-grid {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+}
+
+.perk-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 32px;
+  padding: 1px;
+  background: var(--card-accent);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0.3;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.card-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--card-accent) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.perk-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-md); }
+.perk-card:hover::before { opacity: 0.8; }
+
+.perk-icon-wrap {
+  width: 56px; height: 56px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 2rem;
+  color: #f59e0b;
+}
+.perk-icon { width: 26px; height: 26px; }
+
+.perk-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+}
+
+.perk-desc {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* ── Roles Section ──────────────────────────────────────── */
+.roles-section {
+  padding: 4rem 5% 8rem;
+  background: var(--bg-secondary);
+}
+
+.roles-grid-wrapper { position: relative; }
+
+.roles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 3rem;
 }
 
 .role-card {
-  padding: 2.5rem 3rem;
-  background: var(--bg-primary);
-  border-radius: 24px;
-  border: 1px solid var(--grid-color);
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  transition: border-color 0.3s ease;
+  justify-content: space-between;
+  padding: 2rem 2.5rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
 .role-card:hover {
-  border-color: #a855f7;
+  border-color: rgba(245, 158, 11, 0.35);
+  transform: translateX(6px);
+  background: rgba(245, 158, 11, 0.02);
 }
 
-.role-info h3 {
-  font-size: 1.5rem;
+.role-left { display: flex; align-items: center; gap: 1.5rem; }
+
+.role-type-badge {
+  padding: 0.35rem 0.9rem;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 8px;
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: #f59e0b;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.role-title {
+  font-size: 1.2rem;
   font-weight: 800;
-  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.02em;
 }
 
 .role-meta {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   color: var(--text-secondary);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
-
-.dot {
-  width: 4px;
-  height: 4px;
-  background: var(--grid-color);
+.meta-dot {
+  width: 3px; height: 3px;
+  background: var(--text-muted, rgba(255,255,255,0.2));
   border-radius: 50%;
 }
 
-.secondary-btn {
-  padding: 0.8rem 1.8rem;
-  background: var(--bg-secondary);
-  border: 1px solid var(--grid-color);
+.apply-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.75rem;
+  background: transparent;
+  border: 1px solid var(--glass-border);
   border-radius: 12px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
-  color: var(--text-primary);
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
-
-.secondary-btn:hover {
-  background: var(--bg-primary);
-  border-color: #a855f7;
+.apply-btn:hover {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: #f59e0b;
 }
+.apply-btn:hover .btn-arrow { transform: translateX(4px); }
 
-.no-roles-notice {
+.no-roles {
   text-align: center;
-  margin-top: 4rem;
+  padding: 6rem 2rem;
   color: var(--text-secondary);
 }
+.no-roles-icon { font-size: 3rem; margin-bottom: 1.5rem; opacity: 0.3; }
+.no-roles h3 { font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.75rem; }
 
-.link {
-  color: #a855f7;
-  text-decoration: none;
-  font-weight: 600;
+.roles-footer {
+  text-align: center;
+  margin-top: 3rem;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
 }
+.link { color: #f59e0b; text-decoration: none; font-weight: 700; }
+.link:hover { color: #d97706; }
 
-/* CTA Section */
-.page-cta {
-  padding: 8rem 5% 10rem;
-}
+/* ── CTA ─────────────────────────────────────────────────── */
+.page-cta { padding: 8rem 5% 10rem; }
 
 .cta-card {
   max-width: 1000px;
@@ -402,163 +589,73 @@ onMounted(() => {
   border-radius: 48px;
   padding: 6rem 4rem;
   text-align: center;
-  border: 1px solid var(--grid-color);
+  border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+.cta-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at center, rgba(245, 158, 11, 0.05) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .cta-card h2 {
   font-size: 3.5rem;
-  color: var(--text-primary);
   font-weight: 850;
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
   line-height: 1.1;
+  position: relative; z-index: 1;
 }
 
-.cta-buttons {
-  display: flex;
-  justify-content: center;
+.cta-subtitle {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto 2.5rem;
+  position: relative; z-index: 1;
+  line-height: 1.6;
 }
 
-.primary-btn {
-  padding: 1.1rem 2.5rem;
-  background: linear-gradient(135deg, #a855f7 0%, #d946ef 100%);
-  color: white;
-  border: none;
-  border-radius: 14px;
-  font-size: 1.05rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  box-shadow: 0 10px 30px rgba(168, 85, 247, 0.25);
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-}
+.cta-buttons { display: flex; justify-content: center; position: relative; z-index: 1; }
 
-.btn-arrow {
-  width: 18px;
-  height: 18px;
-  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.primary-btn:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(168, 85, 247, 0.35);
-}
-
-.primary-btn:hover .btn-arrow {
-  transform: translateX(5px);
-}
-
+/* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .benefits-grid { grid-template-columns: 1fr; }
-  .role-card { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
-  .page-title { font-size: 3.5rem; }
+  .perks-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero-title { font-size: 3.5rem; }
+  .cta-card { padding: 4rem 2rem; }
   .cta-card h2 { font-size: 2.5rem; }
 }
 
 @media (max-width: 768px) {
-  .section-header h2 {
-    font-size: 2.5rem;
-  }
-
-  /* Benefits Carousel for Mobile */
-  .benefits-carousel-wrapper {
-    position: relative;
-    width: 100%;
-  }
-
-  .carousel-nav {
+  .carousel-arrow {
     display: flex;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 48px;
-    height: 48px;
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    border-radius: 50%;
-    z-index: 10;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+    opacity: 0; pointer-events: none;
   }
+  .perks-grid-wrapper:active .carousel-arrow,
+  .carousel-arrow:active { opacity: 1; pointer-events: auto; }
+  .carousel-arrow-left { left: -10px; }
+  .carousel-arrow-right { right: -10px; }
+  .perks-grid-wrapper:active .carousel-arrow-left { left: 10px; }
+  .perks-grid-wrapper:active .carousel-arrow-right { right: 10px; }
 
-  .carousel-nav.prev { left: -10px; }
-  .carousel-nav.next { right: -10px; }
-
-  .carousel-nav svg {
-    width: 20px;
-    height: 20px;
-    color: var(--text-primary);
-  }
-
-  .benefits-grid {
+  .perks-grid {
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
     gap: 1.5rem;
-    padding: 0 1rem;
-    -webkit-overflow-scrolling: touch;
+    padding-bottom: 1rem;
     scrollbar-width: none;
     grid-template-columns: none;
   }
+  .perks-grid::-webkit-scrollbar { display: none; }
+  .perk-card { min-width: 80vw; scroll-snap-align: center; }
 
-  .benefits-grid::-webkit-scrollbar { display: none; }
+  .role-card { flex-direction: column; align-items: flex-start; gap: 1.25rem; }
+  .role-left { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+  .apply-btn { width: 100%; justify-content: center; }
 
-  .benefit-card {
-    flex: 0 0 85%;
-    scroll-snap-align: center;
-    padding: 2.5rem 2rem;
-    border-radius: 32px;
-    height: auto;
-  }
-
-  /* Roles Carousel for Mobile */
-  .roles-carousel-wrapper {
-    position: relative;
-    width: 100%;
-  }
-
-  .roles-carousel-wrapper .carousel-nav {
-    display: flex; /* Override base */
-  }
-
-  .roles-grid {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    gap: 1rem;
-    padding: 0 1rem;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    flex-direction: row; /* Override desktop column */
-  }
-
-  .roles-grid::-webkit-scrollbar { display: none; }
-
-  .role-card {
-    flex: 0 0 85%;
-    scroll-snap-align: center;
-    padding: 2rem;
-    border-radius: 24px;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 1.5rem;
-  }
-
-  .role-info h3 {
-    font-size: 1.25rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .role-meta {
-    justify-content: center;
-    font-size: 0.85rem;
-  }
+  .section-header h2 { font-size: 2.5rem; }
 }
 </style>

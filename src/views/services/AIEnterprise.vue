@@ -2,14 +2,12 @@
   <div class="page-container">
     <!-- Hero Section -->
     <section class="premium-hero">
-      <div class="hero-content">
+      <div class="hero-content" v-if="pageConfig">
         <div class="badge-wrapper">
-          <span class="hero-badge">AI FOR ENTERPRISE</span>
+          <span class="hero-badge">{{ pageConfig.hero_badge }}</span>
         </div>
-        <h1 class="hero-title">Omniscient Scale: The <span class="text-gradient">Self-Driving Enterprise</span></h1>
-        <p class="hero-subtitle">
-          Engineered for global leaders. Orchestrate billions of parameters with enterprise-grade security, multi-agent swarms, and sovereign infrastructure that evolves with your business logic.
-        </p>
+        <h1 class="hero-title" v-html="formatGradientTitle(pageConfig.hero_title)"></h1>
+        <p class="hero-subtitle">{{ pageConfig.hero_subtitle }}</p>
         <div class="hero-actions">
           <button class="primary-btn" @click="scrollToSolutions">
             Explore Solutions
@@ -58,6 +56,7 @@
                 '--card-accent': solution.accent,
                 '--card-color': solution.color 
               }"
+              @click="handleSolutionContact(solution)"
             >
               <div class="card-glow"></div>
               <div class="sol-header">
@@ -98,44 +97,23 @@
           <p>Analyzing the shift from manual oversight to sovereign AI governance in Fortune 500 enterprises.</p>
         </div>
 
-        <div class="insights-grid">
-          <div v-for="insight in insights" :key="insight._id" class="insight-card" @click="openInsight(insight)">
-            <div class="insight-image">
-              <img v-if="insight.imageUrl" :src="insight.imageUrl" :alt="insight.title" class="card-img" />
-              <div v-else class="placeholder-img"></div>
-            </div>
-            <div class="insight-body">
-              <div class="insight-meta">Published: {{ formatDate(insight.createdAt) }}</div>
-              <h3>{{ insight.title }}</h3>
-              <p>{{ insight.excerpt }}</p>
-              <button class="read-btn">Read Article</button>
-            </div>
-          </div>
+        <InsightsCarousel 
+          v-if="!insightsLoading && insights.length > 0" 
+          :insights="insights" 
+          @open-insight="openInsight" 
+        />
+        <div v-else-if="insightsLoading" class="loading-insights">
+          <div class="spinner"></div>
+          <p>Loading Research...</p>
         </div>
       </div>
 
       <!-- Insight Reader Modal -->
-      <Transition name="fade-in">
-        <div v-if="selectedInsight" class="insight-modal-overlay" @click.self="closeInsight">
-          <div class="insight-modal-content">
-            <button class="close-modal-btn" @click="closeInsight">×</button>
-            
-            <div class="modal-header">
-              <div class="modal-meta">Published: {{ formatDate(selectedInsight.createdAt) }}</div>
-              <h2 class="modal-title">{{ selectedInsight.title }}</h2>
-              <div class="modal-author">By {{ selectedInsight.author || 'DREAMATIC Team' }}</div>
-            </div>
-
-            <div class="modal-image" v-if="selectedInsight.imageUrl">
-              <img :src="selectedInsight.imageUrl" :alt="selectedInsight.title" />
-            </div>
-
-            <div class="modal-body">
-              <div class="insight-full-content" v-html="formatContent(selectedInsight.content)"></div>
-            </div>
-          </div>
-        </div>
-      </Transition>
+      <InsightModal 
+        :is-open="!!selectedInsight" 
+        :insight="selectedInsight" 
+        @close="closeInsight" 
+      />
     </section>
 
     <!-- Final CTA -->
@@ -145,8 +123,16 @@
           <h2>Secure the Future of Your <span class="text-gradient">Empire</span></h2>
           <p>Deployment engineers are standing by for consultation on custom weights, private cloud architecture, and cross-border data compliance.</p>
           <div class="cta-actions">
-            <button class="primary-btn">Start Full Platform Trial</button>
-            <button class="secondary-btn">Schedule Vision Demo</button>
+            <button class="primary-btn" @click="openDemoModal('trial', {
+              title: 'Secure your Enterprise Trial',
+              subtitle: 'Begin your journey with custom weights, private cloud architecture, and cross-border compliance.',
+              message: 'I want to initiate an enterprise-grade platform trial with a focus on sovereign infrastructure and security.'
+            })">Start Full Platform Trial</button>
+            <button class="secondary-btn" @click="openDemoModal('demo', {
+              title: 'Schedule Private Vision Demo',
+              subtitle: 'Consult with deployment engineers on secure, scalable agentic workflows for your empire.',
+              message: 'I would like to schedule a private vision demo to discuss our enterprise private cloud requirements.'
+            })">Schedule Vision Demo</button>
           </div>
         </div>
       </div>
@@ -155,8 +141,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { insightsAPI } from '@/services/api'
+import { ref, onMounted, inject } from 'vue'
+import { insightsAPI, pagesAPI } from '@/services/api'
+import InsightsCarousel from '@/components/InsightsCarousel.vue'
+import InsightModal from '@/components/InsightModal.vue'
+
+const openSolutionModal = inject('openSolutionModal')
+const openDemoModal = inject('openDemoModal')
+
+const handleSolutionContact = (solution) => {
+  openSolutionModal({
+    title: solution.title,
+    message: `I am interested in learning more about your Enterprise-Grade "${solution.title}" solution. I'd like to understand how this can be implemented for our specific enterprise needs and sovereign infrastructure.`,
+    accent: solution.accent || 'var(--accent-primary)'
+  })
+}
 
 const ecosystem = [
   { name: 'SAP S/4HANA', color: '#008FD3', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 6.064v11.872h12.13L24 6.064zm3.264 2.208h.005c.863.001 1.915.245 2.676.633l-.82 1.43c-.835-.404-1.255-.442-1.73-.467-.708-.038-1.064.215-1.069.488-.007.332.669.633 1.305.838.964.306 2.19.715 2.377 1.9L7.77 8.437h2.046l2.064 5.576-.007-5.575h2.37c2.257 0 3.318.764 3.318 2.519 0 1.575-1.09 2.514-2.936 2.514h-.763l-.01 2.094-3.588-.003-.25-.908c-.37.122-.787.189-1.23.189-.456 0-.885-.071-1.263-.2l-.358.919-2 .006.09-.462c-.029.025-.057.05-.087.074-.535.43-1.208.629-2.037.644l-.213.002a5.075 5.075 0 0 1-2.581-.675l.73-1.448c.79.467 1.286.572 1.956.558.347-.007.598-.07.761-.239a.557.557 0 0 0 .156-.369c.007-.376-.53-.553-1.185-.756-.531-.164-1.135-.389-1.606-.735-.559-.41-.825-.924-.812-1.65a1.99 1.99 0 0 1 .566-1.377c.519-.537 1.357-.863 2.363-.863zm10.597 1.67v1.904h.521c.694 0 1.247-.23 1.248-.964 0-.709-.554-.94-1.248-.94zm-5.087.767l-.748 2.362c.223.085.481.133.757.133.268 0 .52-.047.742-.126l-.736-2.37z"/></svg>' },
@@ -199,80 +198,24 @@ const scrollToSolutions = () => {
   window.scrollTo({ top: offsetPosition, behavior: 'smooth' })
 }
 
-const solutions = [
-  { 
-    id: 1, 
-    title: 'Visualizer', 
-    subtitle: 'Data Imaging',
-    description: 'Transform complex enterprise data into hyper-immersive visual narratives. Real-time rendering of large-scale dataset structures.',
-    features: ['Infinite zoom rendering', 'Neural voxel clusters', 'Interactive data topology'],
-    accent: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-    color: '#10B981'
-  },
-  { 
-    id: 2, 
-    title: '3D Design', 
-    subtitle: 'Spatial Intelligence',
-    description: 'Automated 3D environment generation for product simulation, architectural pre-viz, and industrial digital twins.',
-    features: ['Physics-aware synthesis', 'LIDAR-to-Mesh pipeline', 'Real-time Raytracing'],
-    accent: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
-    color: '#3B82F6'
-  },
-  { 
-    id: 3, 
-    title: 'Real Estate', 
-    subtitle: 'Property Intelligence',
-    description: 'Global property analysis and photorealistic virtual staging agents that scale property management across continents.',
-    features: ['Automated valuation swarms', 'Virtual light simulation', 'Market sentiment mapping'],
-    accent: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
-    color: '#F59E0B'
-  },
-  { 
-    id: 4, 
-    title: 'Virtual Tour', 
-    subtitle: 'Mapping & Telepresence',
-    description: 'Deploy 6DOF immersive tours for industrial sites, retail showrooms, and distributed headquarters with neural stitching.',
-    features: ['6-Degrees of Freedom', 'Neural point cloud sync', 'Multi-user telepresence'],
-    accent: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
-    color: '#8B5CF6'
-  },
-  { 
-    id: 5, 
-    title: 'Interior AI', 
-    subtitle: 'Smart Design Systems',
-    description: 'Autonomous spatial planning for enterprise offices, retail layouts, and industrial floor optimization using generative logic.',
-    features: ['Constraint-based routing', 'Ergonomic heatmaps', 'Auto-material sourcing'],
-    accent: 'linear-gradient(135deg, #06B6D4 0%, #0891B2 100%)',
-    color: '#06B6D4'
-  },
-  { 
-    id: 6, 
-    title: 'Planning', 
-    subtitle: 'Strategy & Orchestration',
-    description: 'High-level multi-agent orchestration for corporate strategy, board-level forecasting, and scenario modeling.',
-    features: ['Monte Carlo swarms', 'Competitive game theory', 'Recursive goal planning'],
-    accent: 'linear-gradient(135deg, #EC4899 0%, #DB2777 100%)',
-    color: '#EC4899'
-  },
-  { 
-    id: 7, 
-    title: 'Finance AI', 
-    subtitle: 'Risk & Forecasting',
-    description: 'Sovereign financial models for real-time risk assessment, automated hedging, and synthetic market simulations.',
-    features: ['Predictive liquidity', 'Neural fraud detection', 'Zero-latency execution'],
-    accent: 'linear-gradient(135deg, #14B8A6 0%, #0D9488 100%)',
-    color: '#14B8A6'
-  },
-  { 
-    id: 8, 
-    title: 'Logistics', 
-    subtitle: 'Neural Routing',
-    description: 'Autonomous global supply chain routing. Agent swarms that manage port delays, fuel optimization, and fleet logic.',
-    features: ['Dynamic pathfinding', 'Fleet consciousness', 'Intermodal sync'],
-    accent: 'linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)',
-    color: '#4F46E5'
+const solutions = ref([])
+
+// Dynamic Page Config
+const pageConfig = ref({
+  hero_badge: 'AI FOR ENTERPRISE',
+  hero_title: 'Omniscient Scale: The Self-Driving Enterprise',
+  hero_subtitle: 'Engineered for global leaders. Orchestrate billions of parameters with enterprise-grade security, multi-agent swarms, and sovereign infrastructure that evolves with your business logic.'
+})
+
+const formatGradientTitle = (title) => {
+  if (!title) return ''
+  // Basic heuristic: wrap the last few words or after a colon
+  const parts = title.split(':')
+  if (parts.length > 1) {
+    return `${parts[0]}: <span class="text-gradient">${parts[1]}</span>`
   }
-]
+  return title.replace(/Self-Driving Enterprise|Neural Core|Impact|Empire/g, (m) => `<span class="text-gradient">${m}</span>`)
+}
 
 const insights = ref([])
 const insightsLoading = ref(false)
@@ -296,6 +239,11 @@ const formatContent = (content) => {
 onMounted(async () => {
   insightsLoading.value = true
   try {
+    const config = await pagesAPI.getConfig('ai-enterprise')
+    if (config) {
+      pageConfig.value = config
+      if (config.solutions) solutions.value = config.solutions
+    }
     insights.value = await insightsAPI.getAll('ai-enterprise')
     if (insights.value.length === 0) {
        insights.value = [
@@ -690,6 +638,7 @@ const formatDate = (dateStr) => {
   transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   border: 1px solid var(--glass-border);
+  cursor: pointer;
 }
 
 /* Holographic Border Effect */
@@ -809,6 +758,7 @@ const formatDate = (dateStr) => {
   margin-top: auto;
   opacity: 0.8;
   transition: opacity 0.3s ease;
+  cursor: pointer;
 }
 
 .solution-card:hover .sol-footer {
@@ -830,21 +780,6 @@ const formatDate = (dateStr) => {
 /* Insights Section */
 .insights-section {
   padding: 0 5% 10rem;
-}
-
-.insights-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2.5rem;
-}
-
-.insight-card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 24px;
-  overflow: hidden;
-  transition: all 0.4s;
-  cursor: pointer;
 }
 
 .insight-card:hover {
@@ -910,110 +845,7 @@ const formatDate = (dateStr) => {
 }
 
 /* Modal Styles */
-.insight-modal-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  padding: 2rem;
-}
-
-.insight-modal-content {
-  background: var(--bg-primary);
-  border: 1px solid var(--glass-border);
-  border-radius: 32px;
-  max-width: 900px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-  padding: 4rem;
-  scrollbar-width: thin;
-}
-
-.close-modal-btn {
-  position: absolute;
-  top: 2rem;
-  right: 2rem;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  font-size: 1.5rem;
-  color: var(--text-primary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s;
-}
-
-.close-modal-btn:hover {
-  background: #10B981;
-  color: white;
-}
-
-.modal-header {
-  margin-bottom: 3rem;
-  text-align: center;
-}
-
-.modal-meta {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  margin-bottom: 1rem;
-}
-
-.modal-title {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  line-height: 1.1;
-  font-weight: 850;
-}
-
-.modal-author {
-  color: #10B981;
-  font-weight: 600;
-}
-
-.modal-image {
-  width: 100%;
-  border-radius: 20px;
-  overflow: hidden;
-  margin-bottom: 3rem;
-  aspect-ratio: 16/9;
-}
-
-.modal-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.modal-body {
-  color: var(--text-secondary);
-  line-height: 1.8;
-  font-size: 1.15rem;
-}
-
-.insight-full-content :deep(p) {
-  margin-bottom: 1.5rem;
-}
-
-@media (max-width: 768px) {
-  .insight-modal-content {
-    padding: 2.5rem;
-    border-radius: 24px;
-  }
-  .modal-title {
-    font-size: 2rem;
-  }
-}
+/* InsightModal styles are now handled in the component */
 
 /* Page CTA */
 .page-cta {

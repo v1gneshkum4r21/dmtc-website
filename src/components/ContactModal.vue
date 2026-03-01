@@ -165,7 +165,9 @@
 import { ref, watch, computed } from 'vue'
 
 const props = defineProps({
-  isOpen: Boolean
+  isOpen: Boolean,
+  initialSubject: String,
+  initialMessage: String
 })
 
 const emit = defineEmits(['close'])
@@ -238,10 +240,17 @@ watch(() => props.isOpen, (newVal) => {
   if (newVal) {
     document.addEventListener('keydown', handleEsc)
     document.body.style.overflow = 'hidden'
+    
+    // Set initial values if provided
+    if (props.initialSubject) form.value.subject = props.initialSubject
+    if (props.initialMessage) form.value.message = props.initialMessage
   } else {
     document.removeEventListener('keydown', handleEsc)
     document.body.style.overflow = ''
     isDropdownOpen.value = false
+    // Clear form on close if needed, or keep it. 
+    // Usually better to reset for fresh state next time.
+    form.value = { name: '', email: '', subject: '', message: '' }
   }
 })
 

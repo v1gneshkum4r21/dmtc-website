@@ -1,18 +1,22 @@
 <template>
   <div class="page-container">
     <!-- Hero Section -->
-    <div class="page-hero docs-hero">
+    <div class="premium-hero docs-hero-gradient">
       <div class="hero-content">
-        <div class="hero-badge">DOCUMENTATION</div>
-        <h1 class="page-title">Developer <span class="text-gradient">Documentation</span></h1>
-        <p class="page-description">
-          Complete technical documentation, API references, and SDKs for integrating Dreamactic's autonomous AI platform. Start building production-ready agent workflows in minutes.
+        <div class="badge-wrapper">
+          <span class="hero-badge">DOCUMENTATION</span>
+        </div>
+        <h1 class="hero-title">Developer <span class="text-gradient">Documentation</span></h1>
+        <p class="hero-subtitle">
+          Complete technical documentation and SDKs for building production-ready agent workflows in minutes.
         </p>
-        <div class="search-bar">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-          </svg>
-          <input type="text" placeholder="Search the docs..." class="search-input">
+        <div class="search-vessel">
+          <div class="search-bar">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+            </svg>
+            <input type="text" placeholder="Search the docs..." class="search-input">
+          </div>
         </div>
       </div>
     </div>
@@ -20,31 +24,20 @@
     <!-- Quick Start Grid -->
     <section class="quick-start">
       <div class="section-container">
-        <div class="section-header">
-          <span class="section-tag">GET STARTED</span>
-          <h2>Quick <span class="text-gradient">Launch</span></h2>
+        <div class="section-header centered">
+          <div class="detail-badge">GET STARTED</div>
+          <h2 class="section-title">Quick <span class="text-gradient">Launch</span></h2>
         </div>
-        <div class="docs-carousel-wrapper">
-          <button class="carousel-nav prev" @click="scrollDocs('left')" aria-label="Previous">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M15 18l-6-6 6-6"/>
-            </svg>
-          </button>
-
-          <div class="docs-grid" ref="docsGrid">
-            <div v-for="guide in quickStart" :key="guide.title" class="doc-card">
+        <div class="docs-grid" @mousemove="handleMouseMove" ref="docsGrid">
+          <div v-for="guide in quickStart" :key="guide.title" class="doc-card glass-card">
+            <div class="card-glow"></div>
+            <div class="doc-content">
               <div class="icon-box" v-html="guide.icon"></div>
               <h3>{{ guide.title }}</h3>
               <p>{{ guide.desc }}</p>
-              <span class="read-more">View Guide</span>
+              <span class="read-more">Deploy Guide →</span>
             </div>
           </div>
-
-          <button class="carousel-nav next" @click="scrollDocs('right')" aria-label="Next">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 18l6-6-6-6"/>
-            </svg>
-          </button>
         </div>
       </div>
     </section>
@@ -54,16 +47,16 @@
       <div class="section-container">
         <div class="api-grid">
           <div class="api-text">
-            <span class="section-tag">API REFERENCE</span>
-            <h2>Powerful <span class="text-gradient">Primitives</span></h2>
-            <p>Our REST and WebSocket APIs are designed for reliability and low-latency interaction. Manage agent lifecycles, streaming voice buffers, and complex reasoning nodes with ease.</p>
+            <div class="detail-badge">API REFERENCE</div>
+            <h2 class="section-title">Powerful <span class="text-gradient">Primitives</span></h2>
+            <p>Our REST and WebSocket APIs are designed for reliability and low-latency interaction. Manage agent lifecycles and streaming voice buffers with ease.</p>
             <ul class="api-features">
               <li>Granular Workflow Control</li>
               <li>Real-time State Syncing</li>
               <li>Secure Orchestration Tokens</li>
             </ul>
           </div>
-          <div class="code-preview">
+          <div class="code-preview-vessel">
             <div class="code-header">
               <div class="code-dots"><span></span><span></span><span></span></div>
               <span class="file-name">POST /v1/orchestrate</span>
@@ -97,13 +90,13 @@
 
     <!-- Final CTA -->
     <section class="page-cta">
-      <div class="cta-card">
-        <div class="cta-content">
-          <h2>Need technical <span class="text-gradient">Support</span>?</h2>
-          <div class="cta-buttons">
-            <button class="primary-btn" @click="openContactModal">
-              Open a Ticket
-              <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <div class="cta-luxe-card indigo-aura">
+        <div class="cta-luxe-content">
+          <h2 class="cta-luxe-title">Need technical <span class="text-gradient">Support</span>?</h2>
+          <div class="cta-luxe-buttons">
+            <button class="btn-luxe-primary" @click="openContactModal">
+              <span>Open a Ticket</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
             </button>
@@ -139,11 +132,16 @@ const quickStart = [
 
 const docsGrid = ref(null)
 
-const scrollDocs = (direction) => {
+const handleMouseMove = (e) => {
   if (!docsGrid.value) return
-  const scrollAmount = 350
-  const scrollLeft = direction === 'left' ? -scrollAmount : scrollAmount
-  docsGrid.value.scrollBy({ left: scrollLeft, behavior: 'smooth' })
+  const cards = docsGrid.value.querySelectorAll('.doc-card')
+  cards.forEach(card => {
+    const rect = card.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 100
+    const y = ((e.clientY - rect.top) / rect.height) * 100
+    card.style.setProperty('--mouse-x', `${x}%`)
+    card.style.setProperty('--mouse-y', `${y}%`)
+  })
 }
 
 onMounted(() => {
@@ -152,21 +150,16 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container {
-  width: 100%;
-  min-height: 100vh;
-  background: var(--bg-primary);
-}
-
-.page-hero {
+/* Premium Hero */
+.premium-hero {
+  position: relative;
   padding: 12rem 5% 8rem;
   text-align: center;
-  position: relative;
   overflow: hidden;
   background: var(--bg-secondary);
 }
 
-.docs-hero::before {
+.docs-hero-gradient::before {
   content: '';
   position: absolute;
   top: -50%;
@@ -175,15 +168,17 @@ onMounted(() => {
   height: 200%;
   background: radial-gradient(circle at center, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
   z-index: 0;
+  pointer-events: none;
 }
 
 .hero-content {
   position: relative;
-  z-index: 1;
-  max-width: 900px;
+  z-index: 10;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
+.badge-wrapper { margin-bottom: 2rem; }
 .hero-badge {
   display: inline-block;
   padding: 0.5rem 1.25rem;
@@ -194,59 +189,14 @@ onMounted(() => {
   font-weight: 800;
   letter-spacing: 0.15em;
   color: #6366f1;
-  margin-bottom: 2rem;
 }
 
-.page-title {
-  font-size: 5.5rem;
+.hero-title {
+  font-size: clamp(3rem, 6vw, 5.5rem);
   font-weight: 900;
   letter-spacing: -0.04em;
-  margin-bottom: 1.5rem;
-  background: linear-gradient(135deg, var(--text-primary) 0%, #6366f1 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.page-description {
-  font-size: 1.25rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  max-width: 750px;
-  margin: 0 auto 3rem;
-}
-
-.search-bar {
-  max-width: 500px;
-  margin: 0 auto;
-  position: relative;
-}
-
-.search-icon {
-  position: absolute;
-  left: 1.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  color: var(--text-secondary);
-}
-
-.search-input {
-  width: 100%;
-  padding: 1.2rem 1.5rem 1.2rem 3.5rem;
-  border-radius: 16px;
-  border: 1px solid var(--grid-color);
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #6366f1;
-  box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+  line-height: 1.1;
+  margin-bottom: 2rem;
 }
 
 .text-gradient {
@@ -256,286 +206,210 @@ onMounted(() => {
   -webkit-text-fill-color: transparent;
 }
 
-.section-container {
-  max-width: 1200px;
-  margin: 0 auto;
+.hero-subtitle {
+  font-size: 1.4rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto 3rem;
 }
 
-.section-tag {
+.search-vessel { display: flex; justify-content: center; }
+.search-bar { width: 100%; max-width: 500px; position: relative; }
+.search-icon {
+  position: absolute; left: 1.5rem; top: 50%; transform: translateY(-50%);
+  width: 20px; height: 20px; color: var(--text-secondary); opacity: 0.5;
+}
+
+.search-input {
+  width: 100%;
+  padding: 1.25rem 1.5rem 1.25rem 3.5rem;
+  border-radius: 20px;
+  border: 1px solid var(--grid-color);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  color: var(--text-primary);
+  transition: 0.3s;
+}
+
+.search-input:focus {
+  outline: none; border-color: #6366f1;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 30px rgba(99, 102, 241, 0.15);
+}
+
+/* Quick Start Section */
+.quick-start { padding: 8rem 5%; }
+.centered { text-align: center; margin-bottom: 6rem; }
+.detail-badge {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  background: rgba(99, 102, 241, 0.1);
   color: #6366f1;
-  font-weight: 800;
-  font-size: 0.85rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  display: block;
-  margin-bottom: 1.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  margin-bottom: 2rem;
 }
 
-/* Quick Start */
-.quick-start {
-  padding: 8rem 5%;
-}
+.section-title { font-size: 3.5rem; font-weight: 850; }
 
 .docs-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 2.5rem;
 }
 
-.doc-card {
-  padding: 3rem;
-  background: var(--bg-secondary);
+.glass-card {
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: blur(40px);
+  border: 1px solid var(--glass-border);
   border-radius: 32px;
-  border: 1px solid var(--grid-color);
-  transition: all 0.4s ease;
+  overflow: hidden;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.doc-card {
+  padding: 3.5rem;
+  flex: 1 1 350px;
+  max-width: 400px;
   cursor: pointer;
 }
 
-.doc-card:hover {
-  transform: translateY(-8px);
-  border-color: #6366f1;
+.doc-card::before {
+  content: ''; position: absolute; inset: 0; padding: 1px; border-radius: 32px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.5), transparent);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0.2;
 }
 
-.icon-box {
-  width: 48px;
-  height: 48px;
-  color: #6366f1;
-  margin-bottom: 2rem;
+.doc-card:hover { transform: translateY(-10px); border-color: rgba(99, 102, 241, 0.3); }
+
+.card-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(99, 102, 241, 0.15) 0%, transparent 60%);
+  opacity: 0; transition: opacity 0.5s ease; pointer-events: none;
 }
 
-.doc-card h3 {
-  font-size: 1.4rem;
-  margin-bottom: 1rem;
-  font-weight: 700;
-}
+.doc-card:hover .card-glow { opacity: 1; }
 
-.doc-card p {
-  color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 2rem;
-}
-
-.read-more {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #6366f1;
-}
+.icon-box { color: #6366f1; width: 56px; height: 56px; margin-bottom: 2rem; }
+.doc-card h3 { font-size: 1.75rem; font-weight: 850; margin-bottom: 1.25rem; }
+.doc-card p { color: var(--text-secondary); line-height: 1.6; margin-bottom: 2.5rem; }
+.read-more { font-weight: 800; color: #6366f1; font-size: 0.9rem; }
 
 /* API Preview */
-.api-preview {
-  padding: 8rem 5%;
-  background: var(--bg-secondary);
-}
+.api-preview { padding: 10rem 5%; background: rgba(0,0,0,0.2); }
+.api-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 6rem; align-items: center; }
 
-.api-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 6rem;
-  align-items: center;
-}
+.api-text p { font-size: 1.25rem; color: var(--text-secondary); margin-top: 1.5rem; line-height: 1.7; }
 
-.api-text h2 {
-  font-size: 3.5rem;
-  font-weight: 850;
-  margin-bottom: 2rem;
-}
-
-.api-text p {
-  font-size: 1.2rem;
-  color: var(--text-secondary);
-  line-height: 1.7;
-  margin-bottom: 2.5rem;
-}
-
-.api-features {
-  list-style: none;
-  padding: 0;
-}
-
+.api-features { list-style: none; padding: 0; margin-top: 2.5rem; }
 .api-features li {
-  margin-bottom: 1rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+  margin-bottom: 1rem; font-weight: 700; color: white;
+  display: flex; align-items: center; gap: 1rem;
+}
+.api-features li::before { content: ''; width: 6px; height: 6px; background: #6366f1; border-radius: 50%; }
+
+.code-preview-vessel {
+  background: #0a0a0c; border-radius: 32px; border: 1px solid var(--glass-border);
+  overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.5);
 }
 
-.api-features li::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  background: #6366f1;
-  border-radius: 50%;
-}
+.code-header { padding: 1.25rem 2rem; background: rgba(255,255,255,0.03); display: flex; justify-content: space-between; align-items: center; }
+.code-dots { display: flex; gap: 0.6rem; }
+.code-dots span { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.1); }
+.file-name { color: #6366f1; font-family: monospace; font-size: 0.85rem; font-weight: 700; }
 
-.code-preview {
-  background: #0f172a;
-  border-radius: 24px;
-  overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
+.code-box { padding: 3rem; margin: 0; overflow-x: auto; color: #e2e8f0; font-family: 'Fira Code', monospace; line-height: 1.8; }
+.code-box code { color: #6366f1; }
 
-.code-header {
-  padding: 1rem 1.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+/* Luxe Aura CTA System */
+.page-cta { padding: 12rem 5%; }
 
-.code-dots {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.code-dots span {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.file-name {
-  color: #94a3b8;
-  font-family: monospace;
-  font-size: 0.85rem;
-}
-
-.code-box {
-  padding: 2.5rem;
-  margin: 0;
-  color: #e2e8f0;
-  font-family: 'Fira Code', monospace;
-  font-size: 1.1rem;
-  line-height: 1.6;
-  overflow-x: auto;
-}
-
-.code-box code {
-  color: #38bdf8;
-}
-
-/* CTA Section */
-.page-cta {
-  padding: 8rem 5% 10rem;
-}
-
-.cta-card {
-  max-width: 1000px;
+.cta-luxe-card {
+  max-width: 1200px;
   margin: 0 auto;
-  background: var(--bg-secondary);
-  border-radius: 48px;
-  padding: 6rem 4rem;
+  position: relative;
+  padding: 8rem 4rem;
+  border-radius: 40px;
+  overflow: hidden;
   text-align: center;
-  border: 1px solid var(--grid-color);
-  box-shadow: var(--shadow-md);
+  background: #050505;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.5);
 }
 
-.cta-card h2 {
-  font-size: 3.5rem;
-  color: var(--text-primary);
-  font-weight: 850;
-  margin-bottom: 3rem;
+.indigo-aura::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 120%, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+  z-index: 0;
+}
+
+.cta-luxe-content {
+  position: relative;
+  z-index: 10;
+}
+
+.cta-luxe-title {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  margin-bottom: 4rem;
   line-height: 1.1;
 }
 
-.primary-btn {
-  padding: 1.1rem 2.5rem;
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-  color: white;
+.btn-luxe-primary {
+  position: relative;
+  padding: 1.25rem 3.5rem;
+  background: #fff;
+  color: #000;
   border: none;
-  border-radius: 14px;
-  font-size: 1.05rem;
-  font-weight: 700;
+  border-radius: 100px;
+  font-size: 1.1rem;
+  font-weight: 800;
   cursor: pointer;
-  transition: all 0.4s ease;
-  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
   display: inline-flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 1rem;
+  transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
 }
 
-@media (max-width: 1024px) {
-  .docs-grid { grid-template-columns: 1fr; }
-  .api-grid { grid-template-columns: 1fr; }
-  .page-title { font-size: 3.5rem; }
+.btn-luxe-primary svg {
+  width: 20px;
+  transition: transform 0.4s ease;
+}
+
+.btn-luxe-primary:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(255, 255, 255, 0.2);
+}
+
+.btn-luxe-primary:hover svg {
+  transform: translateX(5px);
 }
 
 @media (max-width: 768px) {
-  .section-header h2 {
-    font-size: 2.5rem;
-  }
+  .cta-luxe-card { padding: 5rem 2rem; border-radius: 30px; }
+  .cta-luxe-title { font-size: 2.5rem; }
+  .btn-luxe-primary { width: 100%; justify-content: center; }
+}
 
-  /* Docs Carousel for Mobile */
-  .docs-carousel-wrapper {
-    position: relative;
-    width: 100%;
-  }
+@media (max-width: 1024px) {
+  .api-grid { grid-template-columns: 1fr; gap: 4rem; }
+  .doc-card { flex: 1 1 100%; }
+}
 
-  .carousel-nav {
-    display: flex;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 48px;
-    height: 48px;
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    border-radius: 50%;
-    z-index: 10;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-
-  .carousel-nav.prev { left: -10px; }
-  .carousel-nav.next { right: -10px; }
-
-  .carousel-nav svg {
-    width: 20px;
-    height: 20px;
-    color: var(--text-primary);
-  }
-
-  .docs-grid {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    gap: 1.5rem;
-    padding: 0 1rem;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    grid-template-columns: none;
-  }
-
-  .docs-grid::-webkit-scrollbar { display: none; }
-
-  .doc-card {
-    flex: 0 0 85%;
-    scroll-snap-align: center;
-    padding: 2.5rem 2rem;
-    border-radius: 32px;
-    height: auto;
-  }
-
-  .api-grid {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-  }
-
-  .api-text h2 {
-    font-size: 2rem;
-  }
-
-  .api-text p {
-    font-size: 1rem;
-  }
-
-  .code-box {
-    font-size: 0.85rem;
-    padding: 1.5rem;
-  }
+@media (max-width: 768px) {
+  .cta-card { padding: 5rem 2rem; }
+  .cta-card h2 { font-size: 2.5rem; }
+  .code-box { padding: 1.5rem; font-size: 0.9rem; }
 }
 </style>

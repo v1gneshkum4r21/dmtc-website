@@ -1,16 +1,13 @@
 <template>
   <div class="page-container">
     <!-- Hero Section -->
-    <section class="premium-hero echoai-gradient">
+    <section class="premium-hero echoai-gradient" v-if="pageConfig">
       <div class="hero-content">
         <div class="badge-wrapper">
-          <span class="hero-badge">AI VOICE & AUTONOMOUS AGENTS</span>
+          <span class="hero-badge">{{ pageConfig.hero_badge }}</span>
         </div>
-        <h1 class="hero-title">EchoAI <span class="text-gradient">Voice Intelligence</span></h1>
-        <p class="hero-subtitle">
-          The next evolution in voice intelligence and autonomous BPO automation. 
-          Deploy self-learning voice agents that handle complex conversational workflows with human-parity precision.
-        </p>
+        <h1 class="hero-title" v-html="formatGradientTitle(pageConfig.hero_title)"></h1>
+        <p class="hero-subtitle">{{ pageConfig.hero_subtitle }}</p>
 
         <div class="hero-actions">
           <button class="primary-btn" @click="scrollToSolutions">
@@ -59,6 +56,7 @@
               :style="{ 
                 '--card-accent': solution.accent 
               }"
+              @click="handleSolutionContact(solution)"
             >
               <div class="card-glow"></div>
               <div class="sol-header">
@@ -99,44 +97,23 @@
           <p>Read our latest breakthroughs in multi-modal learning and automated production.</p>
         </div>
 
-        <div class="insights-grid">
-          <div v-for="insight in insights" :key="insight._id" class="insight-card" @click="openInsight(insight)">
-            <div class="insight-image">
-              <img v-if="insight.imageUrl" :src="insight.imageUrl" :alt="insight.title" class="card-img" />
-              <div v-else class="placeholder-img"></div>
-            </div>
-            <div class="insight-body">
-              <div class="insight-meta">Published: {{ formatDate(insight.createdAt) }}</div>
-              <h3>{{ insight.title }}</h3>
-              <p>{{ insight.excerpt }}</p>
-              <button class="read-btn">Read Article</button>
-            </div>
-          </div>
+        <InsightsCarousel 
+          v-if="!insightsLoading && insights.length > 0" 
+          :insights="insights" 
+          @open-insight="openInsight" 
+        />
+        <div v-else-if="insightsLoading" class="loading-insights">
+          <div class="spinner"></div>
+          <p>Loading Research...</p>
         </div>
       </div>
 
       <!-- Insight Reader Modal -->
-      <Transition name="fade-in">
-        <div v-if="selectedInsight" class="insight-modal-overlay" @click.self="closeInsight">
-          <div class="insight-modal-content">
-            <button class="close-modal-btn" @click="closeInsight">×</button>
-            
-            <div class="modal-header">
-              <div class="modal-meta">Published: {{ formatDate(selectedInsight.createdAt) }}</div>
-              <h2 class="modal-title">{{ selectedInsight.title }}</h2>
-              <div class="modal-author">By {{ selectedInsight.author || 'DREAMATIC Team' }}</div>
-            </div>
-
-            <div class="modal-image" v-if="selectedInsight.imageUrl">
-              <img :src="selectedInsight.imageUrl" :alt="selectedInsight.title" />
-            </div>
-
-            <div class="modal-body">
-              <div class="insight-full-content" v-html="formatContent(selectedInsight.content)"></div>
-            </div>
-          </div>
-        </div>
-      </Transition>
+      <InsightModal 
+        :is-open="!!selectedInsight" 
+        :insight="selectedInsight" 
+        @close="closeInsight" 
+      />
     </section>
 
     <!-- Final CTA -->
@@ -146,7 +123,11 @@
           <h2>Revolutionize your <span class="text-gradient">Voice Operations</span></h2>
           <p class="cta-subtitle">Deploy high-performance voice intelligence that powers the next generation of digital enterprise.</p>
           <div class="cta-buttons">
-            <button class="primary-btn" @click="openContactModal">
+            <button class="primary-btn" @click="openDemoModal('demo', {
+              title: 'Schedule EchoAI Strategy session',
+              subtitle: 'Revolutionize your Voice Operations with high-performance voice intelligence.',
+              message: 'I would like to book an EchoAI strategy call to discuss integrating your voice intelligence into our operations.'
+            })">
               Book a Strategy Call
               <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -161,8 +142,18 @@
 
 <script setup>
 import { ref, inject, onMounted } from 'vue'
+import { insightsAPI, pagesAPI } from '@/services/api'
 
-const openContactModal = inject('openContactModal')
+const openSolutionModal = inject('openSolutionModal')
+const openDemoModal = inject('openDemoModal')
+
+const handleSolutionContact = (solution) => {
+  openSolutionModal({
+    title: solution.title,
+    message: `Hello Dreamactic Team,\n\nI am interested in learning more about "${solution.title}" within the EchoAI platform. I'd like to understand how these voice intelligence capabilities can be integrated into our workflow.`,
+    accent: solution.accent || 'var(--accent-primary)'
+  })
+}
 
 const ecosystem = [
   { name: 'OpenAI', color: '#412991', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/></svg>' },
@@ -180,40 +171,25 @@ const ecosystem = [
   { name: 'Kubernetes', color: '#326CE5', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.5l1.65 6.07 6.13-.53-4.63 4.13 1.34 6.06L12 14.1l-4.49 3.13 1.34-6.06-4.63-4.13 6.13.53L12 1.5M12 24c6.627 0 12-5.373 12-12S18.627 0 12 0 0 5.373 0 12s5.373 12 12 12"/></svg>' }
 ]
 
-const solutions = [
-  { 
-    id: 1, 
-    title: 'AI Voice Calling', 
-    subtitle: 'Human Parity',
-    description: 'Ultra-low latency, human-parity voice synthesis for high-volume customer support operations.',
-    features: ['<500ms Latency', 'Multi-speaker Support', 'Emotion synthesis'],
-    accent: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)'
-  },
-  { 
-    id: 2, 
-    title: 'Autonomous Agents', 
-    subtitle: 'Reasoning Engine',
-    description: 'Context-aware reasoning engines that handle complex multi-turn inquiries independently.',
-    features: ['Memory persistence', 'Goal-oriented', 'Self-correction'],
-    accent: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)'
-  },
-  { 
-    id: 3, 
-    title: 'Enterprise Sync', 
-    subtitle: 'Integration',
-    description: 'Unified task orchestration that replaces manual processes with intelligent agent chains.',
-    features: ['CRM Integration', 'Live Data Sync', 'Secure Handoff'],
-    accent: 'linear-gradient(135deg, #10b981 0%, #14b8a6 100%)'
-  },
-  { 
-    id: 4, 
-    title: 'Sentiment Analysis', 
-    subtitle: 'Real-time Intelligence',
-    description: 'Live monitoring of conversation sentiment with automated escalation and risk detection.',
-    features: ['Live Dashboard', 'Risk Alerts', 'Trend Analysis'],
-    accent: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)'
+const solutions = ref([])
+
+// Dynamic Page Config
+const pageConfig = ref({
+  hero_badge: 'AI VOICE & AUTONOMOUS AGENTS',
+  hero_title: 'EchoAI Voice Intelligence',
+  hero_subtitle: 'The next evolution in voice intelligence and autonomous BPO automation. Deploy self-learning voice agents that handle complex conversational workflows with human-parity precision.'
+})
+
+const formatGradientTitle = (title) => {
+  if (!title) return ''
+  const parts = title.split(' ')
+  if (parts.length > 1) {
+    const last = parts.pop()
+    const secondLast = parts.pop()
+    return `${parts.join(' ')} <span class="text-gradient">${secondLast} ${last}</span>`
   }
-]
+  return title
+}
 
 const solutionsGrid = ref(null)
 
@@ -247,6 +223,8 @@ const scrollToSolutions = () => {
 
 // Insights logic
 import { insightsAPI } from '@/services/api'
+import InsightsCarousel from '@/components/InsightsCarousel.vue'
+import InsightModal from '@/components/InsightModal.vue'
 const insights = ref([])
 const selectedInsight = ref(null)
 
@@ -263,13 +241,22 @@ const closeInsight = () => {
 const formatDate = (d) => d ? new Date(d).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A'
 const formatContent = (c) => c ? c.split('\n\n').map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('') : ''
 
+const insightsLoading = ref(false)
+
 onMounted(async () => {
   window.scrollTo(0, 0)
+  insightsLoading.value = true
   try {
-    // Attempt to load insights for 'echoai' (or fallback to 'ai-service' or similar if none yet)
+    const config = await pagesAPI.getConfig('echo-ai')
+    if (config) {
+      pageConfig.value = config
+      if (config.solutions) solutions.value = config.solutions
+    }
     insights.value = await insightsAPI.getAll('echo-ai')  
   } catch (err) {
-    console.error('Failed to load insights:', err)
+    console.error('Failed to load page context:', err)
+  } finally {
+    insightsLoading.value = false
   }
 })
 </script>
@@ -609,6 +596,7 @@ onMounted(async () => {
   transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   border: 1px solid var(--glass-border);
+  cursor: pointer;
 }
 
 .solution-card::before {
@@ -727,6 +715,7 @@ onMounted(async () => {
   margin-top: auto;
   opacity: 0.8;
   transition: opacity 0.3s ease;
+  cursor: pointer;
 }
 
 .solution-card:hover .sol-footer {
@@ -748,21 +737,6 @@ onMounted(async () => {
 /* Insights Section */
 .insights-section {
   padding: 0 5% 10rem;
-}
-
-.insights-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2.5rem;
-}
-
-.insight-card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 24px;
-  overflow: hidden;
-  transition: all 0.4s;
-  cursor: pointer;
 }
 
 .insight-card:hover {
@@ -843,96 +817,7 @@ onMounted(async () => {
 }
 
 /* Insight Modal */
-.insight-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
-  z-index: 2000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-}
-
-.insight-modal-content {
-  background: #0f0f11;
-  width: 100%;
-  max-width: 900px;
-  max-height: 90vh;
-  border-radius: 32px;
-  border: 1px solid var(--glass-border);
-  padding: 4rem;
-  overflow-y: auto;
-  position: relative;
-  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
-}
-
-.close-modal-btn {
-  position: absolute;
-  top: 2rem;
-  right: 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  color: var(--text-secondary);
-  font-size: 1.5rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s;
-}
-
-.close-modal-btn:hover {
-  background: #3b82f6;
-  color: white;
-}
-
-.modal-header {
-  margin-bottom: 3rem;
-  text-align: center;
-}
-
-.modal-meta {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  margin-bottom: 1rem;
-}
-
-.modal-title {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  line-height: 1.1;
-  font-weight: 850;
-}
-
-.modal-author {
-  color: #3b82f6;
-  font-weight: 600;
-}
-
-.modal-image {
-  width: 100%;
-  border-radius: 20px;
-  overflow: hidden;
-  margin-bottom: 3rem;
-  aspect-ratio: 16/9;
-}
-
-.modal-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.modal-body {
-  color: var(--text-secondary);
-  line-height: 1.8;
-  font-size: 1.1rem;
-}
+/* InsightModal styles are now handled in the component */
 
 /* Page CTA */
 .page-cta {

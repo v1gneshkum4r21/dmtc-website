@@ -2,14 +2,12 @@
   <div class="page-container">
     <!-- Hero Section -->
     <section class="premium-hero">
-      <div class="hero-content">
+      <div class="hero-content" v-if="pageConfig">
         <div class="badge-wrapper">
-          <span class="hero-badge">AI FOR SERVICE</span>
+          <span class="hero-badge">{{ pageConfig.hero_badge }}</span>
         </div>
-        <h1 class="hero-title">Elevating Experience through <span class="text-gradient">Cognitive Media</span></h1>
-        <p class="hero-subtitle">
-          From multi-modal intelligence to hyper-realistic digital personas. We build the infrastructure that transforms how brands interact, visualize, and scale.
-        </p>
+        <h1 class="hero-title" v-html="formatGradientTitle(pageConfig.hero_title)"></h1>
+        <p class="hero-subtitle">{{ pageConfig.hero_subtitle }}</p>
         <div class="hero-actions">
           <button class="primary-btn" @click="scrollToSolutions">
             Explore Capabilities
@@ -57,6 +55,7 @@
               :style="{ 
                 '--card-accent': solution.accent 
               }"
+              @click="handleSolutionContact(solution)"
             >
               <div class="card-glow"></div>
               <div class="sol-header">
@@ -97,44 +96,23 @@
           <p>Read our latest breakthroughs in multi-modal learning and automated production.</p>
         </div>
 
-        <div class="insights-grid">
-          <div v-for="insight in insights" :key="insight._id" class="insight-card" @click="openInsight(insight)">
-            <div class="insight-image">
-              <img v-if="insight.imageUrl" :src="insight.imageUrl" :alt="insight.title" class="card-img" />
-              <div v-else class="placeholder-img"></div>
-            </div>
-            <div class="insight-body">
-              <div class="insight-meta">Published: {{ formatDate(insight.createdAt) }}</div>
-              <h3>{{ insight.title }}</h3>
-              <p>{{ insight.excerpt }}</p>
-              <button class="read-btn">Read Article</button>
-            </div>
-          </div>
+        <InsightsCarousel 
+          v-if="!insightsLoading && insights.length > 0" 
+          :insights="insights" 
+          @open-insight="openInsight" 
+        />
+        <div v-else-if="insightsLoading" class="loading-insights">
+          <div class="spinner"></div>
+          <p>Loading Research...</p>
         </div>
       </div>
 
       <!-- Insight Reader Modal -->
-      <Transition name="fade-in">
-        <div v-if="selectedInsight" class="insight-modal-overlay" @click.self="closeInsight">
-          <div class="insight-modal-content">
-            <button class="close-modal-btn" @click="closeInsight">×</button>
-            
-            <div class="modal-header">
-              <div class="modal-meta">Published: {{ formatDate(selectedInsight.createdAt) }}</div>
-              <h2 class="modal-title">{{ selectedInsight.title }}</h2>
-              <div class="modal-author">By {{ selectedInsight.author || 'DREAMATIC Team' }}</div>
-            </div>
-
-            <div class="modal-image" v-if="selectedInsight.imageUrl">
-              <img :src="selectedInsight.imageUrl" :alt="selectedInsight.title" />
-            </div>
-
-            <div class="modal-body">
-              <div class="insight-full-content" v-html="formatContent(selectedInsight.content)"></div>
-            </div>
-          </div>
-        </div>
-      </Transition>
+      <InsightModal 
+        :is-open="!!selectedInsight" 
+        :insight="selectedInsight" 
+        @close="closeInsight" 
+      />
     </section>
 
     <!-- Final CTA -->
@@ -144,8 +122,16 @@
           <h2>Ready to revolutionize your <span class="text-gradient">Service Layer</span>?</h2>
           <p>Deploy the high-performance media intelligence that powers the next generation of digital commerce.</p>
           <div class="cta-actions">
-            <button class="primary-btn">Start Full Trial</button>
-            <button class="secondary-btn">Schedule Strategy Call</button>
+            <button class="primary-btn" @click="openDemoModal('trial', {
+              title: 'Start Service Layer Trial',
+              subtitle: 'Deploy high-performance media intelligence that powers the next generation of digital commerce.',
+              message: 'I am interested in starting a trial for your AI Service Layer to improve our media processing workflows.'
+            })">Start Full Trial</button>
+            <button class="secondary-btn" @click="openDemoModal('demo', {
+              title: 'Schedule a Strategy session',
+              subtitle: 'Architect your high-performance service layer with our expert deployment engineers.',
+              message: 'I would like to schedule a strategy call to discuss how your AI services can modernize our service layer.'
+            })">Schedule Strategy Call</button>
           </div>
         </div>
       </div>
@@ -154,8 +140,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { insightsAPI } from '@/services/api'
+import { ref, onMounted, inject } from 'vue'
+import { insightsAPI, pagesAPI } from '@/services/api'
+import InsightsCarousel from '@/components/InsightsCarousel.vue'
+import InsightModal from '@/components/InsightModal.vue'
+
+const openSolutionModal = inject('openSolutionModal')
+const openDemoModal = inject('openDemoModal')
+
+const handleSolutionContact = (solution) => {
+  openSolutionModal({
+    title: solution.title,
+    message: `I am interested in learning more about your "${solution.title}" solution. I'd like to understand how this can be implemented for our specific needs.`,
+    accent: solution.accent || 'var(--accent-primary)'
+  })
+}
 
 const ecosystem = [
   { name: 'Nvidia', color: '#76B900', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.948 8.798v-1.43a6.7 6.7 0 0 1 .424-.018c3.922-.124 6.493 3.374 6.493 3.374s-2.774 3.851-5.75 3.851c-.398 0-.787-.062-1.158-.185v-4.346c1.528.185 1.837.857 2.747 2.385l2.04-1.714s-1.492-1.952-4-1.952a6.016 6.016 0 0 0-.796.035m0-4.735v2.138l.424-.027c5.45-.185 9.01 4.47 9.01 4.47s-4.08 4.964-8.33 4.964c-.37 0-.733-.035-1.095-.097v1.325c.3.035.61.062.91.062 3.957 0 6.82-2.023 9.593-4.408.459.371 2.34 1.263 2.73 1.652-2.633 2.208-8.772 3.984-12.253 3.984-.335 0-.653-.018-.971-.053v1.864H24V4.063zm0 10.326v1.131c-3.657-.654-4.673-4.46-4.673-4.46s1.758-1.944 4.673-2.262v1.237H8.94c-1.528-.186-2.73 1.245-2.73 1.245s.68 2.412 2.739 3.11M2.456 10.9s2.164-3.197 6.5-3.533V6.201C4.153 6.59 0 10.653 0 10.653s2.35 6.802 8.948 7.42v-1.237c-4.84-.6-6.492-5.936-6.492-5.936z"/></svg>' },
@@ -201,72 +200,24 @@ const scrollToSolutions = () => {
   })
 }
 
-const solutions = [
-  { 
-    id: 1, 
-    title: 'Multi-Modal Training', 
-    subtitle: 'Media Intelligence',
-    description: 'Custom neural architectures trained to process and synchronize audio, video, and text for unified comprehension.',
-    features: ['Synchronized reasoning', 'Context-aware indexing', 'Semantic search'],
-    accent: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)'
-  },
-  { 
-    id: 2, 
-    title: '3D CGI Design', 
-    subtitle: 'Automated Visualization',
-    description: 'Procedural generation of high-fidelity 3D assets and environments for architectural and creative industries.',
-    features: ['Real-time rendering', 'Asset automation', 'Spatial reasoning'],
-    accent: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)'
-  },
-  { 
-    id: 3, 
-    title: 'Real Estate Vis', 
-    subtitle: 'Property Showcasing',
-    description: 'Photorealistic virtual staging and immersive tours that transform property marketing through spatial AI.',
-    features: ['Virtual staging', 'Lighting simulation', 'Immersive tours'],
-    accent: 'linear-gradient(135deg, #2563eb 0%, #38bdf8 100%)'
-  },
-  { 
-    id: 4, 
-    title: 'Interior Design AI', 
-    subtitle: 'Smart Interiors',
-    description: 'Intelligence-driven space planning and aesthetic optimization tailored to architectural constraints and user preference.',
-    features: ['Layout optimization', 'Curation engine', 'Material synthesis'],
-    accent: 'linear-gradient(135deg, #14b8a6 0%, #4ade80 100%)'
-  },
-  { 
-    id: 5, 
-    title: 'Media Production', 
-    subtitle: 'Content Acceleration',
-    description: 'Automated post-production workflows that eliminate technical bottlenecks in the creative process.',
-    features: ['Auto-grading', 'Scene reconstruction', 'Asset management'],
-    accent: 'linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)'
-  },
-  { 
-    id: 6, 
-    title: 'AI Avatars', 
-    subtitle: 'Digital Personas',
-    description: 'Hyper-realistic digital twins capable of autonomous interaction and natural emotional expression.',
-    features: ['Natural voice synthesis', 'Action mapping', 'Memory persistence'],
-    accent: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)'
-  },
-  { 
-    id: 7, 
-    title: 'Product Renders', 
-    subtitle: 'E-commerce Visuals',
-    description: 'Studio-quality product visualization at scale, replacing traditional sets with generative photography.',
-    features: ['Multi-angle generation', 'Dynamic lighting', 'Variant automation'],
-    accent: 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)'
-  },
-  { 
-    id: 8, 
-    title: 'Analytics AI', 
-    subtitle: 'Business Insights',
-    description: 'Transforming consumer interaction data into predictive intelligence for strategic growth.',
-    features: ['Behavioral mapping', 'Trend forecasting', 'ROI attribution'],
-    accent: 'linear-gradient(135deg, #4361ee 0%, #3f37c9 100%)'
+const solutions = ref([])
+
+// Dynamic Page Config
+const pageConfig = ref({
+  hero_badge: 'AI FOR SERVICE',
+  hero_title: 'Elevating Experience through Cognitive Media',
+  hero_subtitle: 'From multi-modal intelligence to hyper-realistic digital personas. We build the infrastructure that transforms how brands interact, visualize, and scale.'
+})
+
+const formatGradientTitle = (title) => {
+  if (!title) return ''
+  // Basic heuristic: wrap the last few words or after a colon
+  const parts = title.split(':')
+  if (parts.length > 1) {
+    return `${parts[0]}: <span class="text-gradient">${parts[1]}</span>`
   }
-]
+  return title.replace(/Cognitive Media|Media Solutions|Motion|Service Layer/g, (m) => `<span class="text-gradient">${m}</span>`)
+}
 
 const insights = ref([])
 const selectedInsight = ref(null)
@@ -283,9 +234,14 @@ const closeInsight = () => {
 
 onMounted(async () => {
   try {
+    const config = await pagesAPI.getConfig('ai-service')
+    if (config) {
+      pageConfig.value = config
+      if (config.solutions) solutions.value = config.solutions
+    }
     insights.value = await insightsAPI.getAll('ai-service')
   } catch (err) {
-    console.error('Failed to load insights:', err)
+    console.error('Failed to load page context:', err)
   }
 })
 
@@ -632,6 +588,7 @@ const formatContent = (c) => c ? c.split('\n\n').map(p => `<p>${p.replace(/\n/g,
   transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   border: 1px solid var(--glass-border);
+  cursor: pointer;
 }
 
 /* Holographic Border Effect */
@@ -751,6 +708,7 @@ const formatContent = (c) => c ? c.split('\n\n').map(p => `<p>${p.replace(/\n/g,
   margin-top: auto;
   opacity: 0.8;
   transition: opacity 0.3s ease;
+  cursor: pointer;
 }
 
 .solution-card:hover .sol-footer {
@@ -772,21 +730,6 @@ const formatContent = (c) => c ? c.split('\n\n').map(p => `<p>${p.replace(/\n/g,
 /* Insights Section */
 .insights-section {
   padding: 0 5% 10rem;
-}
-
-.insights-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2.5rem;
-}
-
-.insight-card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 24px;
-  overflow: hidden;
-  transition: all 0.4s;
-  cursor: pointer;
 }
 
 .insight-card:hover {
@@ -852,100 +795,7 @@ const formatContent = (c) => c ? c.split('\n\n').map(p => `<p>${p.replace(/\n/g,
 }
 
 /* Modal Styles */
-.insight-modal-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  padding: 2rem;
-}
-
-.insight-modal-content {
-  background: var(--bg-primary);
-  border: 1px solid var(--glass-border);
-  border-radius: 32px;
-  max-width: 900px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-  padding: 4rem;
-  scrollbar-width: thin;
-}
-
-.close-modal-btn {
-  position: absolute;
-  top: 2rem;
-  right: 2rem;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  font-size: 1.5rem;
-  color: var(--text-primary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s;
-}
-
-.close-modal-btn:hover {
-  background: #3b82f6;
-  color: white;
-}
-
-.modal-header {
-  margin-bottom: 3rem;
-  text-align: center;
-}
-
-.modal-meta {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  margin-bottom: 1rem;
-}
-
-.modal-title {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  line-height: 1.1;
-  font-weight: 850;
-}
-
-.modal-author {
-  color: #3b82f6;
-  font-weight: 600;
-}
-
-.modal-image {
-  width: 100%;
-  border-radius: 20px;
-  overflow: hidden;
-  margin-bottom: 3rem;
-  aspect-ratio: 16/9;
-}
-
-.modal-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.modal-body {
-  color: var(--text-secondary);
-  line-height: 1.8;
-  font-size: 1.15rem;
-}
-
-.insight-full-content :deep(p) {
-  margin-bottom: 1.5rem;
-}
+/* InsightModal styles are now handled in the component */
 
 /* Page CTA */
 .page-cta {

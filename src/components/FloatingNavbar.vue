@@ -8,71 +8,79 @@
 
       <!-- Links -->
       <ul class="nav-links">
-        <li class="nav-item" @mouseenter="openDropdown('services')">
+        <li v-if="navStore.hasVisibleInSection('services')" class="nav-item" @mouseenter="openDropdown('services')">
           <router-link to="/services/ai-work" :class="{ active: activeDropdown === 'services' || isServicesActive }">Services</router-link>
           
           <!-- SERVICES MEGA MENU -->
           <div class="mega-menu" :class="{ show: activeDropdown === 'services' }">
-            <router-link to="/services/ai-work" class="mega-row row-lavender" @click="closeDropdown">
+            <router-link v-if="navStore.isVisible('ai-work')" to="/services/ai-work" class="mega-row row-lavender" @click="closeDropdown">
               <span class="mega-watermark">Work</span>
               <div class="row-content">
                 <div class="row-text">
                   <h3>AI for Work</h3>
                   <p>Search across silos. Automate workflows. Orchestrate AI agents.</p>
                 </div>
-                <!-- Animated Arrow -->
                 <div class="row-arrow">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                  </svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </div>
               </div>
             </router-link>
-            <router-link to="/services/ai-service" class="mega-row row-blue" @click="closeDropdown">
+            <router-link v-if="navStore.isVisible('ai-service')" to="/services/ai-service" class="mega-row row-blue" @click="closeDropdown">
               <span class="mega-watermark">Service</span>
               <div class="row-content">
                 <div class="row-text">
                   <h3>AI for Service</h3>
                   <p>Leverage Agentic capabilities to empower customers.</p>
                 </div>
-                <!-- Animated Arrow -->
                 <div class="row-arrow">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                  </svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </div>
               </div>
             </router-link>
-            <router-link to="/services/ai-enterprise" class="mega-row row-green" @click="closeDropdown">
+            <router-link v-if="navStore.isVisible('ai-enterprise')" to="/services/ai-enterprise" class="mega-row row-green" @click="closeDropdown">
               <span class="mega-watermark">Enterprise</span>
               <div class="row-content">
                 <div class="row-text">
                   <h3>AI for Enterprise</h3>
                   <p>Transform your entire organization with custom AI swarms.</p>
                 </div>
-                <!-- Animated Arrow -->
                 <div class="row-arrow">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                  </svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+            </router-link>
+
+            <!-- DYNAMIC SERVICES -->
+            <router-link 
+              v-for="page in getModularPages('services')" 
+              :key="page.id" 
+              :to="page.path" 
+              class="mega-row row-orange" 
+              @click="closeDropdown"
+            >
+              <span class="mega-watermark">Modular</span>
+              <div class="row-content">
+                <div class="row-text">
+                  <h3>{{ page.label }}</h3>
+                  <p>Custom modular agentic node.</p>
+                </div>
+                <div class="row-arrow">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </div>
               </div>
             </router-link>
           </div>
         </li>
 
-        <li class="nav-item" @mouseenter="openDropdown('products')">
+        <li v-if="navStore.hasVisibleInSection('products')" class="nav-item" @mouseenter="openDropdown('products')">
           <router-link to="/products/superfiitter" :class="{ active: activeDropdown === 'products' || isProductsActive }">Products</router-link>
           <div class="mega-menu" :class="{ show: activeDropdown === 'products' }">
-             <router-link to="/products/superfiitter" class="mega-row row-lavender" @click="closeDropdown">
+             <router-link v-if="navStore.isVisible('superfiitter')" to="/products/superfiitter" class="mega-row row-lavender" @click="closeDropdown">
               <span class="mega-watermark">SuperFiitter</span>
               <div class="row-content">
                 <div class="row-text">
                   <h3>SuperFiitter</h3>
-                  <p>AI-powered virtual try-on platform with real-time image and video rendering for immersive fitting.</p>
+                  <p>AI Virtual Try-On & Real-Time Rendering.</p>
                 </div>
                 <!-- Animated Arrow -->
                 <div class="row-arrow">
@@ -83,7 +91,7 @@
                 </div>
               </div>
             </router-link>
-            <router-link to="/products/echoai" class="mega-row row-blue" @click="closeDropdown">
+            <router-link v-if="navStore.isVisible('echoai')" to="/products/echoai" class="mega-row row-blue" @click="closeDropdown">
               <span class="mega-watermark">EchoAI</span>
               <div class="row-content">
                 <div class="row-text">
@@ -99,13 +107,36 @@
                 </div>
               </div>
             </router-link>
+
+            <!-- DYNAMIC PRODUCTS -->
+            <router-link 
+              v-for="page in getModularPages('products')" 
+              :key="page.id" 
+              :to="page.path" 
+              class="mega-row row-orange" 
+              @click="closeDropdown"
+            >
+              <span class="mega-watermark">Modular</span>
+              <div class="row-content">
+                <div class="row-text">
+                  <h3>{{ page.label }}</h3>
+                  <p>Custom modular agentic node.</p>
+                </div>
+                <div class="row-arrow">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </div>
+              </div>
+            </router-link>
           </div>
         </li>
 
-        <li class="nav-item" @mouseenter="openDropdown('company')">
+        <li v-if="navStore.hasVisibleInSection('company')" class="nav-item" @mouseenter="openDropdown('company')">
           <router-link to="/company/about" :class="{ active: activeDropdown === 'company' || isCompanyActive }">Company</router-link>
           <div class="mega-menu" :class="{ show: activeDropdown === 'company' }">
-            <router-link to="/company/about" class="mega-row row-lavender" @click="closeDropdown">
+            <router-link v-if="navStore.isVisible('about')" to="/company/about" class="mega-row row-lavender" @click="closeDropdown">
               <span class="mega-watermark">About</span>
               <div class="row-content">
                 <div class="row-text">
@@ -121,7 +152,7 @@
                 </div>
               </div>
             </router-link>
-            <router-link to="/company/leadership" class="mega-row row-blue" @click="closeDropdown">
+            <router-link v-if="navStore.isVisible('leadership')" to="/company/leadership" class="mega-row row-blue" @click="closeDropdown">
               <span class="mega-watermark">Team</span>
               <div class="row-content">
                 <div class="row-text">
@@ -137,7 +168,7 @@
                 </div>
               </div>
             </router-link>
-            <router-link to="/company/careers" class="mega-row row-green" @click="closeDropdown">
+            <router-link v-if="navStore.isVisible('careers')" to="/company/careers" class="mega-row row-green" @click="closeDropdown">
               <span class="mega-watermark">Jobs</span>
               <div class="row-content">
                 <div class="row-text">
@@ -153,17 +184,37 @@
                 </div>
               </div>
             </router-link>
+
+            <!-- DYNAMIC COMPANY -->
+            <router-link 
+              v-for="page in getModularPages('company')" 
+              :key="page.id" 
+              :to="page.path" 
+              class="mega-row row-orange" 
+              @click="closeDropdown"
+            >
+              <span class="mega-watermark">Modular</span>
+              <div class="row-content">
+                <div class="row-text">
+                  <h3>{{ page.label }}</h3>
+                  <p>Custom modular corporate node.</p>
+                </div>
+                <div class="row-arrow">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+              </div>
+            </router-link>
           </div>
         </li>
-        <li class="nav-item" @mouseenter="openDropdown('resources')">
+        <li v-if="navStore.hasVisibleInSection('resources')" class="nav-item" @mouseenter="openDropdown('resources')">
           <router-link to="/resources/hub" :class="{ active: activeDropdown === 'resources' || isResourcesActive }">Resources</router-link>
           <div class="mega-menu" :class="{ show: activeDropdown === 'resources' }">
-            <router-link to="/resources/hub" class="mega-row row-lavender" @click="closeDropdown">
+            <router-link v-if="navStore.isVisible('resource-hub')" to="/resources/hub" class="mega-row row-lavender" @click="closeDropdown">
               <span class="mega-watermark">Hub</span>
               <div class="row-content">
                 <div class="row-text">
                   <h3>Resource Hub</h3>
-                  <p>Guides, tutorials, and training materials.</p>
+                  <p>Guides and training materials.</p>
                 </div>
                 <!-- Animated Arrow -->
                 <div class="row-arrow">
@@ -174,7 +225,7 @@
                 </div>
               </div>
             </router-link>
-            <router-link to="/resources/blog" class="mega-row row-blue" @click="closeDropdown">
+            <router-link v-if="navStore.isVisible('blog')" to="/resources/blog" class="mega-row row-blue" @click="closeDropdown">
               <span class="mega-watermark">Blog</span>
               <div class="row-content">
                 <div class="row-text">
@@ -190,12 +241,12 @@
                 </div>
               </div>
             </router-link>
-            <router-link to="/resources/research" class="mega-row row-green" @click="closeDropdown">
+            <router-link v-if="navStore.isVisible('research')" to="/resources/research" class="mega-row row-green" @click="closeDropdown">
               <span class="mega-watermark">Research</span>
               <div class="row-content">
                 <div class="row-text">
                   <h3>Research</h3>
-                  <p>Our contributions to the field of Agentic AI.</p>
+                  <p>Field-leading AI research.</p>
                 </div>
                 <!-- Animated Arrow -->
                 <div class="row-arrow">
@@ -203,20 +254,40 @@
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                     <polyline points="12 5 19 12 12 19"></polyline>
                   </svg>
+                </div>
+              </div>
+            </router-link>
+
+            <!-- DYNAMIC RESOURCES -->
+            <router-link 
+              v-for="page in getModularPages('resources')" 
+              :key="page.id" 
+              :to="page.path" 
+              class="mega-row row-orange" 
+              @click="closeDropdown"
+            >
+              <span class="mega-watermark">Modular</span>
+              <div class="row-content">
+                <div class="row-text">
+                  <h3>{{ page.label }}</h3>
+                  <p>Custom modular intelligence node.</p>
+                </div>
+                <div class="row-arrow">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </div>
               </div>
             </router-link>
           </div>
         </li>
-        <li class="nav-item" @mouseenter="openDropdown('support')">
+        <li v-if="navStore.hasVisibleInSection('support')" class="nav-item" @mouseenter="openDropdown('support')">
           <router-link to="/support/docs" :class="{ active: activeDropdown === 'support' || isSupportActive }">Support</router-link>
           <div class="mega-menu" :class="{ show: activeDropdown === 'support' }">
-            <router-link to="/support/docs" class="mega-row row-lavender" @click="closeDropdown">
+            <router-link v-if="navStore.isVisible('docs')" to="/support/docs" class="mega-row row-lavender" @click="closeDropdown">
               <span class="mega-watermark">Docs</span>
               <div class="row-content">
                 <div class="row-text">
                   <h3>Documentation</h3>
-                  <p>Get started with our technical guides.</p>
+                  <p>Technical guides and API docs.</p>
                 </div>
                 <!-- Animated Arrow -->
                 <div class="row-arrow">
@@ -227,7 +298,7 @@
                 </div>
               </div>
             </router-link>
-            <router-link to="/support/community" class="mega-row row-blue" @click="closeDropdown">
+            <router-link v-if="navStore.isVisible('community')" to="/support/community" class="mega-row row-blue" @click="closeDropdown">
               <span class="mega-watermark">Help</span>
               <div class="row-content">
                 <div class="row-text">
@@ -243,7 +314,7 @@
                 </div>
               </div>
             </router-link>
-            <router-link to="/support/help" class="mega-row row-green" @click="closeDropdown">
+            <router-link v-if="navStore.isVisible('help')" to="/support/help" class="mega-row row-green" @click="closeDropdown">
               <span class="mega-watermark">Support</span>
               <div class="row-content">
                 <div class="row-text">
@@ -266,21 +337,31 @@
       <!-- Actions -->
       <div class="nav-actions">
         <!-- Search -->
-        <div class="search-container">
+        <div class="search-container" v-click-outside="closeSearch">
           <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
           <input 
             type="text" 
-            placeholder="Search..." 
+            placeholder="Search platform..." 
             class="search-input" 
-            @focus="closeDropdown"
+            v-model="searchQuery"
+            @input="handleSearch"
+            @focus="onSearchFocus"
+          />
+          
+          <SearchDropdown 
+            :is-open="showSearchResults && (searchResults.length > 0 || isSearching || (searchQuery.length >= 2 && !isSearching))"
+            :results="searchResults"
+            :is-searching="isSearching"
+            :query="searchQuery"
+            @close="closeSearch"
           />
         </div>
 
         <!-- Showcase -->
-        <div class="action-item">
+        <div v-if="navStore.isVisible('showcase')" class="action-item">
           <router-link to="/showcase" class="showcase-btn">
             <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
@@ -331,7 +412,7 @@
     <div class="mobile-drawer" :class="{ open: isMobileMenuOpen }">
       <div class="mobile-nav-list">
         <!-- Services Accordion -->
-        <div class="mobile-nav-item">
+        <div v-if="navStore.hasVisibleInSection('services')" class="mobile-nav-item">
           <button class="mobile-nav-btn" @click="toggleSection('services')">
             Services
             <svg class="chevron" :class="{ rotate: openSection === 'services' }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -339,23 +420,28 @@
             </svg>
           </button>
           <div class="mobile-sub-menu" v-show="openSection === 'services'">
-            <router-link to="/services/ai-work" class="mobile-sub-item lavender" @click="toggleMobileMenu">
+            <router-link v-if="navStore.isVisible('ai-work')" to="/services/ai-work" class="mobile-sub-item lavender" @click="toggleMobileMenu">
               <h3>AI for Work</h3>
               <p>Search across silos. Automate workflows.</p>
             </router-link>
-            <router-link to="/services/ai-service" class="mobile-sub-item blue" @click="toggleMobileMenu">
+            <router-link v-if="navStore.isVisible('ai-service')" to="/services/ai-service" class="mobile-sub-item blue" @click="toggleMobileMenu">
               <h3>AI for Service</h3>
               <p>Leverage Agentic capabilities to empower customers.</p>
             </router-link>
-            <router-link to="/services/ai-enterprise" class="mobile-sub-item green" @click="toggleMobileMenu">
+            <router-link v-if="navStore.isVisible('ai-enterprise')" to="/services/ai-enterprise" class="mobile-sub-item green" @click="toggleMobileMenu">
               <h3>AI for Enterprise</h3>
               <p>Transform your entire organization with AI swarms.</p>
+            </router-link>
+            <!-- DYNAMIC SERVICES MOBILE -->
+            <router-link v-for="page in getModularPages('services')" :key="page.id" :to="page.path" class="mobile-sub-item orange" @click="toggleMobileMenu">
+              <h3>{{ page.label }}</h3>
+              <p>Custom modular agentic node.</p>
             </router-link>
           </div>
         </div>
 
         <!-- Products Accordion -->
-        <div class="mobile-nav-item">
+        <div v-if="navStore.hasVisibleInSection('products')" class="mobile-nav-item">
           <button class="mobile-nav-btn" @click="toggleSection('products')">
             Products
             <svg class="chevron" :class="{ rotate: openSection === 'products' }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -363,19 +449,24 @@
             </svg>
           </button>
           <div class="mobile-sub-menu" v-show="openSection === 'products'">
-            <router-link to="/products/superfiitter" class="mobile-sub-item lavender" @click="toggleMobileMenu">
+            <router-link v-if="navStore.isVisible('superfiitter')" to="/products/superfiitter" class="mobile-sub-item lavender" @click="toggleMobileMenu">
               <h3>SuperFiitter</h3>
               <p>AI Virtual Try-On & Real-Time Rendering.</p>
             </router-link>
-            <router-link to="/products/echoai" class="mobile-sub-item blue" @click="toggleMobileMenu">
+            <router-link v-if="navStore.isVisible('echoai')" to="/products/echoai" class="mobile-sub-item blue" @click="toggleMobileMenu">
               <h3>EchoAI</h3>
               <p>Autonomous Voice Agents & BPO Automation.</p>
+            </router-link>
+            <!-- DYNAMIC PRODUCTS MOBILE -->
+            <router-link v-for="page in getModularPages('products')" :key="page.id" :to="page.path" class="mobile-sub-item orange" @click="toggleMobileMenu">
+              <h3>{{ page.label }}</h3>
+              <p>Custom modular agentic node.</p>
             </router-link>
           </div>
         </div>
 
         <!-- Company Accordion -->
-        <div class="mobile-nav-item">
+        <div v-if="navStore.hasVisibleInSection('company')" class="mobile-nav-item">
           <button class="mobile-nav-btn" @click="toggleSection('company')">
             Company
             <svg class="chevron" :class="{ rotate: openSection === 'company' }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -383,23 +474,28 @@
             </svg>
           </button>
           <div class="mobile-sub-menu" v-show="openSection === 'company'">
-            <router-link to="/company/about" class="mobile-sub-item lavender" @click="toggleMobileMenu">
+            <router-link v-if="navStore.isVisible('about')" to="/company/about" class="mobile-sub-item lavender" @click="toggleMobileMenu">
               <h3>About Us</h3>
               <p>Our mission and team.</p>
             </router-link>
-            <router-link to="/company/leadership" class="mobile-sub-item blue" @click="toggleMobileMenu">
+            <router-link v-if="navStore.isVisible('leadership')" to="/company/leadership" class="mobile-sub-item blue" @click="toggleMobileMenu">
               <h3>Leadership</h3>
               <p>Meet the visionaries.</p>
             </router-link>
-            <router-link to="/company/careers" class="mobile-sub-item green" @click="toggleMobileMenu">
+            <router-link v-if="navStore.isVisible('careers')" to="/company/careers" class="mobile-sub-item green" @click="toggleMobileMenu">
               <h3>Careers</h3>
               <p>Join us in building the future.</p>
+            </router-link>
+            <!-- DYNAMIC COMPANY MOBILE -->
+            <router-link v-for="page in getModularPages('company')" :key="page.id" :to="page.path" class="mobile-sub-item orange" @click="toggleMobileMenu">
+              <h3>{{ page.label }}</h3>
+              <p>Custom corporate node.</p>
             </router-link>
           </div>
         </div>
 
         <!-- Resources Accordion -->
-        <div class="mobile-nav-item">
+        <div v-if="navStore.hasVisibleInSection('resources')" class="mobile-nav-item">
           <button class="mobile-nav-btn" @click="toggleSection('resources')">
             Resources
             <svg class="chevron" :class="{ rotate: openSection === 'resources' }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -407,23 +503,28 @@
             </svg>
           </button>
           <div class="mobile-sub-menu" v-show="openSection === 'resources'">
-            <router-link to="/resources/hub" class="mobile-sub-item lavender" @click="toggleMobileMenu">
+            <router-link v-if="navStore.isVisible('resource-hub')" to="/resources/hub" class="mobile-sub-item lavender" @click="toggleMobileMenu">
               <h3>Resource Hub</h3>
               <p>Guides and training materials.</p>
             </router-link>
-            <router-link to="/resources/blog" class="mobile-sub-item blue" @click="toggleMobileMenu">
+            <router-link v-if="navStore.isVisible('blog')" to="/resources/blog" class="mobile-sub-item blue" @click="toggleMobileMenu">
               <h3>Blog</h3>
               <p>Latest news and insights.</p>
             </router-link>
-            <router-link to="/resources/research" class="mobile-sub-item green" @click="toggleMobileMenu">
+            <router-link v-if="navStore.isVisible('research')" to="/resources/research" class="mobile-sub-item green" @click="toggleMobileMenu">
               <h3>Research</h3>
               <p>Field-leading AI research.</p>
+            </router-link>
+            <!-- DYNAMIC RESOURCES MOBILE -->
+            <router-link v-for="page in getModularPages('resources')" :key="page.id" :to="page.path" class="mobile-sub-item orange" @click="toggleMobileMenu">
+              <h3>{{ page.label }}</h3>
+              <p>Custom intelligence node.</p>
             </router-link>
           </div>
         </div>
 
         <!-- Support Accordion -->
-        <div class="mobile-nav-item">
+        <div v-if="navStore.hasVisibleInSection('support')" class="mobile-nav-item">
           <button class="mobile-nav-btn" @click="toggleSection('support')">
             Support
             <svg class="chevron" :class="{ rotate: openSection === 'support' }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -431,15 +532,15 @@
             </svg>
           </button>
           <div class="mobile-sub-menu" v-show="openSection === 'support'">
-            <router-link to="/support/docs" class="mobile-sub-item lavender" @click="toggleMobileMenu">
+            <router-link v-if="navStore.isVisible('docs')" to="/support/docs" class="mobile-sub-item lavender" @click="toggleMobileMenu">
               <h3>Documentation</h3>
               <p>Technical guides and API docs.</p>
             </router-link>
-            <router-link to="/support/community" class="mobile-sub-item blue" @click="toggleMobileMenu">
+            <router-link v-if="navStore.isVisible('community')" to="/support/community" class="mobile-sub-item blue" @click="toggleMobileMenu">
               <h3>Community</h3>
               <p>Connect with other builders.</p>
             </router-link>
-            <router-link to="/support/help" class="mobile-sub-item green" @click="toggleMobileMenu">
+            <router-link v-if="navStore.isVisible('help')" to="/support/help" class="mobile-sub-item green" @click="toggleMobileMenu">
               <h3>Help Center</h3>
               <p>Answers to common questions.</p>
             </router-link>
@@ -451,8 +552,11 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits, inject, computed, onMounted, onUnmounted } from 'vue'
+import { ref, defineProps, defineEmits, inject, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { searchAPI } from '@/services/api'
+import SearchDropdown from './SearchDropdown.vue'
+import { navStore } from '@/store/navigation'
 
 const navbarRef = ref(null)
 
@@ -468,6 +572,11 @@ const emit = defineEmits(['toggle-theme'])
 const activeDropdown = ref(null)
 const isMobileMenuOpen = ref(false)
 const openSection = ref(null)
+const searchQuery = ref('')
+const searchResults = ref([])
+const isSearching = ref(false)
+const showSearchResults = ref(false)
+let searchTimeout = null
 
 const isServicesActive = computed(() => route.path.startsWith('/services'))
 const isProductsActive = computed(() => route.path.startsWith('/products'))
@@ -482,6 +591,7 @@ const logoSrc = computed(() => {
 const openDropdown = (menu) => {
   if (window.innerWidth > 1050) {
     activeDropdown.value = menu
+    closeSearch()
   }
 }
 
@@ -499,6 +609,66 @@ const toggleMobileMenu = () => {
 const toggleSection = (section) => {
   openSection.value = openSection.value === section ? null : section
 }
+
+const handleSearch = () => {
+  if (searchTimeout) clearTimeout(searchTimeout)
+  
+  if (searchQuery.value.length < 2) {
+    searchResults.value = []
+    isSearching.value = false
+    return
+  }
+  
+  isSearching.value = true
+  showSearchResults.value = true
+  
+  searchTimeout = setTimeout(async () => {
+    try {
+      const results = await searchAPI.query(searchQuery.value)
+      searchResults.value = results
+    } catch (err) {
+      console.error('Search failed:', err)
+      searchResults.value = []
+    } finally {
+      isSearching.value = false
+    }
+  }, 400)
+}
+
+const onSearchFocus = () => {
+  closeDropdown()
+  if (searchQuery.value.length >= 2) {
+    showSearchResults.value = true
+  }
+}
+
+const closeSearch = () => {
+  showSearchResults.value = false
+}
+
+const getModularPages = (group) => {
+  return Object.values(navStore.matrix).filter(p => p.isCustom && p.group === group && p.visible)
+}
+
+// Click outside directive for search
+const vClickOutside = {
+  mounted(el, binding) {
+    el.clickOutsideEvent = (event) => {
+      if (!(el === event.target || el.contains(event.target))) {
+        binding.value(event)
+      }
+    }
+    document.addEventListener('click', el.clickOutsideEvent)
+  },
+  unmounted(el) {
+    document.removeEventListener('click', el.clickOutsideEvent)
+  }
+}
+
+watch(() => route.path, () => {
+  closeSearch()
+  searchQuery.value = ''
+})
 const handleClickOutside = (event) => {
   if (isMobileMenuOpen.value && navbarRef.value && !navbarRef.value.contains(event.target)) {
     isMobileMenuOpen.value = false
@@ -680,6 +850,8 @@ onUnmounted(() => {
   line-height: 1.4;
 }
 
+.mobile-sub-item.orange { border-left-color: #f6ad55; }
+
 /* Row Arrow Styles */
 .row-arrow {
   opacity: 0;
@@ -704,6 +876,9 @@ onUnmounted(() => {
 
 .row-green { background-color: #A8E6C8; }
 .row-green:hover { background-color: #8CDDB5 !important; }
+
+.row-orange { background-color: #fbd38d; }
+.row-orange:hover { background-color: #f6ad55 !important; }
 
 /* ========================================
    NAV ACTIONS
@@ -744,9 +919,9 @@ onUnmounted(() => {
 .search-input:focus {
   outline: none;
   background: var(--bg-primary);
-  width: 180px;
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.1);
+  width: 220px;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
 .showcase-btn, .contact-us-btn, .theme-toggle {

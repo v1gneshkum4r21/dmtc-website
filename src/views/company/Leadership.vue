@@ -1,15 +1,13 @@
 <template>
   <div class="page-container">
     <!-- Hero Section -->
-    <div class="premium-hero leadership-gradient">
+    <div class="premium-hero leadership-gradient" v-if="pageConfig">
       <div class="hero-content">
         <div class="badge-wrapper">
-          <span class="hero-badge">OUR LEADERSHIP</span>
+          <span class="hero-badge">{{ pageConfig.hero_badge }}</span>
         </div>
-        <h1 class="hero-title">The Team Building <span class="text-gradient">Tomorrow</span></h1>
-        <p class="hero-subtitle">
-          Our founding team combines decades of experience from leading AI research labs, enterprise software companies, and Fortune 500 digital transformations.
-        </p>
+        <h1 class="hero-title" v-html="formatGradientTitle(pageConfig.hero_title)"></h1>
+        <p class="hero-subtitle">{{ pageConfig.hero_subtitle }}</p>
       </div>
     </div>
 
@@ -54,11 +52,15 @@
               <p class="member-bio">{{ member.bio }}</p>
               
               <div class="member-footer">
-                <a :href="'https://linkedin.com/in/' + member.initials" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
-                </a>
-                <a :href="'https://twitter.com/' + member.initials" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Twitter">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                <a 
+                  v-for="link in member.socials" 
+                  :key="link.url"
+                  :href="link.url" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  class="social-link" 
+                  v-html="getSocialIcon(link.url)"
+                >
                 </a>
               </div>
             </div>
@@ -120,39 +122,39 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { pagesAPI } from '@/services/api'
 
-const team = [
-  {
-    name: 'Dr. Amara Singh',
-    role: 'Chief Executive Officer & Co-Founder',
-    initials: 'AS',
-    bio: 'Former Director of AI Strategy at Microsoft Azure. PhD in Computer Science from Stanford. Led enterprise AI deployments serving 50M+ users.',
-    accent: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=300&h=300'
-  },
-  {
-    name: 'James Chen',
-    role: 'Chief Technology Officer & Co-Founder',
-    initials: 'JC',
-    bio: 'Ex-Principal Engineer at Google DeepMind. Pioneered multi-agent reinforcement learning systems. 15+ publications in top AI conferences.',
-    accent: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=300&h=300'
-  },
-  {
-    name: 'Sarah Okonkwo',
-    role: 'VP of Product & Design',
-    initials: 'SO',
-    bio: 'Previously led Product at Anthropic. Expert in human-AI interaction and enterprise UX. Built products used by 500+ Fortune 1000 companies.',
-    accent: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=300&h=300'
+const team = ref([])
+const advisors = ref([])
+
+const pageConfig = ref({
+  hero_badge: 'OUR LEADERSHIP',
+  hero_title: 'The Team Building Tomorrow',
+  hero_subtitle: 'Our founding team combines decades of experience from leading AI research labs, enterprise software companies, and Fortune 500 digital transformations.'
+})
+
+const getSocialIcon = (url) => {
+  if (!url) return '🔗'
+  const u = url.toLowerCase()
+  if (u.includes('linkedin')) return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>'
+  if (u.includes('twitter') || u.includes('x.com')) return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>'
+  if (u.includes('facebook')) return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96C18.34 21.21 22 17.06 22 12.06C22 6.53 17.5 2.04 12 2.04Z"/></svg>'
+  if (u.includes('instagram')) return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4A3.6,3.6 0 0,0 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6A3.6,3.6 0 0,0 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg>'
+  if (u.includes('whatsapp') || u.includes('wa.me')) return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0012.04 2zM6.07 17.51l-.19-.3a8.163 8.163 0 01-1.25-4.3c0-4.51 3.67-8.19 8.19-8.19 2.19 0 4.24.85 5.79 2.4s2.4 3.61 2.4 5.79c0 4.51-3.67 8.19-8.19 8.19-1.53 0-3.04-.43-4.35-1.24l-.31-.19-3.24.85.86-3.16z"/></svg>'
+  if (u.includes('youtube')) return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M10,15L15.19,12L10,9V15M21.56,7.17C21.67,7.64 21.78,8.11 21.84,8.57C22,9.75 22,12 22,12C22,12 22,14.25 21.84,15.43C21.78,15.89 21.67,16.36 21.56,16.83C21.23,18.06 20.26,19.03 19.03,19.36C17.85,19.7 12,19.7 12,19.7C12,19.7 6.15,19.7 4.97,19.36C3.74,19.03 2.77,18.06 2.44,16.83C2.33,16.36 2.22,15.89 2.16,15.43C2,14.25 2,12 2,12C2,12 2,9.75 2.16,8.57C2.22,8.11 2.33,7.64 2.44,7.17C2.77,5.94 3.74,4.97 4.97,4.64C6.15,4.3 12,4.3 12,4.3C12,4.3 17.85,4.3 19.03,4.64C20.26,4.97 21.23,5.94 21.56,7.17Z"/></svg>'
+  if (u.includes('threads.net')) return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.42 12.56a3.86 3.86 0 0 1-3.66 2.6c-2 0-3.7-1.5-3.7-3.7S9.7 7.7 11.75 7.7c1.47 0 2.5.7 3.03 1.34l1.64-1.35c-.86-1-2.45-2.2-4.67-2.2-3.4 0-6 2.32-6 6s2.5 6.1 6 6.1c1.8 0 3.32-.6 4.38-1.58C17 15 17.65 13.84 17.85 13c3.34 0 4.15-2.52 4.15-2.52s-.76-1-3.56-.84c1-5-1.84-7.4-4.82-7.4a6.6 6.6 0 0 0-6.6 6.6c0 3.5 2.8 6.4 6.4 6.4s6.4-2.8 6.4-6.4V5a1.5 1.5 0 0 0-3 0v3.86A3.86 3.86 0 0 0 15.42 12.56Z"/></svg>'
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" /></svg>'
+}
+
+const formatGradientTitle = (title) => {
+  if (!title) return ''
+  const parts = title.split(' ')
+  if (parts.length > 1) {
+    const last = parts.pop()
+    return `${parts.join(' ')} <span class="text-gradient">${last}</span>`
   }
-]
-
-const advisors = [
-  { name: 'Prof. Geoffrey Hinton', position: 'Turing Award Winner, AI Pioneer' },
-  { name: 'Marc Andreessen', position: 'Co-Founder, Andreessen Horowitz' },
-  { name: 'Dr. Fei-Fei Li', position: 'Professor of CS, Stanford | Co-Director, HAI' }
-]
+  return title
+}
 
 const teamGrid = ref(null)
 const advisoryGrid = ref(null)
@@ -183,8 +185,18 @@ const scrollAdvisoryCarousel = (direction) => {
   advisoryGrid.value.scrollBy({ left: scrollLeft, behavior: 'smooth' })
 }
 
-onMounted(() => {
+onMounted(async () => {
   window.scrollTo(0, 0)
+  try {
+    const config = await pagesAPI.getConfig('leadership')
+    if (config) {
+      pageConfig.value = config
+      if (config.team) team.value = config.team
+      if (config.advisors) advisors.value = config.advisors
+    }
+  } catch (err) {
+    console.error('Failed to load leadership page context:', err)
+  }
 })
 </script>
 
@@ -330,8 +342,9 @@ onMounted(() => {
 }
 
 .team-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 2.5rem;
   margin-top: 3rem;
 }
@@ -349,6 +362,8 @@ onMounted(() => {
   transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   border: 1px solid var(--glass-border);
+  flex: 1 1 350px;
+  max-width: 400px;
 }
 
 .member-card::before {
@@ -542,8 +557,9 @@ onMounted(() => {
 }
 
 .advisory-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 2rem;
   margin-top: 3rem;
 }
@@ -555,6 +571,8 @@ onMounted(() => {
   border: 1px solid var(--grid-color);
   text-align: center;
   transition: all 0.3s ease;
+  flex: 1 1 300px;
+  max-width: 380px;
 }
 
 .advisor-item:hover {
@@ -670,8 +688,7 @@ onMounted(() => {
 
 /* Responsiveness */
 @media (max-width: 1024px) {
-  .team-grid { grid-template-columns: repeat(2, 1fr); }
-  .advisory-grid { grid-template-columns: repeat(2, 1fr); }
+  .advisory-grid { justify-content: center; }
   .hero-title { font-size: 3.5rem; }
   .cta-card { padding: 4rem 2rem; }
   .cta-card h2 { font-size: 2.5rem; }

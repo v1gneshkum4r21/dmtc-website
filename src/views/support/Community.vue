@@ -1,21 +1,24 @@
 <template>
   <div class="page-container">
     <!-- Hero Section -->
-    <div class="page-hero community-hero">
+    <div class="premium-hero community-gradient">
       <div class="hero-content">
-        <div class="hero-badge">OUR COMMUNITY</div>
-        <h1 class="page-title">Join the <span class="text-gradient">Agentic AI</span> Community</h1>
-        <p class="page-description">
-          Connect with 50,000+ developers, researchers, and AI practitioners building the future of enterprise automation. Share knowledge, collaborate on projects, and get support from both our team and the community.
+        <div class="badge-wrapper">
+          <span class="hero-badge">OUR COMMUNITY</span>
+        </div>
+        <h1 class="hero-title">Join the <span class="text-gradient">Agentic AI</span> Community</h1>
+        <p class="hero-subtitle">
+          Connect with 50,000+ developers and researchers building the future of enterprise automation.
         </p>
         <div class="stats-row">
           <div class="stat-bubble">
-            <strong>50k+</strong>
-            <span>Active Developers</span>
+            <span class="stat-value">50k+</span>
+            <span class="stat-label">Active Developers</span>
           </div>
+          <div class="stat-separator"></div>
           <div class="stat-bubble">
-            <strong>200+</strong>
-            <span>Enterprise Deployments</span>
+            <span class="stat-value">200+</span>
+            <span class="stat-label">Enterprise Nodes</span>
           </div>
         </div>
       </div>
@@ -24,31 +27,20 @@
     <!-- Channels Section -->
     <section class="channels-section">
       <div class="section-container">
-        <div class="section-header">
-          <span class="section-tag">CHANNELS</span>
-          <h2>Where We <span class="text-gradient">Connect</span></h2>
+        <div class="section-header centered">
+          <div class="detail-badge">CHANNELS</div>
+          <h2 class="section-title">Where We <span class="text-gradient">Connect</span></h2>
         </div>
-        <div class="channels-carousel-wrapper">
-          <button class="carousel-nav prev" @click="scrollChannels('left')" aria-label="Previous">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M15 18l-6-6 6-6"/>
-            </svg>
-          </button>
-
-          <div class="channels-grid" ref="channelsGrid">
-            <div v-for="channel in channels" :key="channel.name" class="channel-card">
+        <div class="channels-grid" @mousemove="handleMouseMove" ref="channelsGrid">
+          <div v-for="channel in channels" :key="channel.name" class="channel-card glass-card">
+            <div class="card-glow"></div>
+            <div class="channel-content">
               <div class="channel-icon" v-html="channel.icon"></div>
               <h3>{{ channel.name }}</h3>
               <p>{{ channel.desc }}</p>
-              <button class="secondary-btn">{{ channel.action }}</button>
+              <button class="secondary-btn luxe">{{ channel.action }}</button>
             </div>
           </div>
-
-          <button class="carousel-nav next" @click="scrollChannels('right')" aria-label="Next">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 18l6-6-6-6"/>
-            </svg>
-          </button>
         </div>
       </div>
     </section>
@@ -56,47 +48,37 @@
     <!-- Events Section -->
     <section class="events-section">
       <div class="section-container">
-        <div class="events-text">
-          <span class="section-tag">EVENTS</span>
-          <h2>Global <span class="text-gradient">Meetups</span></h2>
-          <p>From technical webinars to in-person orchestration hackathons, we are building a global network of agentic experts.</p>
-        </div>
-        
-        <div class="events-list-carousel-wrapper">
-          <button class="carousel-nav prev" @click="scrollEvents('left')" aria-label="Previous">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M15 18l-6-6 6-6"/>
-            </svg>
-          </button>
-
-          <div class="events-list" ref="eventsList">
-             <div v-for="event in events" :key="event.title" class="event-item">
-               <span class="event-date">{{ event.date }}</span>
+        <div class="events-box">
+          <div class="events-text">
+            <div class="detail-badge">EVENTS</div>
+            <h2 class="section-title">Global <span class="text-gradient">Meetups</span></h2>
+            <p>From technical webinars to in-person orchestration hackathons, we are building a global network of agentic experts.</p>
+          </div>
+          
+          <div class="events-list">
+             <div v-for="event in events" :key="event.title" class="event-item glass-card mini">
+               <div class="event-date-box">
+                 <span class="event-date">{{ event.date }}</span>
+               </div>
                <div class="event-info">
                  <h4>{{ event.title }}</h4>
-                 <span>{{ event.location }}</span>
+                 <span class="event-loc">{{ event.location }}</span>
                </div>
              </div>
           </div>
-
-          <button class="carousel-nav next" @click="scrollEvents('right')" aria-label="Next">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 18l6-6-6-6"/>
-            </svg>
-          </button>
         </div>
       </div>
     </section>
 
     <!-- Final CTA -->
     <section class="page-cta">
-      <div class="cta-card">
-        <div class="cta-content">
-          <h2>Ready to join the <span class="text-gradient">Swarm</span>?</h2>
-          <div class="cta-buttons">
-            <button class="primary-btn">
-              Join Discord
-              <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <div class="cta-luxe-card blue-aura">
+        <div class="cta-luxe-content">
+          <h2 class="cta-luxe-title">Ready to join the <span class="text-gradient">Swarm</span>?</h2>
+          <div class="cta-luxe-buttons">
+            <button class="btn-luxe-primary">
+              <span>Join Discord</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
             </button>
@@ -138,20 +120,17 @@ const events = [
 ]
 
 const channelsGrid = ref(null)
-const eventsList = ref(null)
 
-const scrollChannels = (direction) => {
+const handleMouseMove = (e) => {
   if (!channelsGrid.value) return
-  const scrollAmount = 350
-  const scrollLeft = direction === 'left' ? -scrollAmount : scrollAmount
-  channelsGrid.value.scrollBy({ left: scrollLeft, behavior: 'smooth' })
-}
-
-const scrollEvents = (direction) => {
-  if (!eventsList.value) return
-  const scrollAmount = 350
-  const scrollLeft = direction === 'left' ? -scrollAmount : scrollAmount
-  eventsList.value.scrollBy({ left: scrollLeft, behavior: 'smooth' })
+  const cards = channelsGrid.value.querySelectorAll('.channel-card')
+  cards.forEach(card => {
+    const rect = card.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 100
+    const y = ((e.clientY - rect.top) / rect.height) * 100
+    card.style.setProperty('--mouse-x', `${x}%`)
+    card.style.setProperty('--mouse-y', `${y}%`)
+  })
 }
 
 onMounted(() => {
@@ -160,21 +139,16 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container {
-  width: 100%;
-  min-height: 100vh;
-  background: var(--bg-primary);
-}
-
-.page-hero {
+/* Premium Hero */
+.premium-hero {
+  position: relative;
   padding: 12rem 5% 8rem;
   text-align: center;
-  position: relative;
   overflow: hidden;
   background: var(--bg-secondary);
 }
 
-.community-hero::before {
+.community-gradient::before {
   content: '';
   position: absolute;
   top: -50%;
@@ -183,15 +157,17 @@ onMounted(() => {
   height: 200%;
   background: radial-gradient(circle at center, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
   z-index: 0;
+  pointer-events: none;
 }
 
 .hero-content {
   position: relative;
-  z-index: 1;
-  max-width: 900px;
+  z-index: 10;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
+.badge-wrapper { margin-bottom: 2rem; }
 .hero-badge {
   display: inline-block;
   padding: 0.5rem 1.25rem;
@@ -202,50 +178,14 @@ onMounted(() => {
   font-weight: 800;
   letter-spacing: 0.15em;
   color: #3b82f6;
-  margin-bottom: 2rem;
 }
 
-.page-title {
-  font-size: 5.5rem;
+.hero-title {
+  font-size: clamp(3rem, 6vw, 5.5rem);
   font-weight: 900;
   letter-spacing: -0.04em;
-  margin-bottom: 1.5rem;
-  background: linear-gradient(135deg, var(--text-primary) 0%, #3b82f6 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.page-description {
-  font-size: 1.25rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  max-width: 750px;
-  margin: 0 auto 3rem;
-}
-
-.stats-row {
-  display: flex;
-  justify-content: center;
-  gap: 4rem;
-}
-
-.stat-bubble {
-  display: flex;
-  flex-direction: column;
-}
-
-.stat-bubble strong {
-  font-size: 2.5rem;
-  font-weight: 900;
-  color: var(--text-primary);
-}
-
-.stat-bubble span {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  line-height: 1;
+  margin-bottom: 2rem;
 }
 
 .text-gradient {
@@ -255,98 +195,125 @@ onMounted(() => {
   -webkit-text-fill-color: transparent;
 }
 
-.section-container {
-  max-width: 1200px;
-  margin: 0 auto;
+.hero-subtitle {
+  font-size: 1.4rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto 4rem;
 }
 
-.section-tag {
+.stats-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+}
+
+.stat-bubble { display: flex; flex-direction: column; }
+.stat-value { font-size: 3rem; font-weight: 900; color: white; line-height: 1; }
+.stat-label { font-size: 0.8rem; font-weight: 700; color: #3b82f6; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.5rem; }
+.stat-separator { width: 1px; height: 50px; background: rgba(255,255,255,0.1); }
+
+/* Channels Section */
+.channels-section { padding: 8rem 5%; }
+.centered { text-align: center; margin-bottom: 6rem; }
+.detail-badge {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  background: rgba(59, 130, 246, 0.1);
   color: #3b82f6;
-  font-weight: 800;
-  font-size: 0.85rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  display: block;
-  margin-bottom: 1.5rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  margin-bottom: 2rem;
 }
 
-/* Channels */
-.channels-section {
-  padding: 8rem 5%;
-}
-
-.section-header {
-  text-align: center;
-  margin-bottom: 5rem;
-}
-
-.section-header h2 {
-  font-size: 3.5rem;
-  font-weight: 850;
-}
+.section-title { font-size: 3.5rem; font-weight: 850; }
 
 .channels-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 2.5rem;
 }
 
-.channel-card {
-  padding: 3rem;
-  background: var(--bg-secondary);
+.glass-card {
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: blur(40px);
+  border: 1px solid var(--glass-border);
   border-radius: 32px;
-  border: 1px solid var(--grid-color);
-  transition: all 0.4s ease;
+  overflow: hidden;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.channel-card {
+  padding: 4rem 3rem;
+  flex: 1 1 350px;
+  max-width: 400px;
   text-align: center;
 }
 
-.channel-card:hover {
-  transform: translateY(-8px);
-  border-color: #3b82f6;
+.channel-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 32px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.5), transparent);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.2;
 }
 
+.channel-card:hover {
+  transform: translateY(-10px);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.card-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(59, 130, 246, 0.15) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.channel-card:hover .card-glow { opacity: 1; }
+
 .channel-icon {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   color: #3b82f6;
   margin: 0 auto 2.5rem;
 }
 
-.channel-card h3 {
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin-bottom: 1rem;
-}
+.channel-card h3 { font-size: 1.75rem; font-weight: 850; margin-bottom: 1.25rem; }
+.channel-card p { color: var(--text-secondary); line-height: 1.6; margin-bottom: 3rem; }
 
-.channel-card p {
-  color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 2.5rem;
-}
-
-.secondary-btn {
-  padding: 0.8rem 2rem;
-  background: var(--bg-primary);
-  border: 1px solid var(--grid-color);
+.secondary-btn.luxe {
+  padding: 0.9rem 2.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(59, 130, 246, 0.2);
   border-radius: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  color: var(--text-primary);
-  transition: all 0.3s ease;
-}
-
-.secondary-btn:hover {
-  border-color: #3b82f6;
-  background: #3b82f6;
+  font-weight: 800;
   color: white;
+  transition: 0.3s;
 }
 
-/* Events Box */
-.events-section {
-  padding: 8rem 5%;
-  background: var(--bg-secondary);
+.secondary-btn.luxe:hover {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
 }
 
+/* Events Section */
+.events-section { padding: 10rem 5%; background: rgba(0,0,0,0.2); }
 .events-box {
   display: grid;
   grid-template-columns: 1fr 1.5fr;
@@ -354,211 +321,103 @@ onMounted(() => {
   align-items: center;
 }
 
-.events-text h2 {
-  font-size: 3.5rem;
-  font-weight: 850;
-  margin-bottom: 2rem;
-}
+.events-text p { font-size: 1.25rem; color: var(--text-secondary); line-height: 1.7; margin-top: 1.5rem; }
 
-.events-text p {
-  font-size: 1.2rem;
-  color: var(--text-secondary);
-  line-height: 1.7;
-}
-
-.events-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
+.events-list { display: grid; gap: 1.5rem; }
 .event-item {
-  padding: 2.5rem 3rem;
-  background: var(--bg-primary);
-  border-radius: 24px;
-  border: 1px solid var(--grid-color);
   display: flex;
   align-items: center;
   gap: 3rem;
-}
-
-.event-date {
-  font-size: 1.1rem;
-  font-weight: 900;
-  color: #3b82f6;
-  min-width: 120px;
-}
-
-.event-info h4 {
-  font-size: 1.25rem;
-  font-weight: 800;
-  margin-bottom: 0.2rem;
-}
-
-.event-info span {
-  color: var(--text-secondary);
-  font-size: 0.95rem;
-}
-
-/* CTA Section */
-.page-cta {
-  padding: 8rem 5% 10rem;
-}
-
-.cta-card {
-  max-width: 1000px;
-  margin: 0 auto;
-  background: var(--bg-secondary);
-  border-radius: 48px;
-  padding: 6rem 4rem;
-  text-align: center;
-  border: 1px solid var(--grid-color);
-  box-shadow: var(--shadow-md);
-}
-
-.cta-card h2 {
-  font-size: 3.5rem;
-  color: var(--text-primary);
-  font-weight: 850;
-  margin-bottom: 3rem;
-}
-
-.primary-btn {
-  padding: 1.1rem 2.5rem;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: white;
-  border: none;
-  border-radius: 14px;
-  font-size: 1.05rem;
-  font-weight: 700;
+  padding: 2.5rem 3rem;
   cursor: pointer;
-  transition: all 0.4s ease;
-  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+}
+
+.event-date-box { min-width: 140px; }
+.event-date { font-size: 1.2rem; font-weight: 900; color: #3b82f6; }
+
+.event-info h4 { font-size: 1.5rem; font-weight: 850; margin-bottom: 0.5rem; }
+.event-loc { color: var(--text-secondary); font-size: 1rem; opacity: 0.7; }
+
+/* Luxe Aura CTA System */
+.page-cta { padding: 12rem 5%; }
+
+.cta-luxe-card {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  padding: 8rem 4rem;
+  border-radius: 40px;
+  overflow: hidden;
+  text-align: center;
+  background: #050505;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.5);
+}
+
+.blue-aura::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 120%, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+  z-index: 0;
+}
+
+.cta-luxe-content {
+  position: relative;
+  z-index: 10;
+}
+
+.cta-luxe-title {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  margin-bottom: 4rem;
+  line-height: 1;
+}
+
+.btn-luxe-primary {
+  position: relative;
+  padding: 1.25rem 3.5rem;
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 100px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 1rem;
+  transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.btn-luxe-primary svg {
+  width: 20px;
+  transition: transform 0.4s ease;
+}
+
+.btn-luxe-primary:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(255, 255, 255, 0.2);
+}
+
+.btn-luxe-primary:hover svg {
+  transform: translateX(5px);
 }
 
 @media (max-width: 1024px) {
-  .channels-grid { grid-template-columns: 1fr; }
-  .events-box { grid-template-columns: 1fr; }
-  .event-item { flex-direction: column; align-items: flex-start; gap: 1rem; }
-  .page-title { font-size: 3.5rem; }
+  .events-box { grid-template-columns: 1fr; gap: 4rem; }
+  .channel-card { flex: 1 1 100%; }
 }
 
 @media (max-width: 768px) {
-  .section-header h2 {
-    font-size: 2.5rem;
-  }
-
-  /* Channels Carousel for Mobile */
-  .channels-carousel-wrapper {
-    position: relative;
-    width: 100%;
-  }
-
-  .carousel-nav {
-    display: flex;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 48px;
-    height: 48px;
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    border-radius: 50%;
-    z-index: 10;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-
-  .carousel-nav.prev { left: -10px; }
-  .carousel-nav.next { right: -10px; }
-
-  .carousel-nav svg {
-    width: 20px;
-    height: 20px;
-    color: var(--text-primary);
-  }
-
-  .channels-grid {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    gap: 1.5rem;
-    padding: 0 1rem;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    grid-template-columns: none;
-  }
-
-  .channels-grid::-webkit-scrollbar { display: none; }
-
-  .channel-card {
-    flex: 0 0 85%;
-    scroll-snap-align: center;
-    padding: 2.5rem 2rem;
-    border-radius: 32px;
-    height: auto;
-  }
-
-  .events-text h2 {
-    font-size: 2rem;
-  }
-
-  .events-text p {
-    font-size: 1rem;
-  }
-
-  .stats-row {
-    flex-direction: column;
-    gap: 2rem;
-  }
-
-  /* Events Carousel for Mobile */
-  .events-list-carousel-wrapper {
-    position: relative;
-    width: 100%;
-  }
-
-  .events-list-carousel-wrapper .carousel-nav {
-    display: flex;
-  }
-
-  .events-list {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    gap: 1.5rem;
-    padding: 0 1rem;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    flex-direction: row;
-  }
-
-  .events-list::-webkit-scrollbar { display: none; }
-
-  .event-item {
-    flex: 0 0 85%;
-    scroll-snap-align: center;
-    padding: 2rem;
-    border-radius: 24px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
-  .event-date {
-    min-width: auto;
-    font-size: 1rem;
-  }
-
-  .event-info h4 {
-    font-size: 1.15rem;
-  }
+  .stats-row { flex-direction: column; gap: 2rem; }
+  .stat-separator { display: none; }
+  .event-item { flex-direction: column; align-items: flex-start; gap: 1rem; padding: 2rem; }
+  .event-date-box { min-width: auto; }
+  .cta-luxe-card { padding: 5rem 2rem; border-radius: 30px; }
+  .cta-luxe-title { font-size: 2.5rem; }
+  .btn-luxe-primary { width: 100%; justify-content: center; }
 }
 </style>

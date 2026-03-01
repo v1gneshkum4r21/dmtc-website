@@ -3,14 +3,12 @@
     <!-- Hero Section -->
     <section class="premium-hero">
 
-      <div class="hero-content">
+      <div class="hero-content" v-if="pageConfig">
         <div class="badge-wrapper">
-          <span class="hero-badge">AI FOR WORK</span>
+          <span class="hero-badge">{{ pageConfig.hero_badge }}</span>
         </div>
-        <h1 class="hero-title">Beyond Automation: Orchestrating the <span class="text-gradient">Agentic Frontier</span></h1>
-        <p class="hero-subtitle">
-          Transform your enterprise into a living neural ecosystem. Eliminate data silos, automate complex reasoning, and deploy autonomous agent swarms that think, learn, and scale with your mission.
-        </p>
+        <h1 class="hero-title" v-html="formatGradientTitle(pageConfig.hero_title)"></h1>
+        <p class="hero-subtitle">{{ pageConfig.hero_subtitle }}</p>
         <div class="hero-actions">
           <button class="primary-btn" @click="scrollToSolutions">
             Explore Solutions
@@ -60,6 +58,7 @@
               :style="{ 
                 '--card-accent': solution.accent 
               }"
+              @click="handleSolutionContact(solution)"
             >
               <div class="card-glow"></div>
               <div class="sol-header">
@@ -100,44 +99,23 @@
           <p>Read our latest research and case studies on the impact of agentic AI in the modern enterprise.</p>
         </div>
 
-        <div class="insights-grid">
-          <div v-for="insight in insights" :key="insight._id" class="insight-card" @click="openInsight(insight)">
-            <div class="insight-image">
-              <img v-if="insight.imageUrl" :src="insight.imageUrl" :alt="insight.title" class="card-img" />
-              <div v-else class="placeholder-img"></div>
-            </div>
-            <div class="insight-body">
-              <div class="insight-meta">Published: {{ formatDate(insight.createdAt) }}</div>
-              <h3>{{ insight.title }}</h3>
-              <p>{{ insight.excerpt }}</p>
-              <button class="read-btn">Read Article</button>
-            </div>
-          </div>
+        <InsightsCarousel 
+          v-if="!insightsLoading && insights.length > 0" 
+          :insights="insights" 
+          @open-insight="openInsight" 
+        />
+        <div v-else-if="insightsLoading" class="loading-insights">
+          <div class="spinner"></div>
+          <p>Loading Research...</p>
         </div>
       </div>
 
       <!-- Insight Reader Modal -->
-      <Transition name="fade-in">
-        <div v-if="selectedInsight" class="insight-modal-overlay" @click.self="closeInsight">
-          <div class="insight-modal-content">
-            <button class="close-modal-btn" @click="closeInsight">×</button>
-            
-            <div class="modal-header">
-              <div class="modal-meta">Published: {{ formatDate(selectedInsight.createdAt) }}</div>
-              <h2 class="modal-title">{{ selectedInsight.title }}</h2>
-              <div class="modal-author">By {{ selectedInsight.author || 'DREAMATIC Team' }}</div>
-            </div>
-
-            <div class="modal-image" v-if="selectedInsight.imageUrl">
-              <img :src="selectedInsight.imageUrl" :alt="selectedInsight.title" />
-            </div>
-
-            <div class="modal-body">
-              <div class="insight-full-content" v-html="formatContent(selectedInsight.content)"></div>
-            </div>
-          </div>
-        </div>
-      </Transition>
+      <InsightModal 
+        :is-open="!!selectedInsight" 
+        :insight="selectedInsight" 
+        @close="closeInsight" 
+      />
     </section>
 
     <!-- Final CTA -->
@@ -148,8 +126,16 @@
           <h2>Ready to initialize the <span class="text-gradient">Agentic Revolution</span>?</h2>
           <p>Join the world's leading enterprises building the next generation of intelligent work on the DREAMATIC Neural Platform.</p>
           <div class="cta-actions">
-            <button class="primary-btn">Start Full Platform Trial</button>
-            <button class="secondary-btn">Schedule Vision Demo</button>
+            <button class="primary-btn" @click="openDemoModal('trial', { 
+              title: 'Initialize your Workforce Trial', 
+              subtitle: 'Join the world\'s leading enterprises building the next generation of intelligent work.',
+              message: 'I would like to start a full platform trial for DREAMATIC Neural Platform to enhance our workforce efficiency.'
+            })">Start Full Platform Trial</button>
+            <button class="secondary-btn" @click="openDemoModal('demo', {
+              title: 'Schedule a Vision Demo',
+              subtitle: 'See how agentic AI can revolutionize your specific industry workflows.',
+              message: 'I want to schedule a vision demo to see the DREAMATIC platform in action for our enterprise.'
+            })">Schedule Vision Demo</button>
           </div>
         </div>
       </div>
@@ -158,8 +144,21 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { insightsAPI } from '@/services/api'
+import { ref, computed, onMounted, inject } from 'vue'
+import { insightsAPI, pagesAPI } from '@/services/api'
+import InsightsCarousel from '@/components/InsightsCarousel.vue'
+import InsightModal from '@/components/InsightModal.vue'
+
+const openSolutionModal = inject('openSolutionModal')
+const openDemoModal = inject('openDemoModal')
+
+const handleSolutionContact = (solution) => {
+  openSolutionModal({
+    title: solution.title,
+    message: `I am interested in exploring the "${solution.title}" solution for my business. I'd like to understand how your agentic systems can be tailored to our logic.`,
+    accent: solution.accent ? String(solution.accent).match(/#(?:[0-9a-fA-F]{3}){1,2}|rgb\(\d+,\s*\d+,\s*\d+\)|rgba\(\d+,\s*\d+,\s*\d+,\s*[\d.]+\)|linear-gradient\([^)]+\)/)?.[0] || 'var(--accent-primary)' : 'var(--accent-primary)'
+  })
+}
 
 const ecosystem = [
   { name: 'Microsoft Azure', color: '#0089D6', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.379 23.343a1.62 1.62 0 0 0 1.536-2.14v.002L17.35 1.76A1.62 1.62 0 0 0 15.816.657H8.184A1.62 1.62 0 0 0 6.65 1.76L.086 21.204a1.62 1.62 0 0 0 1.536 2.139h4.741a1.62 1.62 0 0 0 1.535-1.103l.977-2.892 4.947 3.675c.28.208.618.32.966.32m-3.084-12.531 3.624 10.739a.54.54 0 0 1-.51.713v-.001h-.03a.54.54 0 0 1-.322-.106l-9.287-6.9h4.853m6.313 7.006c.116-.326.13-.694.007-1.058L9.79 1.76a1.722 1.722 0 0 0-.007-.02h6.034a.54.54 0 0 1 .512.366l6.562 19.445a.54.54 0 0 1-.338.684"/></svg>' },
@@ -210,80 +209,24 @@ const scrollToSolutions = () => {
 
 
 
-const solutions = [
-  { 
-    id: 1, 
-    title: 'Conversational AI', 
-    subtitle: 'Custom Chatbots',
-    description: 'Build intelligent conversational interfaces that understand context, intent, and sentiment to deliver human-like interactions at scale.',
-    features: ['Natural language understanding', 'Multi-turn conversations', 'Sentiment analysis'],
-    accent: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`
-  },
-  { 
-    id: 2, 
-    title: 'Agentic AI', 
-    subtitle: 'Autonomous Systems',
-    description: 'Deploy self-directed AI agents that can plan, execute, and adapt to achieve complex goals without constant human oversight.',
-    features: ['Goal-oriented planning', 'Self-correction', 'Tool integration'],
-    accent: 'linear-gradient(135deg, #8b5cf6 0% , #ec4899 100%)',
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="3"/></svg>`
-  },
-  { 
-    id: 3, 
-    title: 'Generative AI', 
-    subtitle: 'Content Creation',
-    description: 'Generate high-quality text, code, and creative content using state-of-the-art language models fine-tuned for your domain.',
-    features: ['Text generation', 'Code synthesis', 'Creative writing'],
-    accent: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)',
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
-  },
-  { 
-    id: 4, 
-    title: 'Image & Video AI', 
-    subtitle: 'Visual Models',
-    description: 'Process, analyze, and generate visual content with advanced computer vision and generative models for images and video.',
-    features: ['Object detection', 'Image generation', 'Video analysis'],
-    accent: 'linear-gradient(135deg, #f43f5e 0%, #fb923c 100%)',
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`
-  },
-  { 
-    id: 5, 
-    title: 'Predictive Analytics', 
-    subtitle: 'Forecasting',
-    description: 'Leverage machine learning to forecast trends, predict outcomes, and make data-driven decisions with confidence intervals.',
-    features: ['Time-series forecasting', 'Anomaly detection', 'Risk assessment'],
-    accent: 'linear-gradient(135deg, #f59e0b 0%, #eab308 100%)',
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`
-  },
-  { 
-    id: 6, 
-    title: 'Recommendation', 
-    subtitle: 'Personalization',
-    description: 'Deliver personalized experiences with recommendation engines that learn user preferences and adapt in real-time.',
-    features: ['Collaborative filtering', 'Content-based matching', 'Real-time personalization'],
-    accent: 'linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%)',
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`
-  },
-  { 
-    id: 7, 
-    title: 'Knowledge Graphs', 
-    subtitle: 'RAG Systems',
-    description: 'Build retrieval-augmented generation systems that combine structured knowledge graphs with LLMs for accurate, grounded responses.',
-    features: ['Semantic search', 'Entity extraction', 'Context retrieval'],
-    accent: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/></svg>`
-  },
-  { 
-    id: 8, 
-    title: 'AI Automation', 
-    subtitle: 'Workflow Intelligence',
-    description: 'Automate complex business processes with intelligent workflows that adapt to changing conditions and optimize for efficiency.',
-    features: ['Process mining', 'Smart routing', 'Adaptive optimization'],
-    accent: 'linear-gradient(135deg, #a855f7 0%, #6366f1 100%)',
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`
+const solutions = ref([])
+
+// Dynamic Page Config
+const pageConfig = ref({
+  hero_badge: 'AI FOR WORK',
+  hero_title: 'Beyond Automation: Orchestrating the Agentic Frontier',
+  hero_subtitle: 'Transform your enterprise into a living neural ecosystem. Eliminate data silos, automate complex reasoning, and deploy autonomous agent swarms that think, learn, and scale with your mission.'
+})
+
+const formatGradientTitle = (title) => {
+  if (!title) return ''
+  // Basic heuristic: wrap the last few words or after a colon
+  const parts = title.split(':')
+  if (parts.length > 1) {
+    return `${parts[0]}: <span class="text-gradient">${parts[1]}</span>`
   }
-]
+  return title.replace(/Agentic Frontier|Every Task|workforce|Agentic Revolution/g, (m) => `<span class="text-gradient">${m}</span>`)
+}
 
 // Insights - now loaded from API
 const insights = ref([])
@@ -307,14 +250,19 @@ const formatContent = (content) => {
   return content.split('\n\n').map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('')
 }
 
-// Load insights from API on component mount
+// Load context from API on component mount
 onMounted(async () => {
   insightsLoading.value = true
   try {
+    const config = await pagesAPI.getConfig('ai-work')
+    if (config) {
+      pageConfig.value = config
+      if (config.solutions) solutions.value = config.solutions
+    }
+    
     insights.value = await insightsAPI.getAll('ai-work')
   } catch (error) {
-    console.error('Failed to load insights:', error)
-    insights.value = []
+    console.error('Failed to load page context:', error)
   } finally {
     insightsLoading.value = false
   }
@@ -818,6 +766,7 @@ const formatDate = (dateStr) => {
   transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   border: 1px solid var(--glass-border);
+  cursor: pointer;
 }
 
 /* Holographic Border Effect */
@@ -938,6 +887,7 @@ const formatDate = (dateStr) => {
   margin-top: auto;
   opacity: 0.8;
   transition: opacity 0.3s ease;
+  cursor: pointer;
 }
 
 .solution-card:hover .sol-footer {
@@ -959,21 +909,6 @@ const formatDate = (dateStr) => {
 /* Insights Section */
 .insights-section {
   padding: 0 5% 10rem;
-}
-
-.insights-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2.5rem;
-}
-
-.insight-card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 24px;
-  overflow: hidden;
-  transition: all 0.4s;
-  cursor: pointer;
 }
 
 .insight-card:hover {
@@ -1039,110 +974,7 @@ const formatDate = (dateStr) => {
 }
 
 /* Modal Styles */
-.insight-modal-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  padding: 2rem;
-}
-
-.insight-modal-content {
-  background: var(--bg-primary);
-  border: 1px solid var(--glass-border);
-  border-radius: 32px;
-  max-width: 900px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-  padding: 4rem;
-  scrollbar-width: thin;
-}
-
-.close-modal-btn {
-  position: absolute;
-  top: 2rem;
-  right: 2rem;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  font-size: 1.5rem;
-  color: var(--text-primary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s;
-}
-
-.close-modal-btn:hover {
-  background: var(--accent-primary);
-  color: white;
-}
-
-.modal-header {
-  margin-bottom: 3rem;
-  text-align: center;
-}
-
-.modal-meta {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  margin-bottom: 1rem;
-}
-
-.modal-title {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  line-height: 1.1;
-  font-weight: 850;
-}
-
-.modal-author {
-  color: var(--accent-primary);
-  font-weight: 600;
-}
-
-.modal-image {
-  width: 100%;
-  border-radius: 20px;
-  overflow: hidden;
-  margin-bottom: 3rem;
-  aspect-ratio: 16/9;
-}
-
-.modal-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.modal-body {
-  color: var(--text-secondary);
-  line-height: 1.8;
-  font-size: 1.15rem;
-}
-
-.insight-full-content :deep(p) {
-  margin-bottom: 1.5rem;
-}
-
-@media (max-width: 768px) {
-  .insight-modal-content {
-    padding: 2.5rem;
-    border-radius: 24px;
-  }
-  .modal-title {
-    font-size: 2rem;
-  }
-}
+/* InsightModal styles are now handled in the component */
 
 /* Page CTA */
 .page-cta {

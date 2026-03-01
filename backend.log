@@ -1,0 +1,1856 @@
+nohup: ignoring input
+/home/vk-linux/Desktop/website-scrollable/backend/main.py:94: DeprecationWarning: 
+        on_event is deprecated, use lifespan event handlers instead.
+
+        Read more about it in the
+        [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+        
+  @app.on_event("startup")
+INFO:     Started server process [146432]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+✅ MongoDB connected and initialized
+INFO:     127.0.0.1:48030 - "GET /api/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47370 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46132 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46132 - "GET /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46144 - "GET /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46154 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46170 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46170 - "OPTIONS /api/admin/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46154 - "OPTIONS /api/admin/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46144 - "GET /api/admin/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46144 - "GET /api/admin/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46144 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59168 - "GET /api/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59168 - "OPTIONS /api/admin/insights?page=ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59170 - "GET /api/admin/insights?page=ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59170 - "OPTIONS /api/pages/ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59168 - "GET /api/pages/ai-service HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:37086 - "OPTIONS /api/admin/insights?page=ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37092 - "GET /api/admin/insights?page=ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37092 - "OPTIONS /api/pages/ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37086 - "GET /api/pages/ai-enterprise HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:37086 - "OPTIONS /api/admin/insights?page=superfiitter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37092 - "OPTIONS /api/admin/insights?page=superfiitter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37108 - "GET /api/admin/insights?page=superfiitter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37108 - "GET /api/admin/insights?page=superfiitter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37108 - "GET /api/admin/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37092 - "GET /api/admin/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35756 - "GET /admin HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:35756 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59302 - "GET /api/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59920 - "OPTIONS /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59932 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59932 - "OPTIONS /api/admin/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59920 - "POST /api/admin/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59920 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38076 - "OPTIONS /api/insights?page=superfiitter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38078 - "GET /api/insights?page=superfiitter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38078 - "GET /api/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38078 - "GET /api/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55650 - "OPTIONS /api/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55656 - "GET /api/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55656 - "GET /api/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55656 - "OPTIONS /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55650 - "OPTIONS /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55662 - "OPTIONS /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55674 - "OPTIONS /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55682 - "GET /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55656 - "GET /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55650 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55662 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55662 - "GET /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55650 - "GET /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55656 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55682 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55656 - "GET /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55650 - "GET /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55662 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55682 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33340 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37622 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37622 - "GET /api/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60928 - "GET /api/admin/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60928 - "GET /api/admin/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60928 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56066 - "POST /api/admin/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56066 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56066 - "GET /api/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37576 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49614 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60448 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60450 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60450 - "GET /api/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57394 - "OPTIONS /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57410 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41420 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36984 - "OPTIONS /api/admin/insights?page=ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37000 - "GET /api/admin/insights?page=ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37000 - "OPTIONS /api/admin/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36984 - "GET /api/admin/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36984 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49256 - "OPTIONS /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49264 - "OPTIONS /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49266 - "OPTIONS /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49278 - "OPTIONS /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49256 - "GET /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49264 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49266 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49292 - "GET /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49292 - "GET /api/admin/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49292 - "GET /api/admin/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49292 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50908 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60024 - "GET /api/admin/insights?page=ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60024 - "OPTIONS /api/pages/ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60036 - "GET /api/pages/ai-service HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:33208 - "GET /api/admin/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33208 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46000 - "OPTIONS /api/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46012 - "GET /api/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58896 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58896 - "GET /api/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32854 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32854 - "GET /api/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32854 - "GET /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32856 - "GET /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32858 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32866 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32866 - "GET /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32858 - "GET /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32856 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32854 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32866 - "GET /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32858 - "GET /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32856 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32854 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51860 - "GET /api/pages/ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51860 - "GET /api/insights?page=ai-work HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58476 - "OPTIONS /api/insights?page=ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58484 - "GET /api/insights?page=ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41540 - "GET /api/insights?page=ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36034 - "GET /api/pages/ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36034 - "GET /api/insights?page=ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53174 - "GET /api/pages/ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53174 - "GET /api/insights?page=ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48846 - "OPTIONS /api/admin/insights?page=ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48862 - "OPTIONS /api/admin/insights?page=ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48874 - "GET /api/admin/insights?page=ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48874 - "GET /api/admin/insights?page=ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48874 - "GET /api/pages/ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48884 - "OPTIONS /api/admin/pages/ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48888 - "POST /api/admin/pages/ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48888 - "GET /api/pages/ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48888 - "GET /api/insights?page=ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57638 - "GET /api/pages/ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57638 - "OPTIONS /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53546 - "OPTIONS /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53552 - "OPTIONS /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53558 - "OPTIONS /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53560 - "GET /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57638 - "GET /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53546 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53552 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53552 - "GET /api/admin/insights?page=ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53552 - "GET /api/admin/insights?page=ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53552 - "GET /api/pages/ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53552 - "POST /api/admin/pages/ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53552 - "GET /api/pages/ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53552 - "GET /api/insights?page=ai-service HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57632 - "OPTIONS /api/pages/ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57640 - "GET /api/pages/ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57640 - "OPTIONS /api/insights?page=ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57632 - "GET /api/insights?page=ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57632 - "OPTIONS /api/admin/insights?page=ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57640 - "GET /api/admin/insights?page=ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57640 - "GET /api/pages/ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57640 - "OPTIONS /api/admin/pages/ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40770 - "POST /api/admin/pages/ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40770 - "GET /api/pages/ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40770 - "GET /api/insights?page=ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40770 - "GET /api/pages/ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40770 - "POST /api/admin/pages/ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40770 - "GET /api/pages/ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40770 - "GET /api/insights?page=ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54994 - "OPTIONS /api/insights?page=superfiitter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55008 - "GET /api/insights?page=superfiitter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53066 - "GET /api/insights?page=superfiitter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33314 - "OPTIONS /api/admin/insights?page=superfiitter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33326 - "OPTIONS /api/admin/insights?page=superfiitter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33328 - "GET /api/admin/insights?page=superfiitter HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:33326 - "GET /api/admin/insights?page=superfiitter HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:33326 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33326 - "GET /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33328 - "GET /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33314 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33342 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33342 - "GET /api/admin/insights?page=superfiitter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33342 - "GET /api/admin/insights?page=superfiitter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33342 - "OPTIONS /api/pages/superfiitter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33314 - "GET /api/pages/superfiitter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53158 - "GET /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53170 - "GET /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53180 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53190 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41310 - "OPTIONS /api/admin/insights?page=echo-ai HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41322 - "OPTIONS /api/admin/insights?page=echo-ai HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41326 - "GET /api/admin/insights?page=echo-ai HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41326 - "GET /api/admin/insights?page=echo-ai HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41326 - "OPTIONS /api/pages/echo-ai HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41322 - "GET /api/pages/echo-ai HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44308 - "GET /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44322 - "GET /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44336 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44342 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56944 - "OPTIONS /api/pages/about HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56946 - "GET /api/pages/about HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:43692 - "OPTIONS /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43702 - "OPTIONS /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43692 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43716 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36078 - "GET /api/pages/about HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:57816 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57828 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53464 - "GET /api/pages/about HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:33712 - "OPTIONS /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33716 - "OPTIONS /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33728 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33738 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33712 - "GET /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33750 - "GET /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60552 - "GET /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60560 - "GET /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60564 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60568 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59028 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59034 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36556 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36572 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53648 - "OPTIONS /api/admin/insights?page=ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53652 - "OPTIONS /api/admin/insights?page=ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53656 - "GET /api/admin/insights?page=ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53656 - "GET /api/admin/insights?page=ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53656 - "OPTIONS /api/pages/ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53652 - "GET /api/pages/ai-enterprise HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36548 - "OPTIONS /api/admin/insights?page=superfiitter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36556 - "OPTIONS /api/pages/superfiitter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36548 - "GET /api/pages/superfiitter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36566 - "GET /api/admin/insights?page=superfiitter HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34412 - "OPTIONS /api/admin/insights?page=about HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34418 - "GET /api/pages/about HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:34428 - "GET /api/admin/insights?page=about HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34428 - "OPTIONS /api/admin/insights?page=leadership HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34412 - "OPTIONS /api/pages/leadership HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34428 - "GET /api/pages/leadership HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:34442 - "GET /api/admin/insights?page=leadership HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34442 - "OPTIONS /api/insights?page=hub HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34412 - "GET /api/insights?page=hub HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34412 - "GET /api/pages/about HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:42662 - "GET /api/pages/leadership HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:37432 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37436 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36192 - "GET /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36208 - "GET /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36210 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36224 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36224 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36210 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56756 - "OPTIONS /api/pages/jds HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56772 - "GET /api/pages/jds HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:39420 - "OPTIONS /api/pages/careers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39430 - "GET /api/pages/careers HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:49092 - "GET /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49102 - "GET /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49108 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49112 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49112 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49108 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49108 - "GET /api/pages/careers HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:39658 - "GET /api/pages/about HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:41712 - "GET /api/pages/about HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:41728 - "GET /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41736 - "GET /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41750 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41758 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41758 - "GET /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41750 - "GET /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41736 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41728 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52626 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52638 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48488 - "OPTIONS /api/pages/about HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48496 - "GET /api/pages/about HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:55372 - "GET /api/pages/leadership HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:43138 - "GET /api/pages/about HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:52058 - "GET /api/pages/leadership HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:52066 - "GET /api/pages/about HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:52080 - "GET /api/pages/leadership HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:51926 - "GET /api/pages/careers HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:52270 - "GET /api/pages/careers HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:57148 - "OPTIONS /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57154 - "OPTIONS /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57160 - "OPTIONS /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57164 - "OPTIONS /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57168 - "GET /api/admin/insights HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57148 - "GET /api/admin/showcase HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57154 - "GET /api/admin/jobs?active_only=false&include_archived=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57160 - "GET /api/admin/applications?include_deleted=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60384 - "GET /api/pages/about HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    return page_config_helper(page)
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page["solutions"],
+                 ~~~~^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:58902 - "GET /api/pages/about HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    "updatedAt": page["updatedAt"]
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page.get("solutions", []),
+                 ^^^^^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:60240 - "GET /api/pages/about HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    "updatedAt": page["updatedAt"]
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page.get("solutions", []),
+                 ^^^^^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:60250 - "GET /api/pages/about HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    "updatedAt": page["updatedAt"]
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page.get("solutions", []),
+                 ^^^^^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     127.0.0.1:56790 - "GET /api/pages/about HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/applications.py", line 1138, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/vk-linux/miniconda3/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/main.py", line 178, in get_page_configuration
+    config = await get_page_config(page_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 687, in get_page_config
+    "updatedAt": page["updatedAt"]
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vk-linux/Desktop/website-scrollable/backend/database.py", line 680, in page_config_helper
+    "solutions": page.get("solutions", []),
+                 ^^^^^^^^^^^^^^^^^
+KeyError: 'solutions'
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [146432]

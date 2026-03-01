@@ -21,7 +21,12 @@ from models import (
     JobCreate,
     JobUpdate,
     JobApplication,
-    JobApplicationCreate
+    JobApplicationCreate,
+    Research,
+    ResearchCreate,
+    ResearchUpdate,
+    PageConfig,
+    PageConfigUpdate
 )
 from database import (
     get_all_insights,
@@ -44,7 +49,20 @@ from database import (
     create_job_application,
     get_all_applications,
     update_application_status,
-    delete_application
+    delete_application,
+    restore_application,
+    get_all_research,
+    get_research_by_id,
+    create_research,
+    update_research,
+    delete_research,
+    delete_research,
+    global_search,
+    get_page_config,
+    upsert_page_config,
+    delete_page_config,
+    get_all_custom_pages,
+    init_default_pages
 )
 from auth import (
     verify_password,
@@ -80,7 +98,8 @@ async def startup_event():
     """Initialize default admin user on startup"""
     try:
         await init_default_user()
-        print("✅ MongoDB connected and default user initialized")
+        await init_default_pages()
+        print("✅ MongoDB connected and initialized")
     except Exception as e:
         print(f"⚠️  MongoDB not available: {e}")
         print("⚠️  Backend will run in limited mode (frontend-only features will work)")
@@ -121,7 +140,6 @@ async def get_jobs():
     jobs = await get_all_jobs(active_only=True)
     return jobs
 
-
 @app.get("/api/jobs/{job_id}", response_model=Job)
 async def get_job(job_id: str):
     """Get a single job by ID (public endpoint)"""
@@ -131,14 +149,48 @@ async def get_job(job_id: str):
     return job
 
 
+# Research public endpoints
+@app.get("/api/research", response_model=List[Research])
+async def get_research_publications():
+    """Get all published research papers (public endpoint)"""
+    return await get_all_research(published_only=True)
+
+
+@app.get("/api/research/{res_id}", response_model=Research)
+async def get_research_paper(res_id: str):
+    """Get a single research paper by ID (public endpoint)"""
+    res = await get_research_by_id(res_id)
+    if not res:
+        raise HTTPException(status_code=404, detail="Research paper not found")
+    return res
+
+
 @app.post("/api/jobs/apply", response_model=JobApplication)
 async def apply_for_job(application: JobApplicationCreate):
-    """Submit a job application (public endpoint)"""
     new_app = await create_job_application(application)
     return new_app
  
  
- # Authentication endpoints
+    return await global_search(q)
+
+
+@app.get("/api/pages", response_model=List[PageConfig])
+async def list_custom_pages():
+    """List all custom modular pages (public endpoint)"""
+    return await get_all_custom_pages()
+
+
+@app.get("/api/pages/{page_id}", response_model=PageConfig)
+async def get_page_configuration(page_id: str):
+    """Get dynamic configuration for a specific page (public endpoint)"""
+    config = await get_page_config(page_id)
+    if not config:
+        # Fallback for pages that haven't been configured yet
+        raise HTTPException(status_code=404, detail="Page configuration not found")
+    return config
+
+
+# Authentication endpoints
 @app.post("/api/auth/login", response_model=Token)
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     """Login endpoint to get JWT token"""
@@ -190,7 +242,6 @@ async def update_existing_insight(
         raise HTTPException(status_code=404, detail="Insight not found")
     return updated_insight
 
-
 @app.delete("/api/admin/insights/{insight_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_existing_insight(
     insight_id: str,
@@ -200,6 +251,47 @@ async def delete_existing_insight(
     deleted = await delete_insight(insight_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Insight not found")
+    return None
+
+
+# Research admin endpoints
+@app.get("/api/admin/research", response_model=List[Research])
+async def get_all_research_admin(current_user = Depends(get_current_user)):
+    """Get all research papers including unpublished (admin only)"""
+    return await get_all_research(published_only=False)
+
+
+@app.post("/api/admin/research", response_model=Research, status_code=status.HTTP_201_CREATED)
+async def create_new_research_paper(
+    paper: ResearchCreate,
+    current_user = Depends(get_current_user)
+):
+    """Create a new research paper (admin only)"""
+    return await create_research(paper)
+
+
+@app.put("/api/admin/research/{res_id}", response_model=Research)
+async def update_existing_research_paper(
+    res_id: str,
+    paper: ResearchUpdate,
+    current_user = Depends(get_current_user)
+):
+    """Update an existing research paper (admin only)"""
+    updated = await update_research(res_id, paper)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Research paper not found")
+    return updated
+
+
+@app.delete("/api/admin/research/{res_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_existing_research_paper(
+    res_id: str,
+    current_user = Depends(get_current_user)
+):
+    """Delete a research paper (admin only)"""
+    deleted = await delete_research(res_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Research paper not found")
     return None
 
 
@@ -292,6 +384,18 @@ async def delete_app_admin(
     except Exception as e:
         print(f"🔥 Error deleting application: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+ 
+ 
+@app.post("/api/admin/applications/{app_id}/restore")
+async def restore_app_admin(
+    app_id: str,
+    current_user = Depends(get_current_user)
+):
+    """Restore a soft-deleted application (admin only)"""
+    restored = await restore_application(app_id)
+    if not restored:
+        raise HTTPException(status_code=404, detail="Application not found or already active")
+    return {"message": "Application restored successfully"}
  
  
  # Admin Jobs endpoints
@@ -389,6 +493,29 @@ async def create_new_user(
     
     new_user = await create_user(user)
     return new_user
+
+
+@app.post("/api/admin/pages/{page_id}", response_model=PageConfig)
+async def update_page_configuration(
+    page_id: str,
+    config: PageConfigUpdate,
+    current_user = Depends(get_current_user)
+):
+    """Update or create page configuration (admin only)"""
+    updated = await upsert_page_config(page_id, config.model_dump(exclude_unset=True))
+    return updated
+
+
+@app.delete("/api/admin/pages/{page_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_page_configuration(
+    page_id: str,
+    current_user = Depends(get_current_user)
+):
+    """Delete a page configuration (admin only)"""
+    deleted = await delete_page_config(page_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Page configuration not found")
+    return None
 
 
 if __name__ == "__main__":
