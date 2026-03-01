@@ -62,7 +62,11 @@ from database import (
     upsert_page_config,
     delete_page_config,
     get_all_custom_pages,
-    init_default_pages
+    init_default_pages,
+    get_credentials_by_username,
+    save_credential,
+    save_challenge,
+    get_challenge
 )
 from auth import (
     verify_password,
@@ -80,7 +84,8 @@ UPLOAD_DIR = "uploads"
 if not os.path.exists(UPLOAD_DIR):
     os.makedirs(UPLOAD_DIR)
 
-# Mount static files for uploads
+# Mount static files for assets and uploads
+app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 # CORS middleware
@@ -99,9 +104,9 @@ async def startup_event():
     try:
         await init_default_user()
         await init_default_pages()
-        print("✅ MongoDB connected and initialized")
+        print("✅ SQLite connected and initialized")
     except Exception as e:
-        print(f"⚠️  MongoDB not available: {e}")
+        print(f"⚠️  Database not available: {e}")
         print("⚠️  Backend will run in limited mode (frontend-only features will work)")
 
 
@@ -169,8 +174,12 @@ async def get_research_paper(res_id: str):
 async def apply_for_job(application: JobApplicationCreate):
     new_app = await create_job_application(application)
     return new_app
- 
- 
+
+
+@app.get("/api/search")
+async def search(q: str):
+    """Global search across the platform (public endpoint)"""
+    return await global_search(q)
     return await global_search(q)
 
 
@@ -191,9 +200,9 @@ async def get_page_configuration(page_id: str):
 
 
 # Authentication endpoints
-@app.post("/api/auth/login", response_model=Token)
+@app.post("/api/auth/login", response_model=dict)
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    """Login endpoint to get JWT token"""
+    """Login endpoint with MFA check"""
     user = await get_user_by_username(form_data.username)
     if not user or not verify_password(form_data.password, user["passwordHash"]):
         raise HTTPException(
@@ -202,11 +211,139 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
             headers={"WWW-Authenticate": "Bearer"},
         )
     
+    # Check if user has registered credentials
+    credentials = await get_credentials_by_username(user["username"])
+    if credentials:
+        # MFA Required
+        return {
+            "mfa_required": True,
+            "username": user["username"],
+            "message": "MFA Challenge Required"
+        }
+
+    # No MFA - proceed normally (or force setup if you want)
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user["username"]}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "mfa_required": False}
+
+
+@app.get("/api/auth/mfa/options")
+async def get_mfa_options(username: str):
+    """Generate authentication options for YubiKey challenge"""
+    from webauthn_auth import get_authentication_options
+    import json
+    
+    credentials = await get_credentials_by_username(username)
+    if not credentials:
+        raise HTTPException(status_code=400, detail="MFA not configured for user")
+        
+    options = get_authentication_options(credentials)
+    # Convert to JSON for frontend
+    from webauthn import options_to_json
+    options_json = options_to_json(options)
+    
+    # Save challenge
+    import json as pyjson
+    opt_dict = pyjson.loads(options_json)
+    await save_challenge(username, opt_dict["challenge"])
+    
+    return pyjson.loads(options_json)
+
+
+@app.post("/api/auth/mfa/verify")
+async def verify_mfa(username: str, auth_response: dict):
+    """Verify YubiKey signature and issue final JWT"""
+    from webauthn_auth import verify_authentication
+    from database import get_challenge, get_credentials_by_username
+    
+    challenge = await get_challenge(username)
+    if not challenge:
+        raise HTTPException(status_code=400, detail="Challenge expired or not found")
+        
+    credentials = await get_credentials_by_username(username)
+    # Find the specific credential used
+    target_cred = next((c for c in credentials if c["credential_id"] == auth_response["id"]), None)
+    
+    if not target_cred:
+        raise HTTPException(status_code=400, detail="Invalid credential ID")
+        
+    try:
+        verification = verify_authentication(
+            credential_id=target_cred["credential_id"],
+            public_key=target_cred["public_key"],
+            sign_count=target_cred["sign_count"],
+            challenge=challenge,
+            authentication_response=auth_response
+        )
+        
+        # In production, update the sign_count in database here!
+        
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": username}, expires_delta=access_token_expires
+        )
+        return {"access_token": access_token, "token_type": "bearer"}
+        
+    except Exception as e:
+        print(f"WebAuthn Verification Error: {e}")
+        raise HTTPException(status_code=401, detail="Security key verification failed")
+
+
+@app.get("/api/admin/mfa/register/options")
+async def register_mfa_options(current_user: dict = Depends(get_current_user)):
+    """Generate options to register a new YubiKey"""
+    from webauthn_auth import get_registration_options
+    from webauthn import options_to_json
+    import json
+    
+    username = current_user.username
+    user = await get_user_by_username(username)
+    
+    existing_creds = await get_credentials_by_username(username)
+    # Convert _id to string for webauthn helper if it's an ObjectId or similar
+    user_id = str(user["_id"])
+    
+    options = get_registration_options(username, user_id, existing_creds)
+    options_json = options_to_json(options)
+    
+    import json as pyjson
+    opt_dict = pyjson.loads(options_json)
+    await save_challenge(username, opt_dict["challenge"])
+    
+    return pyjson.loads(options_json)
+
+
+@app.post("/api/admin/mfa/register/verify")
+async def verify_mfa_registration(registration_data: dict, current_user: dict = Depends(get_current_user)):
+    """Verify and save a new YubiKey credential"""
+    from webauthn_auth import verify_registration
+    from database import get_challenge, save_credential
+    from webauthn.helpers import bytes_to_base64url
+    
+    username = current_user.username
+    challenge = await get_challenge(username)
+    
+    if not challenge:
+        raise HTTPException(status_code=400, detail="Challenge expired or not found")
+        
+    try:
+        verification = verify_registration(username, challenge, registration_data)
+        
+        # Save to DB
+        await save_credential(
+            username=username,
+            cred_id=bytes_to_base64url(verification.credential_id),
+            public_key=bytes_to_base64url(verification.credential_public_key),
+            sign_count=verification.sign_count,
+            transports=registration_data.get("response", {}).get("transports", [])
+        )
+        
+        return {"message": "YubiKey successfully registered"}
+    except Exception as e:
+        print(f"WebAuthn Registration Error: {e}")
+        raise HTTPException(status_code=400, detail="Failed to verify security key")
 
 
 # Protected admin endpoints

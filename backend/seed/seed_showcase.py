@@ -12,7 +12,7 @@ from models import ShowcaseItemCreate
 
 async def seed_showcase():
     # Path to the JSON file
-    json_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src/data/showcase-demo.json')
+    json_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'src/data/showcase-demo.json')
     
     if not os.path.exists(json_path):
         print(f"Error: {json_path} not found.")

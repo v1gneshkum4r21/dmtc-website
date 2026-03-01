@@ -143,7 +143,9 @@
 <script setup>
 import { ref, onMounted, inject } from 'vue'
 import { jobsAPI, pagesAPI } from '@/services/api'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const openContactModal = inject('openContactModal')
 const openJobModal = inject('openJobModal')
 
@@ -205,7 +207,17 @@ onMounted(async () => {
       pageConfig.value = careersConfig
       if (careersConfig.perks) perks.value = careersConfig.perks
     }
-    if (jobsData?.length) roles.value = jobsData
+    if (jobsData?.length) {
+      roles.value = jobsData
+      
+      // Check for ID in query params to auto-open modal
+      if (route.query.id) {
+        const targetJob = jobsData.find(j => j._id === route.query.id)
+        if (targetJob) {
+          openJobModal(targetJob.title)
+        }
+      }
+    }
   } catch (err) {
     console.error('Failed to load careers page:', err)
   }

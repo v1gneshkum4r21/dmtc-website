@@ -173,6 +173,20 @@ export const authAPI = {
     // Check if user is authenticated
     isAuthenticated: () => {
         return !!localStorage.getItem('admin_token')
+    },
+
+    // WebAuthn MFA
+    getMfaOptions: async (username) => {
+        const response = await apiClient.get('/auth/mfa/options', { params: { username } })
+        return response.data
+    },
+
+    verifyMfa: async (username, authResponse) => {
+        const response = await apiClient.post('/auth/mfa/verify', authResponse, { params: { username } })
+        if (response.data.access_token) {
+            localStorage.setItem('admin_token', response.data.access_token)
+        }
+        return response.data
     }
 }
 
@@ -310,6 +324,17 @@ export const adminAPI = {
     },
     deletePageConfig: async (page_id) => {
         await apiClient.delete(`/admin/pages/${page_id}`)
+    },
+
+    // WebAuthn Registration
+    getRegistrationOptions: async () => {
+        const response = await apiClient.get('/admin/mfa/register/options')
+        return response.data
+    },
+
+    verifyRegistration: async (registrationData) => {
+        const response = await apiClient.post('/admin/mfa/register/verify', registrationData)
+        return response.data
     }
 }
 

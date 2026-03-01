@@ -92,7 +92,9 @@
 import { ref, computed, onMounted, inject } from 'vue'
 import { showcaseAPI } from '@/services/api'
 import GalleryItem from '@/components/GalleryItem.vue'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const openContactModal = inject('openContactModal')
 const activeFilter = ref('all')
 const selectedItem = ref(null)
@@ -120,7 +122,16 @@ const filteredItems = computed(() => {
 const fetchShowcase = async () => {
   loading.value = true
   try {
-    showcaseItems.value = await showcaseAPI.getAll()
+    const data = await showcaseAPI.getAll()
+    showcaseItems.value = data
+    
+    // Check for ID in query params to auto-open modal
+    if (route.query.id) {
+      const targetItem = data.find(i => i._id === route.query.id)
+      if (targetItem) {
+        openModal(targetItem)
+      }
+    }
   } catch (err) {
     console.error('Failed to fetch showcase:', err)
   } finally {

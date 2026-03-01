@@ -111,6 +111,9 @@ import { ref, computed, onMounted, inject } from 'vue'
 import { insightsAPI, pagesAPI } from '@/services/api'
 import InsightModal from '@/components/InsightModal.vue'
 
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 const openContactModal = inject('openContactModal')
 
 const allPosts = ref([])
@@ -132,6 +135,14 @@ const initPage = async () => {
     ])
     pageConfig.value = configData
     allPosts.value = resData
+
+    // Check for ID in query params to auto-open modal
+    if (route.query.id) {
+      const targetPost = resData.find(p => p._id === route.query.id)
+      if (targetPost) {
+        openModal(targetPost)
+      }
+    }
   } catch (err) {
     console.error('Failed to load blog data:', err)
   } finally {

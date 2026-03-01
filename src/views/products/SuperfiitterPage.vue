@@ -220,7 +220,6 @@ const scrollToSolutions = () => {
 }
 
 // Insights logic
-import { insightsAPI } from '@/services/api'
 import InsightsCarousel from '@/components/InsightsCarousel.vue'
 import InsightModal from '@/components/InsightModal.vue'
 const insights = ref([])

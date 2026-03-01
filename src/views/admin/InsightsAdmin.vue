@@ -2,6 +2,7 @@
   <div class="admin-container">
     <!-- Authorization Layer -->
     <LoginPanel 
+      ref="loginPanelRef"
       v-if="!isAuthenticated" 
       :loading="loading" 
       :error="error" 
@@ -304,10 +305,18 @@ const handleGlobalCreate = () => {
   }
 }
 
+const loginPanelRef = ref(null)
+
 const handleLogin = async (credentials) => {
   loading.value = true; error.value = ''
   try {
-    await authAPI.login(credentials.username, credentials.password)
+    const res = await authAPI.login(credentials.username, credentials.password)
+    if (res.mfa_required) {
+      if (loginPanelRef.value) {
+        loginPanelRef.value.handleMfaRequired(res.username)
+      }
+      return
+    }
     isAuthenticated.value = true
     initDashboard()
   } catch (err) { error.value = 'Authorization failed: Invalid Credentials' }

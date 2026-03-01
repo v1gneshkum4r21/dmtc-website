@@ -112,6 +112,47 @@
               </div>
             </div>
 
+            <!-- Security -->
+            <div v-if="activeTab === 'security'" class="pane-stack">
+              <div class="pane-header">
+                <h3>Hardware Security Layer</h3>
+                <p>Manage physical security keys (YubiKey 5 NFC) to protect your administrative access.</p>
+              </div>
+
+              <div class="card-premium security-hero-card">
+                <div class="security-meta">
+                  <span class="security-badge">FIDO2 / WebAuthn Certified</span>
+                  <h4>Add a Security Key</h4>
+                  <p>Hardware keys provide the highest level of protection against phishing and credential theft. Once added, you will be required to touch your YubiKey during login.</p>
+                </div>
+                
+                <div class="security-actions">
+                  <button 
+                    class="btn-primary-luxe" 
+                    @click="registerSecurityKey"
+                    :disabled="isRegistering"
+                  >
+                    <span v-if="!isRegistering">➕ Register New YubiKey</span>
+                    <span v-else>⏳ Waiting for touch...</span>
+                  </button>
+                </div>
+              </div>
+
+              <transition name="fade">
+                <p v-if="regError" class="error-message mt-4 text-center">{{ regError }}</p>
+              </transition>
+
+              <div class="security-help card-premium mt-8">
+                <h5>How to Setup:</h5>
+                <ol class="help-list">
+                  <li>Click "Register New YubiKey" above.</li>
+                  <li>Insert your YubiKey 5 NFC into a USB port.</li>
+                  <li>When requested by your browser, touch the gold sensor on your key.</li>
+                  <li>Your key is now bound to your account.</li>
+                </ol>
+              </div>
+            </div>
+
             <!-- Infrastructure -->
             <div v-if="activeTab === 'infra'" class="pane-stack">
               <div class="pane-header">
@@ -235,8 +276,37 @@ const tabs = [
   { id: 'navigation', label: 'Sitemap', sub: 'View Visibility Control', icon: '🗺️' },
   { id: 'seo', label: 'SEO Engine', sub: 'Search Intelligence', icon: '🔍' },
   { id: 'social', label: 'Social Graph', sub: 'Network Presence', icon: '🌐' },
+  { id: 'security', label: 'Security Key', sub: 'FIDO2 / YubiKey MFA', icon: '🔑' },
   { id: 'infra', label: 'Infrastructure', sub: 'System Integrity', icon: '⚙️' }
 ]
+
+import { adminAPI } from '@/services/api'
+import { startRegistration } from '@simplewebauthn/browser'
+
+const isRegistering = ref(false)
+const regError = ref('')
+
+const registerSecurityKey = async () => {
+  isRegistering.value = true
+  regError.value = ''
+  try {
+    // 1. Get options from server
+    const options = await adminAPI.getRegistrationOptions()
+    
+    // 2. Perform registration with browser
+    const regResp = await startRegistration({ optionsJSON: options })
+    
+    // 3. Verify with server
+    await adminAPI.verifyRegistration(regResp)
+    
+    alert('Security key registered successfully! Your account is now secured by YubiKey.')
+  } catch (err) {
+    console.error('Registration Error:', err)
+    regError.value = 'Failed to register security key. Ensure your key is inserted and you touch the sensor when prompted.'
+  } finally {
+    isRegistering.value = false
+  }
+}
 
 const settings = ref({
   siteTitle: 'DREAMATIC',
@@ -560,5 +630,36 @@ const saveSettings = (event) => {
 }
 
 .btn-text:hover { color: white; }
+
+.security-hero-card {
+  padding: 2.5rem !important;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%) !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.security-meta h4 { font-size: 1.25rem; font-weight: 850; margin: 0.75rem 0; color: white; }
+.security-meta p { font-size: 0.9rem; color: var(--text-muted); max-width: 480px; line-height: 1.6; }
+
+.security-badge {
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: var(--primary);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: rgba(99, 102, 241, 0.1);
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+
+.security-help h5 { font-size: 0.9rem; font-weight: 850; color: white; margin-bottom: 1rem; }
+.help-list { padding-left: 1.25rem; }
+.help-list li { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; line-height: 1.4; }
+
+@media (max-width: 900px) {
+  .security-hero-card { flex-direction: column; align-items: flex-start; }
+}
 
 </style>

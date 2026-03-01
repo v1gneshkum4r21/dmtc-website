@@ -111,6 +111,25 @@ class Token(BaseModel):
     token_type: str
 
 
+class WebAuthnCredential(BaseModel):
+    id: str = Field(alias="_id")
+    username: str
+    credential_id: str  # Base64 encoded ID from YubiKey
+    public_key: str    # Base64 encoded public key
+    sign_count: int
+    transports: Optional[list[str]] = []
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    class Config:
+        populate_by_name = True
+
+
+class WebAuthnChallenge(BaseModel):
+    username: str
+    challenge: str
+    expires_at: datetime
+
+
 class TokenData(BaseModel):
     username: Optional[str] = None
 

@@ -121,7 +121,9 @@
 import { ref, computed, onMounted, inject } from 'vue'
 import { researchAPI, pagesAPI } from '@/services/api'
 import ResearchModal from '@/components/ResearchModal.vue'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const openContactModal = inject('openContactModal')
 
 const publications = ref([])
@@ -142,6 +144,14 @@ const initPage = async () => {
     ])
     pageConfig.value = configData
     publications.value = pubData
+
+    // Check for ID in query params to auto-open modal
+    if (route.query.id) {
+      const targetPub = pubData.find(p => p._id === route.query.id)
+      if (targetPub) {
+        openModal(targetPub)
+      }
+    }
   } catch (err) {
     console.error('Failed to load research data:', err)
   } finally {
