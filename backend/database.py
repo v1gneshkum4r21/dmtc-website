@@ -67,6 +67,15 @@ def application_helper(data) -> dict:
         res["history"] = json.loads(res["history"])
     return res
 
+def site_settings_helper(data) -> dict:
+    if not data: return None
+    res = dict(data)
+    if isinstance(res.get("social"), str):
+        res["social"] = json.loads(res["social"])
+    res["indexRobots"] = bool(res["indexRobots"])
+    res["maintenanceMode"] = bool(res["maintenanceMode"])
+    return res
+
 def page_config_helper(data) -> dict:
     if not data: return None
     res = dict(data)
@@ -490,9 +499,61 @@ async def delete_page_config(page_id: str) -> bool:
         await db.commit()
         return result.rowcount > 0
 
+# --- Global Site Settings ---
+async def get_site_settings() -> dict:
+    async with get_db() as db:
+        # Check if table exists
+        await db.execute("CREATE TABLE IF NOT EXISTS site_settings (id TEXT PRIMARY KEY, siteTitle TEXT, tagline TEXT, contactEmail TEXT, seoDescription TEXT, keywords TEXT, indexRobots INTEGER, maintenanceMode INTEGER, social TEXT)")
+        
+        async with db.execute("SELECT * FROM site_settings LIMIT 1") as cursor:
+            row = await cursor.fetchone()
+            if not row:
+                # Seed default settings
+                default_settings = {
+                    "siteTitle": "DREAMATIC",
+                    "tagline": "The Future of Agentic AI",
+                    "contactEmail": "hello@dreamatic.ai",
+                    "seoDescription": "Leading the bridge between human intuition and agentic automation.",
+                    "keywords": "AI, Agents, Enterprise AI, Future Tech",
+                    "indexRobots": 1,
+                    "maintenanceMode": 0,
+                    "social": json.dumps({"linkedin": "", "twitter": ""})
+                }
+                await db.execute("""
+                    INSERT INTO site_settings (id, siteTitle, tagline, contactEmail, seoDescription, keywords, indexRobots, maintenanceMode, social)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, ("default", default_settings["siteTitle"], default_settings["tagline"], default_settings["contactEmail"], 
+                      default_settings["seoDescription"], default_settings["keywords"], default_settings["indexRobots"], 
+                      default_settings["maintenanceMode"], default_settings["social"]))
+                await db.commit()
+                return default_settings
+            
+            return site_settings_helper(row)
+
+async def update_site_settings(settings_data: dict) -> dict:
+    async with get_db() as db:
+        # Flatten social dict
+        social = json.dumps(settings_data.get("social", {}))
+        
+        await db.execute("""
+            UPDATE site_settings SET 
+                siteTitle = ?, tagline = ?, contactEmail = ?, 
+                seoDescription = ?, keywords = ?, 
+                indexRobots = ?, maintenanceMode = ?, social = ?
+            WHERE id = 'default'
+        """, (
+            settings_data.get("siteTitle"), settings_data.get("tagline"), settings_data.get("contactEmail"),
+            settings_data.get("seoDescription"), settings_data.get("keywords"),
+            1 if settings_data.get("indexRobots") else 0,
+            1 if settings_data.get("maintenanceMode") else 0,
+            social
+        ))
+        await db.commit()
+    return await get_site_settings()
+
 async def init_default_pages():
-    """Initialize essential page configs if they don't exist"""
-    # This is typically handled by seeds, but we can add basics here
+    """Initialize essential page configs and site settings if they don't exist"""
+    await get_site_settings() # This will ensure settings table exists and is seeded
     pass
 
 async def global_search(q: str) -> List[dict]:

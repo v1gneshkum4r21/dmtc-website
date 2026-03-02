@@ -267,7 +267,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { navStore } from '@/store/navigation'
 
 const activeTab = ref('general')
@@ -309,18 +309,26 @@ const registerSecurityKey = async () => {
 }
 
 const settings = ref({
-  siteTitle: 'DREAMATIC',
-  tagline: 'The Future of Agentic AI',
-  contactEmail: 'hello@dreamatic.ai',
-  seoDescription: 'Leading the bridge between human intuition and agentic automation.',
-  keywords: 'AI, Agents, Enterprise AI, Future Tech',
+  siteTitle: '',
+  tagline: '',
+  contactEmail: '',
+  seoDescription: '',
+  keywords: '',
   indexRobots: true,
   maintenanceMode: false,
-  social: {
-    linkedin: 'linkedin.com/company/dreamatic',
-    twitter: 'x.com/dreamatic',
-  }
+  social: { linkedin: '', twitter: '' }
 })
+
+const fetchSettings = async () => {
+  try {
+    const data = await adminAPI.getSettings()
+    settings.value = data
+  } catch (err) {
+    console.error('Failed to fetch settings:', err)
+  }
+}
+
+onMounted(fetchSettings)
 
 const groupedRoutes = computed(() => {
   const groups = {}
@@ -351,23 +359,27 @@ const createPage = () => {
   }
 }
 
-const saveSettings = (event) => {
+const saveSettings = async (event) => {
   const btn = event.currentTarget
   btn.classList.add('loading')
   const originalHtml = btn.innerHTML
   
   btn.innerHTML = '<span>⏳</span> Synchronizing...'
   
-  setTimeout(() => {
+  try {
+    await adminAPI.updateSettings(settings.value)
     btn.innerHTML = '<span>🚀</span> Matrix Updated'
-    btn.classList.remove('loading')
     btn.classList.add('success')
-    
+  } catch (err) {
+    console.error('Update failed:', err)
+    btn.innerHTML = '<span>❌</span> Sync Failed'
+  } finally {
+    btn.classList.remove('loading')
     setTimeout(() => { 
       btn.innerHTML = originalHtml
       btn.classList.remove('success')
     }, 2000)
-  }, 1200)
+  }
 }
 </script>
 

@@ -298,6 +298,26 @@ class PageConfigUpdate(BaseModel):
     label: Optional[str] = None
     path: Optional[str] = None
     visible: Optional[bool] = None
+
+
+# --- Global Site Settings ---
+
+class SocialLinks(BaseModel):
+    linkedin: Optional[str] = ""
+    twitter: Optional[str] = ""
+    facebook: Optional[str] = ""
+    instagram: Optional[str] = ""
+
+
+class SiteSettings(BaseModel):
+    siteTitle: str = "DREAMATIC"
+    tagline: str = "The Future of Agentic AI"
+    contactEmail: str = "hello@dreamatic.ai"
+    seoDescription: str = "Leading the bridge between human intuition and agentic automation."
+    keywords: str = "AI, Agents, Enterprise AI, Future Tech"
+    indexRobots: bool = True
+    maintenanceMode: bool = False
+    social: SocialLinks = SocialLinks()
     group: Optional[str] = None
 
 

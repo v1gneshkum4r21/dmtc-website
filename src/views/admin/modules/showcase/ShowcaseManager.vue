@@ -166,7 +166,7 @@ const zoomImage = (url) => {
   zoomedImageUrl.value = url
 }
 
-defineEmits(['edit-showcase', 'delete-showcase'])
+defineEmits(['edit-showcase', 'delete-showcase', 'create'])
 </script>
 
 <style scoped>

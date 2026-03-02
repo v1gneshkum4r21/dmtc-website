@@ -28,10 +28,20 @@
 
     <div class="header-actions-luxury">
       <div class="action-group">
-        <button class="nav-icon-btn" title="System Logs">
+        <button 
+          class="nav-icon-btn" 
+          :class="{ active: activeModule === 'careers' && selectedPage === 'history' }"
+          title="System Logs" 
+          @click="$emit('switch', 'careers', 'history')"
+        >
           <i>▤</i>
         </button>
-        <button class="nav-icon-btn" title="Media Library">
+        <button 
+          class="nav-icon-btn" 
+          :class="{ active: activeModule === 'showcase' }"
+          title="Media Library" 
+          @click="$emit('switch', 'showcase')"
+        >
           <i>🖼</i>
         </button>
       </div>
@@ -43,7 +53,7 @@
         <span class="icon">↗</span>
       </a>
       
-      <button class="btn-primary-luxe" @click="$emit('create')">
+      <button class="btn-primary-header" @click="$emit('create')">
         <template v-if="createLabel.startsWith('+')">
           <span class="plus-glyph">+</span>
           <span class="btn-text">{{ createLabel.slice(1).trim() }}</span>
@@ -62,6 +72,7 @@ import SearchManager from './SearchManager.vue'
 
 const props = defineProps({
   activeModule: { type: String, required: true },
+  selectedPage: { type: String, default: '' },
   title: { type: String, required: true },
   previewUrl: { type: String, default: '/' },
   createLabel: { type: String, default: '+ New Item' },
@@ -70,7 +81,7 @@ const props = defineProps({
 
 const lastSync = ref(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))
 
-defineEmits(['update:activeModule', 'create', 'search-select', 'toggle-sidebar'])
+defineEmits(['update:activeModule', 'update:selectedPage', 'create', 'search-select', 'toggle-sidebar', 'switch'])
 </script>
 
 <style scoped>
@@ -135,6 +146,13 @@ defineEmits(['update:activeModule', 'create', 'search-select', 'toggle-sidebar']
 }
 
 .nav-icon-btn:hover { background: var(--glass-heavy); color: white; border-color: var(--border-medium); }
+
+.nav-icon-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+}
 
 .divider { width: 1px; height: 24px; background: var(--border-subtle); }
 

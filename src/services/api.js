@@ -140,6 +140,10 @@ export const pagesAPI = {
     getConfig: async (pageId) => {
         const response = await apiClient.get(`/pages/${pageId}`)
         return response.data
+    },
+    getSettings: async () => {
+        const response = await apiClient.get('/settings')
+        return response.data
     }
 }
 
@@ -315,6 +319,16 @@ export const adminAPI = {
 
     deleteResearch: async (id) => {
         await apiClient.delete(`/admin/research/${id}`)
+    },
+
+    // Settings Management
+    getSettings: async () => {
+        const response = await apiClient.get('/admin/settings')
+        return response.data
+    },
+    updateSettings: async (settings) => {
+        const response = await apiClient.post('/admin/settings', settings)
+        return response.data
     },
 
     // Page Management

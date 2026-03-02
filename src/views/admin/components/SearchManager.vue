@@ -83,6 +83,15 @@ const handleInput = () => {
     }
   })
 
+  // Search Research
+  if (props.searchData.research) {
+    props.searchData.research.forEach(item => {
+      if (item.title?.toLowerCase().includes(query) || item.excerpt?.toLowerCase().includes(query)) {
+        matches.push({ ...item, type: 'Resources' })
+      }
+    })
+  }
+
   results.value = matches.slice(0, 6)
 }
 
@@ -96,7 +105,7 @@ const groupedResults = computed(() => {
 })
 
 const getIcon = (type) => {
-  const icons = { 'Insights': '📄', 'Showcase': '🎨', 'Careers': '🧬' }
+  const icons = { 'Insights': '📄', 'Showcase': '🎨', 'Careers': '🧬', 'Resources': '🔬' }
   return icons[type] || '🔍'
 }
 

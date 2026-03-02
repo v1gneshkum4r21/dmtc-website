@@ -25,6 +25,7 @@
       <main class="admin-main">
         <AdminHeader 
           v-model:activeModule="activeModule"
+          :selectedPage="selectedPage"
           :title="activeModuleTitle"
           :previewUrl="previewUrl"
           :createLabel="createButtonLabel"
@@ -32,6 +33,7 @@
           @create="handleGlobalCreate"
           @search-select="handleSearchSelect"
           @toggle-sidebar="isSidebarOpen = !isSidebarOpen"
+          @switch="(m, p = '') => { activeModule = m; if (p) selectedPage = p }"
         />
 
         <div class="dashboard-content">
@@ -189,8 +191,13 @@ const applications = ref([])
 const research = ref([])
 
 // Interaction State
+const showCreateForm = ref(false)
+const showShowcaseForm = ref(false)
 const showConfirm = ref(false)
 const confirmConfig = ref({ title: '', message: '', action: null, confirmLabel: '', isDanger: true })
+const isPageModalOpen = ref(false)
+const showJobForm = ref(false)
+const showResearchForm = ref(false)
 
 // Page Management
 const hardcodedPages = [
@@ -223,11 +230,6 @@ const websitePages = computed(() => {
 const isModularPage = computed(() => {
   return websitePages.value.find(p => p.id === selectedPage.value)?.isModular
 })
-
-// Form & Modal Orchestration
-const isPageModalOpen = ref(false)
-const showJobForm = ref(false)
-const showResearchForm = ref(false)
 const editingInsight = ref(null)
 const editingShowcase = ref(null)
 const editingJob = ref(null)
@@ -292,7 +294,12 @@ const createButtonLabel = computed(() => {
 
 const previewUrl = computed(() => '/')
 
-const searchData = computed(() => ({ insights: insights.value, showcase: showcaseItems.value, applications: applications.value }))
+const searchData = computed(() => ({ 
+  insights: insights.value, 
+  showcase: showcaseItems.value, 
+  applications: applications.value,
+  research: research.value
+}))
 
 // Handlers & Logic
 const handleGlobalCreate = () => {
@@ -563,7 +570,7 @@ const handlePageConfigSubmit = async (config) => {
 }
 
 const handleSearchSelect = (item) => {
-  if (item.type === 'Insights') { 
+  if (item.type === 'Insight') { 
     const isService = ['ai-work', 'ai-service', 'ai-enterprise'].includes(item.page)
     activeModule.value = isService ? 'services' : 'products'; 
     selectedPage.value = item.page || ''; 

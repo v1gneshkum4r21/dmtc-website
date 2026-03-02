@@ -26,7 +26,8 @@ from models import (
     ResearchCreate,
     ResearchUpdate,
     PageConfig,
-    PageConfigUpdate
+    PageConfigUpdate,
+    SiteSettings
 )
 from database import (
     get_all_insights,
@@ -58,6 +59,8 @@ from database import (
     delete_research,
     delete_research,
     global_search,
+    get_site_settings,
+    update_site_settings,
     get_page_config,
     upsert_page_config,
     delete_page_config,
@@ -114,6 +117,12 @@ async def startup_event():
 @app.get("/")
 async def root():
     return {"message": "DREAMATIC CMS API", "version": "1.0.0"}
+
+
+@app.get("/api/settings", response_model=SiteSettings)
+async def get_public_settings():
+    """Get public site settings"""
+    return await get_site_settings()
 
 
 @app.get("/api/insights", response_model=List[Insight])
@@ -653,6 +662,18 @@ async def delete_page_configuration(
     if not deleted:
         raise HTTPException(status_code=404, detail="Page configuration not found")
     return None
+
+
+@app.get("/api/admin/settings", response_model=SiteSettings)
+async def get_admin_settings(current_user: str = Depends(get_current_user)):
+    """Get site settings (admin)"""
+    return await get_site_settings()
+
+
+@app.post("/api/admin/settings", response_model=SiteSettings)
+async def update_admin_settings(settings: SiteSettings, current_user = Depends(get_current_user)):
+    """Update site settings (admin)"""
+    return await update_site_settings(settings.model_dump())
 
 
 if __name__ == "__main__":

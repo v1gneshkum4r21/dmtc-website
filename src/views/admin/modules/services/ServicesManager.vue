@@ -27,7 +27,7 @@
           </div>
         </div>
         <div class="actions-wrapper">
-          <button v-if="selectedPage" class="btn-ghost" @click="$emit('configure-page')">
+          <button v-if="selectedPage" class="btn-ghost" @click="$emit('configure-page', selectedPage)">
             <span class="icon">⚙️</span>
             Configure Page
           </button>
