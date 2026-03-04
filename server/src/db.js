@@ -22,6 +22,9 @@ async function initDb() {
 
     console.log('✅ SQLite (async) connected and initialized');
 
+    // Enable WAL mode for better concurrency on Hostinger
+    await db.run('PRAGMA journal_mode = WAL');
+
     await db.exec(`
         CREATE TABLE IF NOT EXISTS insights (
             _id TEXT PRIMARY KEY,
@@ -46,8 +49,12 @@ async function initDb() {
             journal TEXT,
             year INTEGER,
             abstract TEXT,
+            excerpt TEXT,
+            content TEXT,
             doi TEXT,
             pdfUrl TEXT,
+            linkType TEXT,
+            image TEXT,
             tags TEXT,
             published BOOLEAN,
             createdAt TEXT
@@ -60,6 +67,10 @@ async function initDb() {
             image TEXT,
             link TEXT,
             category TEXT,
+            mediaType TEXT,
+            tag TEXT,
+            size TEXT,
+            orderIdx INTEGER DEFAULT 0,
             tags TEXT,
             published BOOLEAN,
             createdAt TEXT
@@ -74,6 +85,7 @@ async function initDb() {
             description TEXT,
             requirements TEXT,
             salary TEXT,
+            company TEXT DEFAULT 'DREAMATIC',
             active BOOLEAN,
             archived BOOLEAN,
             createdAt TEXT
@@ -136,6 +148,21 @@ async function initDb() {
         );
     `);
 
+    // Migrations / Column Checks (Add missing columns if table existed)
+    try {
+        await db.run('ALTER TABLE research ADD COLUMN excerpt TEXT').catch(() => { });
+        await db.run('ALTER TABLE research ADD COLUMN content TEXT').catch(() => { });
+        await db.run('ALTER TABLE research ADD COLUMN linkType TEXT').catch(() => { });
+        await db.run('ALTER TABLE research ADD COLUMN image TEXT').catch(() => { });
+        await db.run('ALTER TABLE showcase ADD COLUMN mediaType TEXT').catch(() => { });
+        await db.run('ALTER TABLE showcase ADD COLUMN tag TEXT').catch(() => { });
+        await db.run('ALTER TABLE showcase ADD COLUMN size TEXT').catch(() => { });
+        await db.run('ALTER TABLE showcase ADD COLUMN orderIdx INTEGER DEFAULT 0').catch(() => { });
+        await db.run('ALTER TABLE jobs ADD COLUMN company TEXT DEFAULT "DREAMATIC"').catch(() => { });
+    } catch (e) {
+        // Silently skip if columns already exist
+    }
+
     // Ensure default settings exist
     const settings = await db.get('SELECT id FROM site_settings WHERE id = "default"');
     if (!settings) {
@@ -152,6 +179,13 @@ async function initDb() {
             [uuidv4(), hash, new Date().toISOString()]);
         console.log('👤 Default admin user created (admin / admin123)');
     }
+}
+
+function generateSlug(title) {
+    if (!title) return uuidv4().split('-')[0];
+    return title.toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
 }
 
 // ─── Site Settings ──────────────────────────────────────────────────────────
@@ -200,29 +234,47 @@ async function getInsightById(id) {
 }
 
 async function createInsight(data) {
-    const insight = {
-        _id: uuidv4(),
-        ...data,
-        tags: JSON.stringify(data.tags || []),
-        createdAt: new Date().toISOString(),
-        published: data.published ? 1 : 0
-    };
-    await db.run(`INSERT INTO insights (_id, title, summary, content, category, author, date, readTime, image, tags, slug, published, createdAt)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [insight._id, insight.title, insight.summary, insight.content, insight.category, insight.author,
-        insight.date, insight.readTime, insight.image, insight.tags, insight.slug, insight.published, insight.createdAt]);
-    return getInsightById(insight._id);
+    const id = uuidv4();
+    const slug = data.slug || generateSlug(data.title);
+
+    // Naming map (frontend -> backend)
+    const summary = data.summary || data.excerpt || '';
+    const category = data.category || data.page || 'uncategorized';
+    const image = data.image || data.imageUrl || '';
+
+    try {
+        await db.run(`INSERT INTO insights (_id, title, summary, content, category, author, date, readTime, image, tags, slug, published, createdAt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [id, data.title, summary, data.content, category, data.author || 'DREAMATIC Team',
+                data.date || new Date().toISOString().split('T')[0], data.readTime || '5 min', image,
+                JSON.stringify(data.tags || []), slug, data.published ? 1 : 0, new Date().toISOString()]);
+        return getInsightById(id);
+    } catch (err) {
+        console.error('❌ DB Error createInsight:', err);
+        throw err;
+    }
 }
 
 async function updateInsight(id, data) {
     const current = await getInsightById(id);
     if (!current) return null;
     const updated = { ...current, ...data };
-    await db.run(`UPDATE insights SET title=?, summary=?, content=?, category=?, author=?, date=?, readTime=?, image=?, tags=?, slug=?, published=?
-        WHERE _id=?`,
-        [updated.title, updated.summary, updated.content, updated.category, updated.author, updated.date,
-        updated.readTime, updated.image, JSON.stringify(updated.tags), updated.slug, updated.published ? 1 : 0, id]);
-    return getInsightById(id);
+
+    // Naming map (frontend -> backend)
+    const summary = data.summary || data.excerpt || updated.summary;
+    const category = data.category || data.page || updated.category;
+    const image = data.image || data.imageUrl || updated.image;
+
+    try {
+        await db.run(`UPDATE insights SET title=?, summary=?, content=?, category=?, author=?, date=?, readTime=?, image=?, tags=?, slug=?, published=?
+            WHERE _id=?`,
+            [updated.title, summary, updated.content, category, updated.author, updated.date,
+            updated.readTime, image, JSON.stringify(updated.tags), updated.slug, updated.published ? 1 : 0, id]);
+        return getInsightById(id);
+    } catch (err) {
+        console.error('❌ DB Error updateInsight:', err);
+        throw err;
+    }
 }
 
 async function deleteInsight(id) {
@@ -247,22 +299,36 @@ async function getResearchById(id) {
 
 async function createResearch(data) {
     const id = uuidv4();
-    await db.run(`INSERT INTO research (_id, title, authors, journal, year, abstract, doi, pdfUrl, tags, published, createdAt)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [id, data.title, data.authors, data.journal, data.year, data.abstract, data.doi, data.pdfUrl,
-            JSON.stringify(data.tags || []), data.published ? 1 : 0, new Date().toISOString()]);
-    return getResearchById(id);
+    const image = data.image || data.imageUrl || '';
+    try {
+        await db.run(`INSERT INTO research (_id, title, authors, journal, year, abstract, excerpt, content, doi, pdfUrl, linkType, image, tags, published, createdAt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [id, data.title, data.authors, data.journal, data.year || new Date().getFullYear(), data.abstract, data.excerpt || '',
+                data.content || data.abstract, data.doi || '', data.pdfUrl || '', data.linkType || 'download', image,
+                JSON.stringify(data.tags || []), data.published ? 1 : 0, new Date().toISOString()]);
+        return getResearchById(id);
+    } catch (err) {
+        console.error('❌ DB Error createResearch:', err);
+        throw err;
+    }
 }
 
 async function updateResearch(id, data) {
     const current = await getResearchById(id);
     if (!current) return null;
     const updated = { ...current, ...data };
-    await db.run(`UPDATE research SET title=?, authors=?, journal=?, year=?, abstract=?, doi=?, pdfUrl=?, tags=?, published=?
-        WHERE _id=?`,
-        [updated.title, updated.authors, updated.journal, updated.year, updated.abstract, updated.doi,
-        updated.pdfUrl, JSON.stringify(updated.tags), updated.published ? 1 : 0, id]);
-    return getResearchById(id);
+    const image = data.image || data.imageUrl || updated.image;
+
+    try {
+        await db.run(`UPDATE research SET title=?, authors=?, journal=?, year=?, abstract=?, excerpt=?, content=?, doi=?, pdfUrl=?, linkType=?, image=?, tags=?, published=?
+            WHERE _id=?`,
+            [updated.title, updated.authors, updated.journal, updated.year, updated.abstract, updated.excerpt, updated.content,
+            updated.doi, updated.pdfUrl, updated.linkType, image, JSON.stringify(updated.tags), updated.published ? 1 : 0, id]);
+        return getResearchById(id);
+    } catch (err) {
+        console.error('❌ DB Error updateResearch:', err);
+        throw err;
+    }
 }
 
 async function deleteResearch(id) {
@@ -275,7 +341,7 @@ async function deleteResearch(id) {
 async function getAllShowcaseItems(onlyPublished = false) {
     let query = 'SELECT * FROM showcase';
     if (onlyPublished) query += ' WHERE published = 1';
-    query += ' ORDER BY createdAt DESC';
+    query += ' ORDER BY orderIdx ASC, createdAt DESC';
     const rows = await db.all(query);
     return rows.map(r => ({ ...r, tags: JSON.parse(r.tags || '[]'), published: !!r.published }));
 }
@@ -287,22 +353,43 @@ async function getShowcaseById(id) {
 
 async function createShowcaseItem(data) {
     const id = uuidv4();
-    await db.run(`INSERT INTO showcase (_id, title, description, image, link, category, tags, published, createdAt)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [id, data.title, data.description, data.image, data.link, data.category,
-            JSON.stringify(data.tags || []), data.published ? 1 : 0, new Date().toISOString()]);
-    return getShowcaseById(id);
+    const image = data.image || data.mediaUrl || '';
+    const category = data.category || data.product || 'Solutions';
+    const published = data.published !== undefined ? data.published : (data.active !== undefined ? data.active : true);
+
+    try {
+        await db.run(`INSERT INTO showcase (_id, title, description, image, link, category, mediaType, tag, size, orderIdx, tags, published, createdAt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [id, data.title, data.description || '', image, data.link || '', category, data.mediaType || 'image',
+                data.tag || '', data.size || 'medium', data.orderIdx || data.order || 0,
+                JSON.stringify(data.tags || []), published ? 1 : 0, new Date().toISOString()]);
+        return getShowcaseById(id);
+    } catch (err) {
+        console.error('❌ DB Error createShowcaseItem:', err);
+        throw err;
+    }
 }
 
 async function updateShowcaseItem(id, data) {
     const current = await getShowcaseById(id);
     if (!current) return null;
     const updated = { ...current, ...data };
-    await db.run(`UPDATE showcase SET title=?, description=?, image=?, link=?, category=?, tags=?, published=?
-        WHERE _id=?`,
-        [updated.title, updated.description, updated.image, updated.link, updated.category,
-        JSON.stringify(updated.tags), updated.published ? 1 : 0, id]);
-    return getShowcaseById(id);
+
+    const image = data.image || data.mediaUrl || updated.image;
+    const category = data.category || data.product || updated.category;
+    const published = data.published !== undefined ? data.published : (data.active !== undefined ? data.active : updated.published);
+
+    try {
+        await db.run(`UPDATE showcase SET title=?, description=?, image=?, link=?, category=?, mediaType=?, tag=?, size=?, orderIdx=?, tags=?, published=?
+            WHERE _id=?`,
+            [updated.title, updated.description, image, updated.link, category, updated.mediaType || current.mediaType,
+            updated.tag || current.tag, updated.size || current.size, updated.orderIdx || updated.order || current.orderIdx,
+            JSON.stringify(updated.tags), published ? 1 : 0, id]);
+        return getShowcaseById(id);
+    } catch (err) {
+        console.error('❌ DB Error updateShowcaseItem:', err);
+        throw err;
+    }
 }
 
 async function deleteShowcaseItem(id) {
@@ -332,22 +419,35 @@ async function getJobById(id) {
 
 async function createJob(data) {
     const id = uuidv4();
-    await db.run(`INSERT INTO jobs (_id, title, department, location, type, description, requirements, salary, active, archived, createdAt)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [id, data.title, data.department, data.location, data.type, data.description, data.requirements,
-            data.salary, data.active ? 1 : 0, 0, new Date().toISOString()]);
-    return getJobById(id);
+    const department = data.department || data.team || 'Core Intelligence';
+    try {
+        await db.run(`INSERT INTO jobs (_id, title, department, location, type, description, requirements, salary, company, active, archived, createdAt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [id, data.title, department, data.location, data.type || 'Full-time', data.description || '', data.requirements || '',
+                data.salary || '', data.company || 'DREAMATIC', data.active ? 1 : 0, 0, new Date().toISOString()]);
+        return getJobById(id);
+    } catch (err) {
+        console.error('❌ DB Error createJob:', err);
+        throw err;
+    }
 }
 
 async function updateJob(id, data) {
     const current = await getJobById(id);
     if (!current) return null;
     const updated = { ...current, ...data };
-    await db.run(`UPDATE jobs SET title=?, department=?, location=?, type=?, description=?, requirements=?, salary=?, active=?, archived=?
-        WHERE _id=?`,
-        [updated.title, updated.department, updated.location, updated.type, updated.description,
-        updated.requirements, updated.salary, updated.active ? 1 : 0, updated.archived ? 1 : 0, id]);
-    return getJobById(id);
+    const department = data.department || data.team || updated.department;
+
+    try {
+        await db.run(`UPDATE jobs SET title=?, department=?, location=?, type=?, description=?, requirements=?, salary=?, company=?, active=?, archived=?
+            WHERE _id=?`,
+            [updated.title, department, updated.location, updated.type, updated.description,
+            updated.requirements, updated.salary, updated.company || current.company, updated.active ? 1 : 0, updated.archived ? 1 : 0, id]);
+        return getJobById(id);
+    } catch (err) {
+        console.error('❌ DB Error updateJob:', err);
+        throw err;
+    }
 }
 
 async function deleteJob(id, permanent = false) {
@@ -364,11 +464,16 @@ async function deleteJob(id, permanent = false) {
 
 async function createJobApplication(data) {
     const id = uuidv4();
-    await db.run(`INSERT INTO job_applications (id, jobId, jobTitle, name, email, phone, linkedIn, resumeUrl, message, status, appliedDate)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "pending", ?)`,
-        [id, data.jobId, data.jobTitle, data.name, data.email, data.phone, data.linkedIn,
-            data.resumeUrl, data.message, new Date().toISOString()]);
-    return { id, message: 'Application submitted' };
+    try {
+        await db.run(`INSERT INTO job_applications (id, jobId, jobTitle, name, email, phone, linkedIn, resumeUrl, message, status, appliedDate)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "pending", ?)`,
+            [id, data.jobId, data.jobTitle, data.name, data.email, data.phone, data.linkedIn,
+                data.resumeUrl, data.message, new Date().toISOString()]);
+        return { id, message: 'Application submitted' };
+    } catch (err) {
+        console.error('❌ DB Error createJobApplication:', err);
+        throw err;
+    }
 }
 
 async function getAllApplications(includeDeleted = false) {
