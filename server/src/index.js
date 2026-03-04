@@ -43,15 +43,13 @@ const upload = multer({ storage });
 
 // ─── Public Endpoints ─────────────────────────────────────────────────────────
 
-app.get('/api/status', (req, res) => res.json({ status: 'online', version: '1.0.2' }));
+app.get('/api/status', (req, res) => res.json({ status: 'online', version: '1.0.3' }));
 
 app.get('/api/settings', async (req, res, next) => {
     try { res.json(await db.getSiteSettings()); } catch (e) { next(e); }
 });
 
-app.get('/api/insights', async (req, res, next) => {
-    try { res.json(await db.getAllInsights(true, req.query.page)); } catch (e) { next(e); }
-});
+
 app.get('/api/insights/:id', async (req, res, next) => {
     try {
         const item = await db.getInsightById(req.params.id);
@@ -94,6 +92,9 @@ app.get('/api/search', async (req, res, next) => {
 app.get('/api/pages', async (req, res, next) => {
     try { res.json(await db.getAllCustomPages()); } catch (e) { next(e); }
 });
+app.get('/api/insights', async (req, res, next) => {
+    try { res.json(await db.getAllInsights(true, req.query.page || null)); } catch (e) { next(e); }
+});
 app.get('/api/pages/:id', async (req, res, next) => {
     try {
         const item = await db.getPageConfig(req.params.id);
@@ -101,11 +102,7 @@ app.get('/api/pages/:id', async (req, res, next) => {
     } catch (e) { next(e); }
 });
 
-app.post('/api/upload', upload.single('file'), (req, res) => {
-    if (!req.file) return res.status(400).json({ detail: 'No file uploaded' });
-    res.json({ url: `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`, filename: req.file.originalname });
-});
-
+// Auth
 app.post('/api/auth/login', upload.none(), async (req, res, next) => {
     try {
         const { username, password } = req.body;
@@ -159,8 +156,20 @@ const admin = express.Router();
 admin.use(authenticateToken);
 app.use('/api/admin', admin);
 
+admin.post('/upload', upload.single('file'), (req, res) => {
+    if (!req.file) return res.status(400).json({ detail: 'No file uploaded' });
+    res.json({ url: `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`, filename: req.file.originalname });
+});
+
+admin.post('/users', async (req, res, next) => {
+    try {
+        if (await db.getUserByUsername(req.body.username)) return res.status(400).json({ detail: 'Username already exists' });
+        res.status(201).json(await db.createUser(req.body));
+    } catch (e) { next(e); }
+});
+
 admin.get('/insights', async (req, res, next) => {
-    try { res.json(await db.getAllInsights(false, req.query.page)); } catch (e) { next(e); }
+    try { res.json(await db.getAllInsights(false, req.query.page || null)); } catch (e) { next(e); }
 });
 admin.post('/insights', async (req, res, next) => {
     try { res.status(201).json(await db.createInsight(req.body)); } catch (e) { next(e); }
@@ -251,13 +260,6 @@ admin.put('/jobs/:id', async (req, res, next) => {
 admin.delete('/jobs/:id', async (req, res, next) => {
     try {
         await db.deleteJob(req.params.id, req.query.permanent === 'true') ? res.status(204).end() : res.status(404).json({ detail: 'Job not found' });
-    } catch (e) { next(e); }
-});
-
-admin.post('/users', async (req, res, next) => {
-    try {
-        if (await db.getUserByUsername(req.body.username)) return res.status(400).json({ detail: 'Username already exists' });
-        res.status(201).json(await db.createUser(req.body));
     } catch (e) { next(e); }
 });
 

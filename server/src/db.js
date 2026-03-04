@@ -1,3 +1,9 @@
+/**
+ * db.js — Express/SQLite database layer
+ * Schema is 100% compatible with the original Python/FastAPI backend (database.py).
+ * Table names, column names and data types are identical.
+ */
+
 const fs = require('fs');
 const sqlite3 = require('sqlite3');
 const { open } = require('sqlite');
@@ -15,96 +21,67 @@ async function initDb() {
         fs.mkdirSync(DATA_DIR, { recursive: true });
     }
 
-    db = await open({
-        filename: DB_PATH,
-        driver: sqlite3.Database
-    });
+    db = await open({ filename: DB_PATH, driver: sqlite3.Database });
+    console.log('✅ SQLite connected');
 
-    console.log('✅ SQLite (async) connected and initialized');
-
-    // Enable WAL mode for better concurrency on Hostinger
+    // Enable WAL mode for better concurrency
     await db.run('PRAGMA journal_mode = WAL');
 
+    /* ── Schema ─────────────────────────────────────────────────────────────
+       Matches 1:1 with the original Python FastAPI backend schema.
+       Column names are preserved exactly.
+    ──────────────────────────────────────────────────────────────────────── */
     await db.exec(`
         CREATE TABLE IF NOT EXISTS insights (
-            _id TEXT PRIMARY KEY,
+            id TEXT PRIMARY KEY,
             title TEXT,
-            summary TEXT,
+            excerpt TEXT,
             content TEXT,
-            category TEXT,
             author TEXT,
-            date TEXT,
-            readTime TEXT,
-            image TEXT,
-            tags TEXT,
-            slug TEXT UNIQUE,
-            published BOOLEAN,
-            createdAt TEXT
+            imageUrl TEXT,
+            page TEXT,
+            published INTEGER,
+            journal TEXT,
+            year TEXT,
+            authors TEXT,
+            pdfUrl TEXT,
+            linkType TEXT,
+            createdAt TEXT,
+            updatedAt TEXT
         );
 
         CREATE TABLE IF NOT EXISTS research (
-            _id TEXT PRIMARY KEY,
+            id TEXT PRIMARY KEY,
             title TEXT,
-            authors TEXT,
             journal TEXT,
-            year INTEGER,
-            abstract TEXT,
+            year TEXT,
+            authors TEXT,
             excerpt TEXT,
+            abstract TEXT,
             content TEXT,
-            doi TEXT,
+            imageUrl TEXT,
             pdfUrl TEXT,
             linkType TEXT,
-            image TEXT,
-            tags TEXT,
-            published BOOLEAN,
-            createdAt TEXT
+            published INTEGER,
+            createdAt TEXT,
+            updatedAt TEXT
         );
 
         CREATE TABLE IF NOT EXISTS showcase (
-            _id TEXT PRIMARY KEY,
+            id TEXT PRIMARY KEY,
             title TEXT,
             description TEXT,
-            image TEXT,
-            link TEXT,
-            category TEXT,
+            mediaUrl TEXT,
             mediaType TEXT,
             tag TEXT,
-            size TEXT,
-            orderIdx INTEGER DEFAULT 0,
-            tags TEXT,
-            published BOOLEAN,
-            createdAt TEXT
-        );
-
-        CREATE TABLE IF NOT EXISTS jobs (
-            _id TEXT PRIMARY KEY,
-            title TEXT,
-            department TEXT,
-            location TEXT,
-            type TEXT,
-            description TEXT,
-            requirements TEXT,
-            salary TEXT,
-            company TEXT DEFAULT 'DREAMATIC',
-            active BOOLEAN,
-            archived BOOLEAN,
-            createdAt TEXT
-        );
-
-        CREATE TABLE IF NOT EXISTS job_applications (
-            id TEXT PRIMARY KEY,
-            jobId TEXT,
-            jobTitle TEXT,
-            name TEXT,
-            email TEXT,
-            phone TEXT,
-            linkedIn TEXT,
-            resumeUrl TEXT,
-            message TEXT,
-            status TEXT,
-            appliedDate TEXT,
-            deletedAt TEXT,
-            notes TEXT
+            product TEXT,
+            "order" INTEGER DEFAULT 0,
+            active INTEGER DEFAULT 1,
+            size TEXT DEFAULT 'medium',
+            likes INTEGER DEFAULT 0,
+            views INTEGER DEFAULT 0,
+            createdAt TEXT,
+            updatedAt TEXT
         );
 
         CREATE TABLE IF NOT EXISTS users (
@@ -116,23 +93,80 @@ async function initDb() {
             createdAt TEXT
         );
 
-        CREATE TABLE IF NOT EXISTS credentials (
-            credential_id TEXT PRIMARY KEY,
+        CREATE TABLE IF NOT EXISTS jobs (
+            id TEXT PRIMARY KEY,
+            title TEXT,
+            team TEXT,
+            location TEXT,
+            description TEXT,
+            requirements TEXT,
+            company TEXT DEFAULT 'DREAMATIC',
+            tags TEXT DEFAULT '',
+            type TEXT DEFAULT 'Full-time',
+            active INTEGER DEFAULT 1,
+            isArchived INTEGER DEFAULT 0,
+            createdAt TEXT,
+            updatedAt TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS applications (
+            id TEXT PRIMARY KEY,
+            name TEXT,
+            email TEXT,
+            phone TEXT,
+            location TEXT,
+            experience TEXT,
+            salary TEXT,
+            linkedin TEXT,
+            portfolio TEXT,
+            notice TEXT,
+            resume TEXT,
+            message TEXT,
+            role TEXT,
+            jobId TEXT,
+            status TEXT DEFAULT 'Applied',
+            history TEXT DEFAULT '[]',
+            isDeleted INTEGER DEFAULT 0,
+            createdAt TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS pages (
+            id TEXT PRIMARY KEY,
+            page_id TEXT UNIQUE,
+            hero_badge TEXT,
+            hero_title TEXT,
+            hero_subtitle TEXT,
+            solutions TEXT,
+            approaches TEXT,
+            "values" TEXT,
+            stats TEXT,
+            team TEXT,
+            advisors TEXT,
+            perks TEXT,
+            content TEXT,
+            theme TEXT,
+            isCustom INTEGER DEFAULT 0,
+            label TEXT,
+            path TEXT,
+            visible INTEGER DEFAULT 1,
+            "group" TEXT,
+            updatedAt TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS webauthn_credentials (
+            id TEXT PRIMARY KEY,
             username TEXT,
+            credential_id TEXT,
             public_key TEXT,
             sign_count INTEGER,
-            transports TEXT
+            transports TEXT,
+            created_at TEXT
         );
 
-        CREATE TABLE IF NOT EXISTS challenges (
+        CREATE TABLE IF NOT EXISTS webauthn_challenges (
             username TEXT PRIMARY KEY,
             challenge TEXT,
-            expiresAt INTEGER
-        );
-
-        CREATE TABLE IF NOT EXISTS page_configs (
-            page_id TEXT PRIMARY KEY,
-            config TEXT
+            expires_at TEXT
         );
 
         CREATE TABLE IF NOT EXISTS site_settings (
@@ -142,115 +176,173 @@ async function initDb() {
             contactEmail TEXT,
             seoDescription TEXT,
             keywords TEXT,
-            indexRobots BOOLEAN,
-            maintenanceMode BOOLEAN,
+            indexRobots INTEGER,
+            maintenanceMode INTEGER,
             social TEXT
         );
     `);
 
-    // Migrations / Column Checks (Add missing columns if table existed)
-    try {
-        await db.run('ALTER TABLE research ADD COLUMN excerpt TEXT').catch(() => { });
-        await db.run('ALTER TABLE research ADD COLUMN content TEXT').catch(() => { });
-        await db.run('ALTER TABLE research ADD COLUMN linkType TEXT').catch(() => { });
-        await db.run('ALTER TABLE research ADD COLUMN image TEXT').catch(() => { });
-        await db.run('ALTER TABLE showcase ADD COLUMN mediaType TEXT').catch(() => { });
-        await db.run('ALTER TABLE showcase ADD COLUMN tag TEXT').catch(() => { });
-        await db.run('ALTER TABLE showcase ADD COLUMN size TEXT').catch(() => { });
-        await db.run('ALTER TABLE showcase ADD COLUMN orderIdx INTEGER DEFAULT 0').catch(() => { });
-        await db.run('ALTER TABLE jobs ADD COLUMN company TEXT DEFAULT "DREAMATIC"').catch(() => { });
-    } catch (e) {
-        // Silently skip if columns already exist
-    }
-
-    // Ensure default settings exist
+    // Seed default site settings
     const settings = await db.get('SELECT id FROM site_settings WHERE id = "default"');
     if (!settings) {
-        await db.run(`INSERT INTO site_settings (id, siteTitle, tagline, contactEmail, social) 
-                      VALUES ("default", "DREAMATIC", "The Future of Agentic AI", "hello@dreamatic.ai", "{}")`);
+        await db.run(`
+            INSERT INTO site_settings (id, siteTitle, tagline, contactEmail, seoDescription, keywords, indexRobots, maintenanceMode, social)
+            VALUES ("default", "DREAMATIC", "The Future of Agentic AI", "hello@dreamatic.ai",
+                    "Leading the bridge between human intuition and agentic automation.",
+                    "AI, Agents, Enterprise AI, Future Tech", 1, 0, '{"linkedin":"","twitter":"","facebook":"","instagram":""}')`);
     }
 
-    // Ensure default admin exists
+    // Seed default admin user
     const admin = await db.get('SELECT username FROM users WHERE username = "admin"');
     if (!admin) {
         const hash = bcrypt.hashSync('admin123', 10);
-        await db.run(`INSERT INTO users (id, username, email, passwordHash, role, createdAt) 
-                      VALUES (?, "admin", "admin@dreamatic.com", ?, "admin", ?)`,
-            [uuidv4(), hash, new Date().toISOString()]);
-        console.log('👤 Default admin user created (admin / admin123)');
+        const now = new Date().toISOString();
+        await db.run(
+            'INSERT INTO users (id, username, email, passwordHash, role, createdAt) VALUES (?, "admin", "admin@dreamatic.com", ?, "admin", ?)',
+            [uuidv4(), hash, now]
+        );
+        console.log('👤 Default admin created (admin / admin123)');
     }
 }
 
-function generateSlug(title) {
-    if (!title) return uuidv4().split('-')[0];
-    return title.toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '');
+const now = () => new Date().toISOString();
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+function insightHelper(row) {
+    if (!row) return null;
+    const r = { ...row };
+    r._id = r.id; delete r.id;
+    r.published = !!r.published;
+    return r;
+}
+
+function researchHelper(row) {
+    if (!row) return null;
+    const r = { ...row };
+    r._id = r.id; delete r.id;
+    r.published = !!r.published;
+    return r;
+}
+
+function showcaseHelper(row) {
+    if (!row) return null;
+    const r = { ...row };
+    r._id = r.id; delete r.id;
+    r.active = !!r.active;
+    return r;
+}
+
+function jobHelper(row) {
+    if (!row) return null;
+    const r = { ...row };
+    r._id = r.id; delete r.id;
+    r.active = !!r.active;
+    r.isArchived = !!r.isArchived;
+    return r;
+}
+
+function applicationHelper(row) {
+    if (!row) return null;
+    const r = { ...row };
+    r._id = r.id; delete r.id;
+    r.isDeleted = !!r.isDeleted;
+    if (typeof r.history === 'string') r.history = JSON.parse(r.history || '[]');
+    return r;
+}
+
+function pageConfigHelper(row) {
+    if (!row) return null;
+    const r = { ...row };
+    r._id = r.id; delete r.id;
+    r.isCustom = !!r.isCustom;
+    r.visible = r.visible !== undefined ? !!r.visible : true;
+    const JSON_FIELDS = ['solutions', 'approaches', 'values', 'stats', 'team', 'advisors', 'perks', 'content', 'theme'];
+    for (const f of JSON_FIELDS) {
+        if (typeof r[f] === 'string') r[f] = JSON.parse(r[f] || 'null');
+    }
+    return r;
+}
+
+function siteSettingsHelper(row) {
+    if (!row) return null;
+    const r = { ...row };
+    if (typeof r.social === 'string') r.social = JSON.parse(r.social || '{}');
+    r.indexRobots = !!r.indexRobots;
+    r.maintenanceMode = !!r.maintenanceMode;
+    return r;
+}
+
+function credentialHelper(row) {
+    if (!row) return null;
+    const r = { ...row };
+    r._id = r.id; delete r.id;
+    if (typeof r.transports === 'string') r.transports = JSON.parse(r.transports || '[]');
+    return r;
 }
 
 // ─── Site Settings ──────────────────────────────────────────────────────────
 
 async function getSiteSettings() {
     const row = await db.get('SELECT * FROM site_settings WHERE id = "default"');
-    if (row) {
-        row.social = JSON.parse(row.social || '{}');
-        row.indexRobots = !!row.indexRobots;
-        row.maintenanceMode = !!row.maintenanceMode;
-    }
-    return row;
+    return siteSettingsHelper(row);
 }
 
 async function updateSiteSettings(data) {
-    const current = await getSiteSettings();
-    const updated = { ...current, ...data };
-    await db.run(`UPDATE site_settings SET 
-        siteTitle = ?, tagline = ?, contactEmail = ?, seoDescription = ?, 
-        keywords = ?, indexRobots = ?, maintenanceMode = ?, social = ?
-        WHERE id = "default"`,
-        [updated.siteTitle, updated.tagline, updated.contactEmail, updated.seoDescription,
-        updated.keywords, updated.indexRobots ? 1 : 0, updated.maintenanceMode ? 1 : 0, JSON.stringify(updated.social)]);
+    const social = JSON.stringify(data.social || {});
+    await db.run(`
+        UPDATE site_settings SET siteTitle=?, tagline=?, contactEmail=?, seoDescription=?, keywords=?, indexRobots=?, maintenanceMode=?, social=?
+        WHERE id="default"`,
+        [data.siteTitle, data.tagline, data.contactEmail, data.seoDescription, data.keywords,
+        data.indexRobots ? 1 : 0, data.maintenanceMode ? 1 : 0, social]);
     return getSiteSettings();
 }
 
 // ─── Insights ───────────────────────────────────────────────────────────────
+// Original schema uses: id, title, excerpt, content, author, imageUrl, page,
+//   published, journal, year, authors, pdfUrl, linkType, createdAt, updatedAt
 
-async function getAllInsights(onlyPublished = false, page = null) {
-    let query = 'SELECT * FROM insights';
-    if (onlyPublished) query += ' WHERE published = 1';
+async function getAllInsights(publishedOnly = false, page = null) {
+    let query = 'SELECT * FROM insights WHERE 1=1';
+    const params = [];
+
+    if (publishedOnly) { query += ' AND published = 1'; }
+    if (page) { query += ' AND page = ?'; params.push(page); }
     query += ' ORDER BY createdAt DESC';
 
-    if (page) {
-        const offset = (parseInt(page) - 1) * 10;
-        query += ` LIMIT 10 OFFSET ${offset}`;
+    try {
+        const rows = await db.all(query, params);
+        return rows.map(insightHelper);
+    } catch (err) {
+        console.error('❌ getAllInsights:', err);
+        throw err;
     }
-
-    const rows = await db.all(query);
-    return rows.map(r => ({ ...r, tags: JSON.parse(r.tags || '[]'), published: !!r.published }));
 }
 
 async function getInsightById(id) {
-    const row = await db.get('SELECT * FROM insights WHERE _id = ?', [id]);
-    return row ? { ...row, tags: JSON.parse(row.tags || '[]'), published: !!row.published } : null;
+    const row = await db.get('SELECT * FROM insights WHERE id = ?', [id]);
+    return insightHelper(row);
 }
 
 async function createInsight(data) {
     const id = uuidv4();
-    const slug = data.slug || generateSlug(data.title);
-
-    // Naming map (frontend -> backend)
-    const summary = data.summary || data.excerpt || '';
-    const category = data.category || data.page || 'uncategorized';
-    const image = data.image || data.imageUrl || '';
+    const n = now();
+    // Accept both original field names (excerpt, page, imageUrl) and any aliases
+    const excerpt = data.excerpt || data.summary || '';
+    const page = data.page || data.category || 'ai-work';
+    const imageUrl = data.imageUrl || data.image || null;
+    const author = data.author || 'DREAMATIC Team';
 
     try {
-        await db.run(`INSERT INTO insights (_id, title, summary, content, category, author, date, readTime, image, tags, slug, published, createdAt)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [id, data.title, summary, data.content, category, data.author || 'DREAMATIC Team',
-                data.date || new Date().toISOString().split('T')[0], data.readTime || '5 min', image,
-                JSON.stringify(data.tags || []), slug, data.published ? 1 : 0, new Date().toISOString()]);
+        await db.run(`
+            INSERT INTO insights (id, title, excerpt, content, author, imageUrl, page, published, journal, year, authors, pdfUrl, linkType, createdAt, updatedAt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [id, data.title, excerpt, data.content || '', author, imageUrl, page,
+                data.published ? 1 : 0, data.journal || null, data.year || null,
+                data.authors || null, data.pdfUrl || null, data.linkType || 'download', n, n]);
         return getInsightById(id);
     } catch (err) {
-        console.error('❌ DB Error createInsight:', err);
+        console.error('❌ createInsight:', err);
         throw err;
     }
 }
@@ -258,57 +350,67 @@ async function createInsight(data) {
 async function updateInsight(id, data) {
     const current = await getInsightById(id);
     if (!current) return null;
-    const updated = { ...current, ...data };
-
-    // Naming map (frontend -> backend)
-    const summary = data.summary || data.excerpt || updated.summary;
-    const category = data.category || data.page || updated.category;
-    const image = data.image || data.imageUrl || updated.image;
+    const n = now();
+    // Merge, respecting field aliases
+    const excerpt = data.excerpt ?? data.summary ?? current.excerpt;
+    const page = data.page ?? data.category ?? current.page;
+    const imageUrl = data.imageUrl ?? data.image ?? current.imageUrl;
 
     try {
-        await db.run(`UPDATE insights SET title=?, summary=?, content=?, category=?, author=?, date=?, readTime=?, image=?, tags=?, slug=?, published=?
-            WHERE _id=?`,
-            [updated.title, summary, updated.content, category, updated.author, updated.date,
-            updated.readTime, image, JSON.stringify(updated.tags), updated.slug, updated.published ? 1 : 0, id]);
+        await db.run(`
+            UPDATE insights SET title=?, excerpt=?, content=?, author=?, imageUrl=?, page=?, published=?, journal=?, year=?, authors=?, pdfUrl=?, linkType=?, updatedAt=?
+            WHERE id=?`,
+            [data.title ?? current.title, excerpt, data.content ?? current.content,
+            data.author ?? current.author, imageUrl, page,
+            (data.published ?? current.published) ? 1 : 0,
+            data.journal ?? current.journal, data.year ?? current.year,
+            data.authors ?? current.authors, data.pdfUrl ?? current.pdfUrl,
+            data.linkType ?? current.linkType, n, id]);
         return getInsightById(id);
     } catch (err) {
-        console.error('❌ DB Error updateInsight:', err);
+        console.error('❌ updateInsight:', err);
         throw err;
     }
 }
 
 async function deleteInsight(id) {
-    const res = await db.run('DELETE FROM insights WHERE _id = ?', [id]);
+    const res = await db.run('DELETE FROM insights WHERE id = ?', [id]);
     return res.changes > 0;
 }
 
 // ─── Research ───────────────────────────────────────────────────────────────
+// Original schema: id, title, journal, year, authors, excerpt, abstract,
+//   content, imageUrl, pdfUrl, linkType, published, createdAt, updatedAt
 
-async function getAllResearch(onlyPublished = false) {
+async function getAllResearch(publishedOnly = false) {
     let query = 'SELECT * FROM research';
-    if (onlyPublished) query += ' WHERE published = 1';
+    if (publishedOnly) query += ' WHERE published = 1';
     query += ' ORDER BY createdAt DESC';
     const rows = await db.all(query);
-    return rows.map(r => ({ ...r, tags: JSON.parse(r.tags || '[]'), published: !!r.published }));
+    return rows.map(researchHelper);
 }
 
 async function getResearchById(id) {
-    const row = await db.get('SELECT * FROM research WHERE _id = ?', [id]);
-    return row ? { ...row, tags: JSON.parse(row.tags || '[]'), published: !!row.published } : null;
+    const row = await db.get('SELECT * FROM research WHERE id = ?', [id]);
+    return researchHelper(row);
 }
 
 async function createResearch(data) {
     const id = uuidv4();
-    const image = data.image || data.imageUrl || '';
+    const n = now();
+    const imageUrl = data.imageUrl || data.image || null;
     try {
-        await db.run(`INSERT INTO research (_id, title, authors, journal, year, abstract, excerpt, content, doi, pdfUrl, linkType, image, tags, published, createdAt)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [id, data.title, data.authors, data.journal, data.year || new Date().getFullYear(), data.abstract, data.excerpt || '',
-                data.content || data.abstract, data.doi || '', data.pdfUrl || '', data.linkType || 'download', image,
-                JSON.stringify(data.tags || []), data.published ? 1 : 0, new Date().toISOString()]);
+        await db.run(`
+            INSERT INTO research (id, title, journal, year, authors, excerpt, abstract, content, imageUrl, pdfUrl, linkType, published, createdAt, updatedAt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [id, data.title, data.journal, data.year || String(new Date().getFullYear()),
+                data.authors, data.excerpt || '', data.abstract || null,
+                data.content || data.abstract || '', imageUrl,
+                data.pdfUrl || null, data.linkType || 'download',
+                data.published ? 1 : 0, n, n]);
         return getResearchById(id);
     } catch (err) {
-        console.error('❌ DB Error createResearch:', err);
+        console.error('❌ createResearch:', err);
         throw err;
     }
 }
@@ -316,56 +418,66 @@ async function createResearch(data) {
 async function updateResearch(id, data) {
     const current = await getResearchById(id);
     if (!current) return null;
-    const updated = { ...current, ...data };
-    const image = data.image || data.imageUrl || updated.image;
-
+    const n = now();
+    const imageUrl = data.imageUrl ?? data.image ?? current.imageUrl;
     try {
-        await db.run(`UPDATE research SET title=?, authors=?, journal=?, year=?, abstract=?, excerpt=?, content=?, doi=?, pdfUrl=?, linkType=?, image=?, tags=?, published=?
-            WHERE _id=?`,
-            [updated.title, updated.authors, updated.journal, updated.year, updated.abstract, updated.excerpt, updated.content,
-            updated.doi, updated.pdfUrl, updated.linkType, image, JSON.stringify(updated.tags), updated.published ? 1 : 0, id]);
+        await db.run(`
+            UPDATE research SET title=?, journal=?, year=?, authors=?, excerpt=?, abstract=?, content=?, imageUrl=?, pdfUrl=?, linkType=?, published=?, updatedAt=?
+            WHERE id=?`,
+            [data.title ?? current.title, data.journal ?? current.journal,
+            data.year ?? current.year, data.authors ?? current.authors,
+            data.excerpt ?? current.excerpt, data.abstract ?? current.abstract,
+            data.content ?? current.content, imageUrl,
+            data.pdfUrl ?? current.pdfUrl, data.linkType ?? current.linkType,
+            (data.published ?? current.published) ? 1 : 0, n, id]);
         return getResearchById(id);
     } catch (err) {
-        console.error('❌ DB Error updateResearch:', err);
+        console.error('❌ updateResearch:', err);
         throw err;
     }
 }
 
 async function deleteResearch(id) {
-    const res = await db.run('DELETE FROM research WHERE _id = ?', [id]);
+    const res = await db.run('DELETE FROM research WHERE id = ?', [id]);
     return res.changes > 0;
 }
 
 // ─── Showcase ───────────────────────────────────────────────────────────────
+// Original schema: id, title, description, mediaUrl, mediaType, tag, product,
+//   order, active, size, likes, views, createdAt, updatedAt
 
-async function getAllShowcaseItems(onlyPublished = false) {
+async function getAllShowcaseItems(activeOnly = false) {
     let query = 'SELECT * FROM showcase';
-    if (onlyPublished) query += ' WHERE published = 1';
-    query += ' ORDER BY orderIdx ASC, createdAt DESC';
+    if (activeOnly) query += ' WHERE active = 1';
+    query += ' ORDER BY "order" ASC, createdAt DESC';
     const rows = await db.all(query);
-    return rows.map(r => ({ ...r, tags: JSON.parse(r.tags || '[]'), published: !!r.published }));
+    return rows.map(showcaseHelper);
 }
 
 async function getShowcaseById(id) {
-    const row = await db.get('SELECT * FROM showcase WHERE _id = ?', [id]);
-    return row ? { ...row, tags: JSON.parse(row.tags || '[]'), published: !!row.published } : null;
+    const row = await db.get('SELECT * FROM showcase WHERE id = ?', [id]);
+    return showcaseHelper(row);
 }
 
 async function createShowcaseItem(data) {
     const id = uuidv4();
-    const image = data.image || data.mediaUrl || '';
-    const category = data.category || data.product || 'Solutions';
-    const published = data.published !== undefined ? data.published : (data.active !== undefined ? data.active : true);
+    const n = now();
+    // Accept both original names (mediaUrl, product, order, active) and any aliases
+    const mediaUrl = data.mediaUrl || data.image || '';
+    const product = data.product || data.category || 'Solutions';
+    const active = data.active !== undefined ? data.active : (data.published !== undefined ? data.published : true);
 
     try {
-        await db.run(`INSERT INTO showcase (_id, title, description, image, link, category, mediaType, tag, size, orderIdx, tags, published, createdAt)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [id, data.title, data.description || '', image, data.link || '', category, data.mediaType || 'image',
-                data.tag || '', data.size || 'medium', data.orderIdx || data.order || 0,
-                JSON.stringify(data.tags || []), published ? 1 : 0, new Date().toISOString()]);
+        await db.run(`
+            INSERT INTO showcase (id, title, description, mediaUrl, mediaType, tag, product, "order", active, size, likes, views, createdAt, updatedAt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [id, data.title, data.description || null, mediaUrl,
+                data.mediaType || 'image', data.tag || '', product,
+                data.order ?? data.orderIdx ?? 0, active ? 1 : 0,
+                data.size || 'medium', 0, 0, n, n]);
         return getShowcaseById(id);
     } catch (err) {
-        console.error('❌ DB Error createShowcaseItem:', err);
+        console.error('❌ createShowcaseItem:', err);
         throw err;
     }
 }
@@ -373,61 +485,66 @@ async function createShowcaseItem(data) {
 async function updateShowcaseItem(id, data) {
     const current = await getShowcaseById(id);
     if (!current) return null;
-    const updated = { ...current, ...data };
-
-    const image = data.image || data.mediaUrl || updated.image;
-    const category = data.category || data.product || updated.category;
-    const published = data.published !== undefined ? data.published : (data.active !== undefined ? data.active : updated.published);
+    const n = now();
+    const mediaUrl = data.mediaUrl ?? data.image ?? current.mediaUrl;
+    const product = data.product ?? data.category ?? current.product;
+    const active = data.active !== undefined ? data.active : (data.published !== undefined ? data.published : current.active);
 
     try {
-        await db.run(`UPDATE showcase SET title=?, description=?, image=?, link=?, category=?, mediaType=?, tag=?, size=?, orderIdx=?, tags=?, published=?
-            WHERE _id=?`,
-            [updated.title, updated.description, image, updated.link, category, updated.mediaType || current.mediaType,
-            updated.tag || current.tag, updated.size || current.size, updated.orderIdx || updated.order || current.orderIdx,
-            JSON.stringify(updated.tags), published ? 1 : 0, id]);
+        await db.run(`
+            UPDATE showcase SET title=?, description=?, mediaUrl=?, mediaType=?, tag=?, product=?, "order"=?, active=?, size=?, updatedAt=?
+            WHERE id=?`,
+            [data.title ?? current.title, data.description ?? current.description,
+                mediaUrl, data.mediaType ?? current.mediaType,
+            data.tag ?? current.tag, product,
+            data.order ?? data.orderIdx ?? current.order,
+            active ? 1 : 0, data.size ?? current.size, n, id]);
         return getShowcaseById(id);
     } catch (err) {
-        console.error('❌ DB Error updateShowcaseItem:', err);
+        console.error('❌ updateShowcaseItem:', err);
         throw err;
     }
 }
 
 async function deleteShowcaseItem(id) {
-    const res = await db.run('DELETE FROM showcase WHERE _id = ?', [id]);
+    const res = await db.run('DELETE FROM showcase WHERE id = ?', [id]);
     return res.changes > 0;
 }
 
 // ─── Jobs ───────────────────────────────────────────────────────────────────
+// Original schema: id, title, team, location, description, requirements,
+//   company, tags, type, active, isArchived, createdAt, updatedAt
 
 async function getAllJobs(activeOnly = false, includeArchived = true) {
-    let conditions = [];
-    if (activeOnly) conditions.push('active = 1');
-    if (!includeArchived) conditions.push('archived = 0');
-
-    let query = 'SELECT * FROM jobs';
-    if (conditions.length) query += ' WHERE ' + conditions.join(' AND ');
-    query += ' ORDER BY createdAt DESC';
-
+    let conds = [];
+    if (activeOnly) conds.push('active = 1');
+    if (!includeArchived) conds.push('isArchived = 0');
+    let query = 'SELECT * FROM jobs' + (conds.length ? ' WHERE ' + conds.join(' AND ') : '') + ' ORDER BY createdAt DESC';
     const rows = await db.all(query);
-    return rows.map(r => ({ ...r, active: !!r.active, archived: !!r.archived }));
+    return rows.map(jobHelper);
 }
 
 async function getJobById(id) {
-    const row = await db.get('SELECT * FROM jobs WHERE _id = ?', [id]);
-    return row ? { ...row, active: !!row.active, archived: !!row.archived } : null;
+    const row = await db.get('SELECT * FROM jobs WHERE id = ?', [id]);
+    return jobHelper(row);
 }
 
 async function createJob(data) {
     const id = uuidv4();
-    const department = data.department || data.team || 'Core Intelligence';
+    const n = now();
+    // Accept 'team' or 'department'
+    const team = data.team || data.department || 'Core Intelligence';
     try {
-        await db.run(`INSERT INTO jobs (_id, title, department, location, type, description, requirements, salary, company, active, archived, createdAt)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [id, data.title, department, data.location, data.type || 'Full-time', data.description || '', data.requirements || '',
-                data.salary || '', data.company || 'DREAMATIC', data.active ? 1 : 0, 0, new Date().toISOString()]);
+        await db.run(`
+            INSERT INTO jobs (id, title, team, location, description, requirements, company, tags, type, active, isArchived, createdAt, updatedAt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [id, data.title, team, data.location || '', data.description || '',
+                data.requirements || '', data.company || 'DREAMATIC',
+                data.tags || '', data.type || 'Full-time',
+                data.active ? 1 : 0, data.isArchived ? 1 : 0, n, n]);
         return getJobById(id);
     } catch (err) {
-        console.error('❌ DB Error createJob:', err);
+        console.error('❌ createJob:', err);
         throw err;
     }
 }
@@ -435,75 +552,93 @@ async function createJob(data) {
 async function updateJob(id, data) {
     const current = await getJobById(id);
     if (!current) return null;
-    const updated = { ...current, ...data };
-    const department = data.department || data.team || updated.department;
-
+    const n = now();
+    const team = data.team ?? data.department ?? current.team;
     try {
-        await db.run(`UPDATE jobs SET title=?, department=?, location=?, type=?, description=?, requirements=?, salary=?, company=?, active=?, archived=?
-            WHERE _id=?`,
-            [updated.title, department, updated.location, updated.type, updated.description,
-            updated.requirements, updated.salary, updated.company || current.company, updated.active ? 1 : 0, updated.archived ? 1 : 0, id]);
+        await db.run(`
+            UPDATE jobs SET title=?, team=?, location=?, description=?, requirements=?, company=?, tags=?, type=?, active=?, isArchived=?, updatedAt=?
+            WHERE id=?`,
+            [data.title ?? current.title, team,
+            data.location ?? current.location, data.description ?? current.description,
+            data.requirements ?? current.requirements, data.company ?? current.company,
+            data.tags ?? current.tags, data.type ?? current.type,
+            (data.active ?? current.active) ? 1 : 0,
+            (data.isArchived ?? current.isArchived) ? 1 : 0, n, id]);
         return getJobById(id);
     } catch (err) {
-        console.error('❌ DB Error updateJob:', err);
+        console.error('❌ updateJob:', err);
         throw err;
     }
 }
 
 async function deleteJob(id, permanent = false) {
     if (permanent) {
-        const res = await db.run('DELETE FROM jobs WHERE _id = ?', [id]);
+        const res = await db.run('DELETE FROM jobs WHERE id = ?', [id]);
         return res.changes > 0;
     } else {
-        const res = await db.run('UPDATE jobs SET archived = 1, active = 0 WHERE _id = ?', [id]);
+        const res = await db.run('UPDATE jobs SET isArchived = 1, active = 0, updatedAt = ? WHERE id = ?', [now(), id]);
         return res.changes > 0;
     }
 }
 
-// ─── Job Applications ───────────────────────────────────────────────────────
+// ─── Applications ───────────────────────────────────────────────────────────
+// Original schema: id, name, email, phone, location, experience, salary,
+//   linkedin, portfolio, notice, resume, message, role, jobId, status,
+//   history, isDeleted, createdAt
+
+async function getAllApplications(includeDeleted = false) {
+    let query = 'SELECT * FROM applications';
+    if (!includeDeleted) query += ' WHERE isDeleted = 0';
+    query += ' ORDER BY createdAt DESC';
+    const rows = await db.all(query);
+    return rows.map(applicationHelper);
+}
 
 async function createJobApplication(data) {
     const id = uuidv4();
     try {
-        await db.run(`INSERT INTO job_applications (id, jobId, jobTitle, name, email, phone, linkedIn, resumeUrl, message, status, appliedDate)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "pending", ?)`,
-            [id, data.jobId, data.jobTitle, data.name, data.email, data.phone, data.linkedIn,
-                data.resumeUrl, data.message, new Date().toISOString()]);
-        return { id, message: 'Application submitted' };
+        await db.run(`
+            INSERT INTO applications (id, name, email, phone, location, experience, salary, linkedin, portfolio, notice, resume, message, role, jobId, status, history, isDeleted, createdAt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [id, data.name, data.email, data.phone || '', data.location || '',
+                data.experience || '', data.salary || '', data.linkedin || '',
+                data.portfolio || '', data.notice || '', data.resume || '',
+                data.message || '', data.role || '', data.jobId || null,
+                'Applied', '[]', 0, now()]);
+        const row = await db.get('SELECT * FROM applications WHERE id = ?', [id]);
+        return applicationHelper(row);
     } catch (err) {
-        console.error('❌ DB Error createJobApplication:', err);
+        console.error('❌ createJobApplication:', err);
         throw err;
     }
 }
 
-async function getAllApplications(includeDeleted = false) {
-    let query = 'SELECT * FROM job_applications';
-    if (!includeDeleted) query += ' WHERE deletedAt IS NULL';
-    query += ' ORDER BY appliedDate DESC';
-    return db.all(query);
-}
-
 async function updateApplicationStatus(id, status, note = '') {
-    const res = await db.run('UPDATE job_applications SET status = ?, notes = ? WHERE id = ?', [status, note, id]);
+    const row = await db.get('SELECT history FROM applications WHERE id = ?', [id]);
+    if (!row) return false;
+    const history = JSON.parse(row.history || '[]');
+    history.push({ status, note, timestamp: now() });
+    const res = await db.run('UPDATE applications SET status = ?, history = ? WHERE id = ?',
+        [status, JSON.stringify(history), id]);
     return res.changes > 0;
 }
 
 async function deleteApplication(id, permanent = false) {
     if (permanent) {
-        const res = await db.run('DELETE FROM job_applications WHERE id = ?', [id]);
+        const res = await db.run('DELETE FROM applications WHERE id = ?', [id]);
         return res.changes > 0;
     } else {
-        const res = await db.run('UPDATE job_applications SET deletedAt = ? WHERE id = ?', [new Date().toISOString(), id]);
+        const res = await db.run('UPDATE applications SET isDeleted = 1 WHERE id = ?', [id]);
         return res.changes > 0;
     }
 }
 
 async function restoreApplication(id) {
-    const res = await db.run('UPDATE job_applications SET deletedAt = NULL WHERE id = ?', [id]);
+    const res = await db.run('UPDATE applications SET isDeleted = 0 WHERE id = ?', [id]);
     return res.changes > 0;
 }
 
-// ─── User / Auth ────────────────────────────────────────────────────────────
+// ─── Users / Auth ────────────────────────────────────────────────────────────
 
 async function getUserByUsername(username) {
     return db.get('SELECT * FROM users WHERE username = ?', [username]);
@@ -513,63 +648,114 @@ async function createUser(data) {
     const id = uuidv4();
     const hash = bcrypt.hashSync(data.password, 10);
     await db.run('INSERT INTO users (id, username, email, passwordHash, role, createdAt) VALUES (?, ?, ?, ?, ?, ?)',
-        [id, data.username, data.email, hash, data.role || 'admin', new Date().toISOString()]);
+        [id, data.username, data.email, hash, data.role || 'admin', now()]);
     return getUserByUsername(data.username);
 }
 
+// ─── WebAuthn ────────────────────────────────────────────────────────────────
+// Original table: webauthn_credentials (id, username, credential_id, public_key, sign_count, transports, created_at)
+
 async function getCredentialsByUsername(username) {
-    const rows = await db.all('SELECT * FROM credentials WHERE username = ?', [username]);
-    return rows.map(r => ({ ...r, transports: JSON.parse(r.transports || '[]') }));
+    const rows = await db.all('SELECT * FROM webauthn_credentials WHERE username = ?', [username]);
+    return rows.map(credentialHelper);
 }
 
 async function saveCredential(data) {
-    await db.run('INSERT INTO credentials (credential_id, username, public_key, sign_count, transports) VALUES (?, ?, ?, ?, ?)',
-        [data.credId, data.username, data.publicKey, data.signCount, JSON.stringify(data.transports || [])]);
+    const id = uuidv4();
+    await db.run(
+        'INSERT INTO webauthn_credentials (id, username, credential_id, public_key, sign_count, transports, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [id, data.username, data.credId, data.publicKey, data.signCount, JSON.stringify(data.transports || []), now()]
+    );
 }
 
+// Original table: webauthn_challenges (username, challenge, expires_at TEXT)
 async function saveChallenge(username, challenge) {
-    const expiresAt = Date.now() + 60000;
-    await db.run('INSERT OR REPLACE INTO challenges (username, challenge, expiresAt) VALUES (?, ?, ?)', [username, challenge, expiresAt]);
+    const expiresAt = String(Date.now() / 1000 + 300); // 5 minutes, same as Python
+    await db.run(
+        'INSERT OR REPLACE INTO webauthn_challenges (username, challenge, expires_at) VALUES (?, ?, ?)',
+        [username, challenge, expiresAt]
+    );
 }
 
 async function getChallenge(username) {
-    const row = await db.get('SELECT * FROM challenges WHERE username = ?', [username]);
-    if (!row || row.expiresAt < Date.now()) return null;
+    const row = await db.get('SELECT challenge, expires_at FROM webauthn_challenges WHERE username = ?', [username]);
+    if (!row) return null;
+    if (parseFloat(row.expires_at) < Date.now() / 1000) return null;
     return row.challenge;
 }
 
-// ─── Dynamic Pages ──────────────────────────────────────────────────────────
+// ─── Pages ───────────────────────────────────────────────────────────────────
+// Original table: pages (id, page_id, hero_badge, hero_title, hero_subtitle,
+//   solutions, approaches, values, stats, team, advisors, perks, content,
+//   theme, isCustom, label, path, visible, group, updatedAt)
+
+const PAGE_JSON_FIELDS = ['solutions', 'approaches', 'values', 'stats', 'team', 'advisors', 'perks', 'content', 'theme'];
+
+async function getPageConfig(pageId) {
+    const row = await db.get('SELECT * FROM pages WHERE page_id = ?', [pageId]);
+    return pageConfigHelper(row);
+}
+
+async function upsertPageConfig(pageId, configData) {
+    const existing = await getPageConfig(pageId);
+    const n = now();
+    const data = { ...configData };
+    for (const f of PAGE_JSON_FIELDS) {
+        if (f in data && typeof data[f] !== 'string') {
+            data[f] = JSON.stringify(data[f]);
+        }
+    }
+
+    if (existing) {
+        const sets = Object.keys(data).map(k => `"${k}" = ?`).join(', ');
+        await db.run(`UPDATE pages SET ${sets}, updatedAt = ? WHERE page_id = ?`,
+            [...Object.values(data), n, pageId]);
+    } else {
+        const id = uuidv4();
+        const keys = ['id', 'page_id', 'updatedAt', ...Object.keys(data)];
+        const placeholders = keys.map(() => '?').join(', ');
+        const cols = keys.map(k => `"${k}"`).join(', ');
+        await db.run(`INSERT INTO pages (${cols}) VALUES (${placeholders})`,
+            [id, pageId, n, ...Object.values(data)]);
+    }
+    return getPageConfig(pageId);
+}
 
 async function getAllCustomPages() {
-    const rows = await db.all('SELECT page_id FROM page_configs');
-    return rows.map(r => r.page_id);
+    const rows = await db.all('SELECT * FROM pages WHERE isCustom = 1');
+    return rows.map(pageConfigHelper);
 }
 
-async function getPageConfig(id) {
-    const row = await db.get('SELECT config FROM page_configs WHERE page_id = ?', [id]);
-    return row ? JSON.parse(row.config) : null;
-}
-
-async function upsertPageConfig(id, config) {
-    await db.run('INSERT OR REPLACE INTO page_configs (page_id, config) VALUES (?, ?)', [id, JSON.stringify(config)]);
-    return { success: true };
-}
-
-async function deletePageConfig(id) {
-    const res = await db.run('DELETE FROM page_configs WHERE page_id = ?', [id]);
+async function deletePageConfig(pageId) {
+    const res = await db.run('DELETE FROM pages WHERE page_id = ?', [pageId]);
     return res.changes > 0;
 }
 
-// ─── Search ─────────────────────────────────────────────────────────────────
+// ─── Search ──────────────────────────────────────────────────────────────────
 
 async function globalSearch(q) {
     const term = `%${q}%`;
-    const [insights, showcase, jobs] = await Promise.all([
-        db.all('SELECT _id, title, category as type FROM insights WHERE title LIKE ? OR summary LIKE ? LIMIT 5', [term, term]),
-        db.all('SELECT _id, title, "showcase" as type FROM showcase WHERE title LIKE ? OR description LIKE ? LIMIT 5', [term, term]),
-        db.all('SELECT _id, title, "job" as type FROM jobs WHERE title LIKE ? OR description LIKE ? LIMIT 5', [term, term])
+
+    const [insights, research, showcase, jobs] = await Promise.all([
+        db.all(
+            'SELECT id as _id, title, excerpt as description, "Insight" as type, page FROM insights WHERE published = 1 AND (title LIKE ? OR excerpt LIKE ? OR content LIKE ?) LIMIT 5',
+            [term, term, term]
+        ),
+        db.all(
+            'SELECT id as _id, title, excerpt as description, "Resources" as type, "research" as page FROM research WHERE published = 1 AND (title LIKE ? OR excerpt LIKE ? OR authors LIKE ?) LIMIT 5',
+            [term, term, term]
+        ),
+        db.all(
+            'SELECT id as _id, title, description, "Showcase" as type FROM showcase WHERE active = 1 AND (title LIKE ? OR description LIKE ? OR tag LIKE ?) LIMIT 5',
+            [term, term, term]
+        ),
+        db.all(
+            'SELECT id as _id, title, team as description, "Careers" as type FROM jobs WHERE active = 1 AND isArchived = 0 AND (title LIKE ? OR description LIKE ? OR team LIKE ?) LIMIT 5',
+            [term, term, term]
+        )
     ]);
-    return [...insights, ...showcase, ...jobs];
+
+    return [...insights, ...research, ...showcase, ...jobs];
 }
 
 module.exports = {
@@ -607,9 +793,9 @@ module.exports = {
     saveCredential,
     saveChallenge,
     getChallenge,
-    getAllCustomPages,
     getPageConfig,
     upsertPageConfig,
+    getAllCustomPages,
     deletePageConfig,
     globalSearch
 };
