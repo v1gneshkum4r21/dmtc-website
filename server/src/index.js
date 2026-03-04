@@ -129,8 +129,22 @@ async function startServer() {
         });
     } else {
         console.warn('⚠️ Warning: dist folder not found.');
+
+        const listDir = (dir) => {
+            try { return fs.readdirSync(dir).join(', '); }
+            catch (e) { return `Error: ${e.message}`; }
+        };
+
         app.get('/', (req, res) => {
-            res.send(`Backend is running, but Frontend build (dist) is missing.<br><br><b>Paths searched:</b><br>${pathsToCheck.join('<br>')}`);
+            const debugInfo = `
+                <h2>Backend Online - Frontend Build (dist) Missing</h2>
+                <p><b>Current Directory:</b> ${process.cwd()}<br>
+                <b>Contents:</b> ${listDir(process.cwd())}</p>
+                <p><b>Parent Directory:</b> ${path.resolve(process.cwd(), '..')}<br>
+                <b>Contents:</b> ${listDir(path.resolve(process.cwd(), '..'))}</p>
+                <p><b>Search Paths attempted:</b><br>${pathsToCheck.join('<br>')}</p>
+            `;
+            res.send(debugInfo);
         });
     }
 
