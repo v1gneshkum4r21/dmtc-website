@@ -481,8 +481,63 @@ async function deletePageConfig(pageId) {
 async function globalSearch(q) {
     const term = `%${q}%`;
     const results = [];
-    const [ins] = await pool.query('SELECT id, title, page FROM insights WHERE (title LIKE ? OR excerpt LIKE ?) AND published = 1 LIMIT 5', [term, term]);
-    ins.forEach(r => results.push({ _id: r.id, title: r.title, type: 'Insight', page: r.page }));
+
+    // Search Insights
+    const [ins] = await pool.query(
+        'SELECT id, title, excerpt, page FROM insights WHERE (title LIKE ? OR excerpt LIKE ? OR content LIKE ?) AND published = 1 LIMIT 5',
+        [term, term, term]
+    );
+    ins.forEach(r => results.push({
+        id: r.id,
+        title: r.title,
+        description: r.excerpt,
+        type: 'insight',
+        category: 'INSIGHT',
+        url: `/resources/blog?id=${r.id}`
+    }));
+
+    // Search Research
+    const [res] = await pool.query(
+        'SELECT id, title, excerpt FROM research WHERE (title LIKE ? OR excerpt LIKE ? OR authors LIKE ?) AND published = 1 LIMIT 5',
+        [term, term, term]
+    );
+    res.forEach(r => results.push({
+        id: r.id,
+        title: r.title,
+        description: r.excerpt,
+        type: 'research',
+        category: 'RESEARCH',
+        url: `/resources/research?id=${r.id}`
+    }));
+
+    // Search Showcase
+    const [show] = await pool.query(
+        'SELECT id, title, description, tag FROM showcase WHERE (title LIKE ? OR description LIKE ? OR tag LIKE ?) AND active = 1 LIMIT 5',
+        [term, term, term]
+    );
+    show.forEach(r => results.push({
+        id: r.id,
+        title: r.title,
+        description: r.description || r.tag,
+        type: 'insight', // Standardized for UI
+        category: 'SHOWCASE',
+        url: `/showcase?id=${r.id}`
+    }));
+
+    // Search Jobs
+    const [jobs] = await pool.query(
+        'SELECT id, title, team, location FROM jobs WHERE (title LIKE ? OR description LIKE ? OR team LIKE ?) AND active = 1 AND isArchived = 0 LIMIT 5',
+        [term, term, term]
+    );
+    jobs.forEach(r => results.push({
+        id: r.id,
+        title: r.title,
+        description: `${r.team} · ${r.location}`,
+        type: 'job',
+        category: 'CAREERS',
+        url: `/company/careers?id=${r.id}`
+    }));
+
     return results;
 }
 

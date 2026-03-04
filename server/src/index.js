@@ -95,6 +95,15 @@ app.get('/api/pages', async (req, res, next) => {
 app.get('/api/insights', async (req, res, next) => {
     try { res.json(await db.getAllInsights(true, req.query.page || null)); } catch (e) { next(e); }
 });
+// Uploads (Public for resumes)
+app.post('/api/upload', upload.single('file'), (req, res) => {
+    if (!req.file) return res.status(400).json({ detail: 'No file uploaded' });
+    res.json({
+        url: `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`,
+        filename: req.file.originalname
+    });
+});
+
 app.get('/api/pages/:id', async (req, res, next) => {
     try {
         const item = await db.getPageConfig(req.params.id);
@@ -282,8 +291,9 @@ admin.post('/settings', async (req, res, next) => {
 // WebAuthn MFA Registration
 admin.get('/mfa/register/options', async (req, res, next) => {
     try {
-        const user = await db.getUserByUsername(req.user.username);
-        const options = webauthn.getRegistrationOptions(user.username, user.username);
+        const user = await db.getUserByUsername(req.user.sub);
+        const creds = await db.getCredentialsByUsername(user.username);
+        const options = webauthn.getRegistrationOptions(user.username, user.username, creds);
         await db.saveChallenge(user.username, Buffer.from(options.challenge, 'base64url').toString('base64url'));
         res.json(options);
     } catch (e) { next(e); }
@@ -291,14 +301,14 @@ admin.get('/mfa/register/options', async (req, res, next) => {
 
 admin.post('/mfa/register/verify', async (req, res, next) => {
     try {
-        const user = await db.getUserByUsername(req.user.username);
+        const user = await db.getUserByUsername(req.user.sub);
         const challenge = await db.getChallenge(user.username);
         if (!challenge) return res.status(400).json({ detail: 'Challenge expired or not found' });
         const verification = await webauthn.verifyRegistration(challenge, req.body);
         if (verification.verified) {
             await db.saveCredential({
                 username: user.username,
-                credId: verification.registrationInfo.credentialID,
+                credId: Buffer.from(verification.registrationInfo.credentialID).toString('base64url'),
                 publicKey: Buffer.from(verification.registrationInfo.credentialPublicKey).toString('base64url'),
                 signCount: verification.registrationInfo.counter,
                 transports: req.body.response?.transports || []
