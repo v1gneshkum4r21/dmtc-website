@@ -1,6 +1,7 @@
 {
   "name": "dreamatic-platform",
   "version": "1.0.0",
+  "main": "index.js",
   "scripts": {
     "dev:frontend": "vite",
     "dev:backend": "nodemon server/src/index.js",
