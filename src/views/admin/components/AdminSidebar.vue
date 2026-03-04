@@ -235,7 +235,7 @@ const props = defineProps({
 const emit = defineEmits(['update:activeModule', 'update:selectedPage', 'add-page', 'logout', 'close', 'configure-page'])
 
 const services = computed(() => props.websitePages.filter(p => p.group === 'services' || ['ai-work', 'ai-service', 'ai-enterprise'].includes(p.id)))
-const products = computed(() => props.websitePages.filter(p => p.group === 'products' || ['superfiitter', 'echo-ai'].includes(p.id)))
+const products = computed(() => props.websitePages.filter(p => p.group === 'products' || ['superfitter', 'echo-ai'].includes(p.id)))
 const companyPages = computed(() => props.websitePages.filter(p => p.group === 'company' || ['about', 'leadership'].includes(p.id)))
 const knowledgeUnits = computed(() => props.websitePages.filter(p => p.group === 'resources' || ['hub', 'blog', 'research'].includes(p.id)))
 

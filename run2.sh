@@ -27,14 +27,6 @@ cleanup() {
 # Trap SIGINT (Ctrl+C) and SIGTERM
 trap cleanup SIGINT SIGTERM EXIT
 
-echo "[1/2] Starting Express.js backend..."
-# Run the node backend in the background
-node server/src/index.js &
-BACKEND_PID=$!
-
-# Give the backend a second to initialize
-sleep 2
-
-echo "[2/2] Starting Vue.js frontend..."
-# Run frontend in the foreground
+echo "[1/1] Starting DREAMATIC Development Suite..."
+# Just run npm run dev which starts both via concurrently
 npm run dev

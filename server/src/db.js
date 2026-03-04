@@ -1,76 +1,45 @@
 /**
- * db.js — Hybrid Database Layer
- * Supports SQLite (Local) and MySQL (Production/Hostinger)
+ * db.js — Express/MySQL database layer
+ * Professional MySQL implementation for Local and Hostinger environments.
  */
 
-const fs = require('fs');
-const path = require('path');
+const mysql = require('mysql2/promise');
 const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
 
-let db;
-const DB_TYPE = process.env.DB_TYPE || 'sqlite';
+let pool;
 
 async function initDb() {
-    if (DB_TYPE === 'mysql') {
-        const mysql = require('mysql2/promise');
-        console.log('📦 Initializing MySQL Database...');
-        db = mysql.createPool({
-            host: process.env.DB_HOST,
-            port: process.env.DB_PORT || 3306,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASS,
-            database: process.env.DB_NAME,
-            waitForConnections: true,
-            connectionLimit: 10
-        });
+    if (pool) return pool;
 
-        // Verify MySQL
-        try {
-            const conn = await db.getConnection();
-            console.log('✅ MySQL connected');
-            conn.release();
-        } catch (err) {
-            console.error('❌ MySQL connection failed:', err.message);
-            throw err;
-        }
+    pool = mysql.createPool({
+        host: process.env.DB_HOST || 'localhost',
+        port: process.env.DB_PORT || 3306,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME,
+        waitForConnections: true,
+        connectionLimit: 10,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 0
+    });
 
-        // Add run/get/all wrappers to match sqlite behavior for easier queries
-        db.run = async (sql, params) => {
-            const [res] = await db.query(sql.replace(/\?/g, '?'), params);
-            return { lastID: res.insertId, changes: res.affectedRows };
-        };
-        db.get = async (sql, params) => {
-            const [rows] = await db.query(sql, params);
-            return rows[0];
-        };
-        db.all = async (sql, params) => {
-            const [rows] = await db.query(sql, params);
-            return rows;
-        };
-
-    } else {
-        const { open } = require('sqlite');
-        const sqlite3 = require('sqlite3');
-        const DB_PATH = path.join(__dirname, '../data/dreamatic.db');
-        const DATA_DIR = path.dirname(DB_PATH);
-
-        if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-
-        console.log('📦 Initializing SQLite Database...');
-        db = await open({
-            filename: DB_PATH,
-            driver: sqlite3.Database
-        });
-        console.log('✅ SQLite connected');
+    try {
+        const conn = await pool.getConnection();
+        console.log('✅ MySQL Database Connected Successfully');
+        conn.release();
+    } catch (err) {
+        console.error('❌ MySQL Connection Error:', err.message);
+        console.error('👉 Make sure you whitelisted your IP in Hostinger Remote MySQL!');
+        throw err;
     }
 
-    // Common Table Creation (Compatible SQL)
+    // Initialize Tables
     const tables = [
         `CREATE TABLE IF NOT EXISTS users (
             id VARCHAR(36) PRIMARY KEY,
-            username VARCHAR(255) ${DB_TYPE === 'mysql' ? '' : 'UNIQUE'} NOT NULL,
-            email VARCHAR(255) ${DB_TYPE === 'mysql' ? '' : 'UNIQUE'} NOT NULL,
+            username VARCHAR(255) UNIQUE NOT NULL,
+            email VARCHAR(255) UNIQUE NOT NULL,
             passwordHash TEXT NOT NULL,
             role VARCHAR(50) DEFAULT 'admin',
             createdAt DATETIME
@@ -79,7 +48,7 @@ async function initDb() {
             id VARCHAR(36) PRIMARY KEY,
             title VARCHAR(255) NOT NULL,
             excerpt TEXT,
-            content ${DB_TYPE === 'mysql' ? 'LONGTEXT' : 'TEXT'},
+            content LONGTEXT,
             author VARCHAR(255),
             imageUrl TEXT,
             page VARCHAR(100),
@@ -92,32 +61,48 @@ async function initDb() {
             createdAt DATETIME,
             updatedAt DATETIME
         )`,
+        `CREATE TABLE IF NOT EXISTS research (
+            id VARCHAR(36) PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            journal VARCHAR(255),
+            year VARCHAR(50),
+            authors TEXT,
+            excerpt TEXT,
+            abstract TEXT,
+            content LONGTEXT,
+            imageUrl TEXT,
+            pdfUrl TEXT,
+            linkType VARCHAR(50),
+            published BOOLEAN DEFAULT 1,
+            createdAt DATETIME,
+            updatedAt DATETIME
+        )`,
         `CREATE TABLE IF NOT EXISTS showcase (
             id VARCHAR(36) PRIMARY KEY,
             title VARCHAR(255) NOT NULL,
             description TEXT,
             mediaUrl TEXT,
-            mediaType TEXT,
-            tag TEXT,
-            product TEXT,
-            \`order\` INTEGER DEFAULT 0,
+            mediaType VARCHAR(50),
+            tag VARCHAR(100),
+            product VARCHAR(100),
+            \`order\` INT DEFAULT 0,
             active BOOLEAN DEFAULT 1,
-            size TEXT,
-            likes INTEGER DEFAULT 0,
-            views INTEGER DEFAULT 0,
+            size VARCHAR(50) DEFAULT 'medium',
+            likes INT DEFAULT 0,
+            views INT DEFAULT 0,
             createdAt DATETIME,
             updatedAt DATETIME
         )`,
         `CREATE TABLE IF NOT EXISTS jobs (
             id VARCHAR(36) PRIMARY KEY,
             title VARCHAR(255) NOT NULL,
-            team TEXT,
-            location TEXT,
-            description ${DB_TYPE === 'mysql' ? 'LONGTEXT' : 'TEXT'},
-            requirements ${DB_TYPE === 'mysql' ? 'LONGTEXT' : 'TEXT'},
-            company TEXT,
+            team VARCHAR(100),
+            location VARCHAR(100),
+            description LONGTEXT,
+            requirements LONGTEXT,
+            company VARCHAR(100),
             tags TEXT,
-            type TEXT,
+            type VARCHAR(50),
             active BOOLEAN DEFAULT 1,
             isArchived BOOLEAN DEFAULT 0,
             createdAt DATETIME,
@@ -127,79 +112,97 @@ async function initDb() {
             id VARCHAR(36) PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
             email VARCHAR(255) NOT NULL,
-            phone TEXT,
-            location TEXT,
+            phone VARCHAR(100),
+            location VARCHAR(255),
             experience TEXT,
-            salary TEXT,
+            salary VARCHAR(100),
             linkedin TEXT,
             portfolio TEXT,
-            notice TEXT,
+            notice VARCHAR(100),
             resume TEXT,
-            message TEXT,
-            role TEXT,
-            jobId TEXT,
-            status TEXT DEFAULT 'Applied',
-            history TEXT,
+            message LONGTEXT,
+            role VARCHAR(255),
+            jobId VARCHAR(36),
+            status VARCHAR(50) DEFAULT 'Applied',
+            history LONGTEXT,
             isDeleted BOOLEAN DEFAULT 0,
             createdAt DATETIME
         )`,
         `CREATE TABLE IF NOT EXISTS pages (
             id VARCHAR(36) PRIMARY KEY,
-            page_id VARCHAR(100) ${DB_TYPE === 'mysql' ? '' : 'UNIQUE'} NOT NULL,
-            hero_badge TEXT,
-            hero_title TEXT,
+            page_id VARCHAR(100) UNIQUE NOT NULL,
+            hero_badge VARCHAR(255),
+            hero_title VARCHAR(255),
             hero_subtitle TEXT,
-            solutions TEXT,
-            approaches TEXT,
-            values_list TEXT,
-            stats TEXT,
-            team TEXT,
-            advisors TEXT,
-            perks TEXT,
-            content TEXT,
-            theme TEXT,
+            solutions LONGTEXT,
+            approaches LONGTEXT,
+            values_list LONGTEXT,
+            stats LONGTEXT,
+            team LONGTEXT,
+            advisors LONGTEXT,
+            perks LONGTEXT,
+            content LONGTEXT,
+            theme LONGTEXT,
             isCustom BOOLEAN DEFAULT 0,
-            label TEXT,
-            path TEXT,
+            label VARCHAR(255),
+            path VARCHAR(255),
             visible BOOLEAN DEFAULT 1,
-            \`group\` TEXT,
+            \`group\` VARCHAR(100),
             updatedAt DATETIME
         )`,
         `CREATE TABLE IF NOT EXISTS settings (
             id VARCHAR(50) PRIMARY KEY,
-            siteTitle TEXT,
-            tagline TEXT,
-            contactEmail TEXT,
+            siteTitle VARCHAR(255),
+            tagline VARCHAR(255),
+            contactEmail VARCHAR(255),
             seoDescription TEXT,
             keywords TEXT,
             indexRobots BOOLEAN DEFAULT 1,
             maintenanceMode BOOLEAN DEFAULT 0,
-            social TEXT,
+            social LONGTEXT,
             updatedAt DATETIME
+        )`,
+        `CREATE TABLE IF NOT EXISTS webauthn_credentials (
+            id VARCHAR(36) PRIMARY KEY,
+            username VARCHAR(255) NOT NULL,
+            credential_id TEXT NOT NULL,
+            public_key TEXT NOT NULL,
+            sign_count INT DEFAULT 0,
+            transports TEXT,
+            created_at DATETIME
+        )`,
+        `CREATE TABLE IF NOT EXISTS webauthn_challenges (
+            username VARCHAR(255) PRIMARY KEY,
+            challenge TEXT NOT NULL,
+            expires_at VARCHAR(100)
         )`
     ];
 
-    for (const sql of tables) {
-        await db.run(sql);
+    const connection = await pool.getConnection();
+    try {
+        for (const sql of tables) {
+            await connection.query(sql);
+        }
+    } finally {
+        connection.release();
     }
 
-    // Seed default user
-    const user = await db.get('SELECT count(*) as count FROM users');
-    if ((user.count || 0) === 0) {
+    // Default Seed Data
+    const [users] = await pool.query('SELECT count(*) as count FROM users');
+    if (users[0].count === 0) {
         const id = uuidv4();
         const hash = bcrypt.hashSync('admin123', 10);
-        await db.run('INSERT INTO users (id, username, email, passwordHash, role, createdAt) VALUES (?, ?, ?, ?, ?, ?)',
+        await pool.query('INSERT INTO users (id, username, email, passwordHash, role, createdAt) VALUES (?, ?, ?, ?, ?, ?)',
             [id, 'admin', 'admin@dreamatic.com', hash, 'admin', now()]);
     }
 
-    // Seed default settings
-    const setting = await db.get('SELECT count(*) as count FROM settings');
-    if ((setting.count || 0) === 0) {
-        await db.run('INSERT INTO settings (id, siteTitle, tagline, contactEmail, social, updatedAt) VALUES (?, ?, ?, ?, ?, ?)',
+    const [sets] = await pool.query('SELECT count(*) as count FROM settings');
+    if (sets[0].count === 0) {
+        await pool.query('INSERT INTO settings (id, siteTitle, tagline, contactEmail, social, updatedAt) VALUES (?, ?, ?, ?, ?, ?)',
             ['default', 'DREAMATIC', 'The Future of Agentic AI', 'hello@dreamatic.ai', '{}', now()]);
     }
 
-    return db;
+    return pool;
 }
 
 function now() { return new Date().toISOString().slice(0, 19).replace('T', ' '); }
@@ -207,6 +210,7 @@ function now() { return new Date().toISOString().slice(0, 19).replace('T', ' ');
 // ─── Shared Helpers ──────────────────────────────────────────────────────────
 
 const insightHelper = (r) => r ? ({ ...r, _id: r.id, published: !!r.published }) : null;
+const researchHelper = (r) => r ? ({ ...r, _id: r.id, published: !!r.published }) : null;
 const showcaseHelper = (r) => r ? ({ ...r, _id: r.id, active: !!r.active }) : null;
 const jobHelper = (r) => r ? ({ ...r, _id: r.id, active: !!r.active, isArchived: !!r.isArchived }) : null;
 const applicationHelper = (r) => {
@@ -232,13 +236,31 @@ const settingsHelper = (r) => {
     return item;
 };
 
+const credentialHelper = (r) => {
+    if (!r) return null;
+    return {
+        ...r,
+        transports: JSON.parse(r.transports || '[]')
+    };
+};
+
 // ─── API Methods ─────────────────────────────────────────────────────────────
 
+// Settings
 async function getSiteSettings() {
-    const row = await db.get('SELECT * FROM settings WHERE id = ?', ['default']);
-    return settingsHelper(row);
+    const [rows] = await pool.query('SELECT * FROM settings WHERE id = ?', ['default']);
+    return settingsHelper(rows[0]);
 }
 
+async function updateSiteSettings(data) {
+    const d = { ...data, updatedAt: now() };
+    if (d.social) d.social = JSON.stringify(d.social);
+    const sets = Object.keys(d).map(k => `\`${k}\` = ?`).join(', ');
+    await pool.query(`UPDATE settings SET ${sets} WHERE id = ?`, [...Object.values(d), 'default']);
+    return getSiteSettings();
+}
+
+// Insights (Blog/Hub)
 async function getAllInsights(publishedOnly = false, page = null) {
     let sql = 'SELECT * FROM insights';
     const params = [];
@@ -247,23 +269,86 @@ async function getAllInsights(publishedOnly = false, page = null) {
     if (page) { wheres.push('page = ?'); params.push(page); }
     if (wheres.length) sql += ' WHERE ' + wheres.join(' AND ');
     sql += ' ORDER BY createdAt DESC';
-    const rows = await db.all(sql, params);
+    const [rows] = await pool.query(sql, params);
     return rows.map(insightHelper);
 }
 
 async function getInsightById(id) {
-    const row = await db.get('SELECT * FROM insights WHERE id = ?', [id]);
-    return insightHelper(row);
+    const [rows] = await pool.query('SELECT * FROM insights WHERE id = ?', [id]);
+    return insightHelper(rows[0]);
 }
 
+async function createInsight(data) {
+    const id = uuidv4();
+    const d = { ...data, id, createdAt: now(), updatedAt: now() };
+    const cols = Object.keys(d).map(k => `\`${k}\``).join(', ');
+    const placeholders = Object.keys(d).map(() => '?').join(', ');
+    await pool.query(`INSERT INTO insights (${cols}) VALUES (${placeholders})`, Object.values(d));
+    return getInsightById(id);
+}
+
+async function updateInsight(id, data) {
+    const d = { ...data, updatedAt: now() };
+    const sets = Object.keys(d).map(k => `\`${k}\` = ?`).join(', ');
+    await pool.query(`UPDATE insights SET ${sets} WHERE id = ?`, [...Object.values(d), id]);
+    return getInsightById(id);
+}
+
+async function deleteInsight(id) {
+    const [res] = await pool.query('DELETE FROM insights WHERE id = ?', [id]);
+    return res.affectedRows > 0;
+}
+
+// Research
+async function getAllResearch(publishedOnly = false) {
+    let sql = 'SELECT * FROM research';
+    if (publishedOnly) sql += ' WHERE published = 1';
+    sql += ' ORDER BY createdAt DESC';
+    const [rows] = await pool.query(sql);
+    return rows.map(researchHelper);
+}
+
+async function getResearchById(id) {
+    const [rows] = await pool.query('SELECT * FROM research WHERE id = ?', [id]);
+    return researchHelper(rows[0]);
+}
+
+async function createResearch(data) {
+    const id = uuidv4();
+    const d = { ...data, id, createdAt: now(), updatedAt: now() };
+    const cols = Object.keys(d).map(k => `\`${k}\``).join(', ');
+    const placeholders = Object.keys(d).map(() => '?').join(', ');
+    await pool.query(`INSERT INTO research (${cols}) VALUES (${placeholders})`, Object.values(d));
+    return getResearchById(id);
+}
+
+async function updateResearch(id, data) {
+    const d = { ...data, updatedAt: now() };
+    const sets = Object.keys(d).map(k => `\`${k}\` = ?`).join(', ');
+    await pool.query(`UPDATE research SET ${sets} WHERE id = ?`, [...Object.values(d), id]);
+    return getResearchById(id);
+}
+
+// Showcase
 async function getAllShowcaseItems(activeOnly = false) {
     let sql = 'SELECT * FROM showcase';
     if (activeOnly) sql += ' WHERE active = 1';
     sql += ' ORDER BY `order` ASC, createdAt DESC';
-    const rows = await db.all(sql);
+    const [rows] = await pool.query(sql);
     return rows.map(showcaseHelper);
 }
 
+async function createShowcaseItem(data) {
+    const id = uuidv4();
+    const d = { ...data, id, createdAt: now(), updatedAt: now() };
+    const cols = Object.keys(d).map(k => `\`${k}\``).join(', ');
+    const placeholders = Object.keys(d).map(() => '?').join(', ');
+    await pool.query(`INSERT INTO showcase (${cols}) VALUES (${placeholders})`, Object.values(d));
+    const [rows] = await pool.query('SELECT * FROM showcase WHERE id = ?', [id]);
+    return showcaseHelper(rows[0]);
+}
+
+// Jobs
 async function getAllJobs(activeOnly = false, includeArchived = true) {
     let sql = 'SELECT * FROM jobs';
     const wheres = [];
@@ -271,56 +356,222 @@ async function getAllJobs(activeOnly = false, includeArchived = true) {
     if (!includeArchived) wheres.push('isArchived = 0');
     if (wheres.length) sql += ' WHERE ' + wheres.join(' AND ');
     sql += ' ORDER BY createdAt DESC';
-    const rows = await db.all(sql);
+    const [rows] = await pool.query(sql);
     return rows.map(jobHelper);
 }
 
 async function getJobById(id) {
-    const row = await db.get('SELECT * FROM jobs WHERE id = ?', [id]);
-    return jobHelper(row);
+    const [rows] = await pool.query('SELECT * FROM jobs WHERE id = ?', [id]);
+    return jobHelper(rows[0]);
 }
 
+async function createJob(data) {
+    const id = uuidv4();
+    const d = { ...data, id, createdAt: now(), updatedAt: now() };
+    const cols = Object.keys(d).map(k => `\`${k}\``).join(', ');
+    const placeholders = Object.keys(d).map(() => '?').join(', ');
+    await pool.query(`INSERT INTO jobs (${cols}) VALUES (${placeholders})`, Object.values(d));
+    return getJobById(id);
+}
+
+// Applications
 async function getAllApplications(includeDeleted = false) {
     let sql = 'SELECT * FROM applications';
     if (!includeDeleted) sql += ' WHERE isDeleted = 0';
     sql += ' ORDER BY createdAt DESC';
-    const rows = await db.all(sql);
+    const [rows] = await pool.query(sql);
     return rows.map(applicationHelper);
 }
 
 async function createJobApplication(data) {
     const id = uuidv4();
-    const cols = ['id', 'name', 'email', 'phone', 'location', 'experience', 'salary', 'linkedin', 'portfolio', 'notice', 'resume', 'message', 'role', 'jobId', 'status', 'history', 'isDeleted', 'createdAt'];
-    const p = [id, data.name, data.email, data.phone || '', data.location || '', data.experience || '', data.salary || '', data.linkedin || '', data.portfolio || '', data.notice || '', data.resume || '', data.message || '', data.role || '', data.jobId || null, 'Applied', '[]', 0, now()];
-    await db.run(`INSERT INTO applications (${cols.map(c => `\`${c}\``).join(',')}) VALUES (${p.map(() => '?').join(',')})`, p);
-    return db.get('SELECT * FROM applications WHERE id = ?', [id]).then(applicationHelper);
+    const d = {
+        id,
+        name: data.name,
+        email: data.email,
+        phone: data.phone || '',
+        location: data.location || '',
+        experience: data.experience || '',
+        salary: data.salary || '',
+        linkedin: data.linkedin || '',
+        portfolio: data.portfolio || '',
+        notice: data.notice || '',
+        resume: data.resume || '',
+        message: data.message || '',
+        role: data.role || '',
+        jobId: data.jobId || null,
+        status: 'Applied',
+        history: '[]',
+        isDeleted: 0,
+        createdAt: now()
+    };
+    const cols = Object.keys(d).map(k => `\`${k}\``).join(', ');
+    const placeholders = Object.keys(d).map(() => '?').join(', ');
+    await pool.query(`INSERT INTO applications (${cols}) VALUES (${placeholders})`, Object.values(d));
+    const [rows] = await pool.query('SELECT * FROM applications WHERE id = ?', [id]);
+    return applicationHelper(rows[0]);
 }
 
+async function updateApplicationStatus(id, status, note = '') {
+    const [rows] = await pool.query('SELECT history FROM applications WHERE id = ?', [id]);
+    if (!rows.length) return false;
+    const history = JSON.parse(rows[0].history || '[]');
+    history.push({ status, note, timestamp: now() });
+    const [res] = await pool.query('UPDATE applications SET status = ?, history = ? WHERE id = ?',
+        [status, JSON.stringify(history), id]);
+    return res.affectedRows > 0;
+}
+
+async function deleteApplication(id, permanent = false) {
+    if (permanent) {
+        const [res] = await pool.query('DELETE FROM applications WHERE id = ?', [id]);
+        return res.affectedRows > 0;
+    } else {
+        const [res] = await pool.query('UPDATE applications SET isDeleted = 1 WHERE id = ?', [id]);
+        return res.affectedRows > 0;
+    }
+}
+
+async function restoreApplication(id) {
+    const [res] = await pool.query('UPDATE applications SET isDeleted = 0 WHERE id = ?', [id]);
+    return res.affectedRows > 0;
+}
+
+// Pages
 async function getPageConfig(pageId) {
-    const row = await db.get('SELECT * FROM pages WHERE page_id = ?', [pageId]);
-    return pageConfigHelper(row);
+    const [rows] = await pool.query('SELECT * FROM pages WHERE page_id = ?', [pageId]);
+    return pageConfigHelper(rows[0]);
 }
 
 async function getAllCustomPages() {
-    const rows = await db.all('SELECT * FROM pages');
+    const [rows] = await pool.query('SELECT * FROM pages');
     return rows.map(pageConfigHelper);
 }
 
+async function upsertPageConfig(pageId, configData) {
+    const existing = await getPageConfig(pageId);
+    const n = now();
+    const data = { ...configData };
+    if ('values' in data) { data.values_list = data.values; delete data.values; }
+    const JSON_FIELDS = ['solutions', 'approaches', 'values_list', 'stats', 'team', 'advisors', 'perks', 'content', 'theme'];
+    for (const f of JSON_FIELDS) {
+        if (f in data && typeof data[f] !== 'string') data[f] = JSON.stringify(data[f]);
+    }
+
+    if (existing) {
+        const sets = Object.keys(data).map(k => `\`${k}\` = ?`).join(', ');
+        await pool.query(`UPDATE pages SET ${sets}, updatedAt = ? WHERE page_id = ?`, [...Object.values(data), n, pageId]);
+        return getPageConfig(pageId);
+    } else {
+        const id = uuidv4();
+        const d = { id, page_id: pageId, updatedAt: n, ...data };
+        const cols = Object.keys(d).map(k => `\`${k}\``).join(', ');
+        const placeholders = Object.keys(d).map(() => '?').join(', ');
+        await pool.query(`INSERT INTO pages (${cols}) VALUES (${placeholders})`, Object.values(d));
+        return getPageConfig(pageId);
+    }
+}
+
+async function deletePageConfig(pageId) {
+    const [res] = await pool.query('DELETE FROM pages WHERE page_id = ?', [pageId]);
+    return res.affectedRows > 0;
+}
+
+// Search
 async function globalSearch(q) {
     const term = `%${q}%`;
     const results = [];
-    const ins = await db.all('SELECT id, title, page FROM insights WHERE (title LIKE ? OR excerpt LIKE ?) AND published = 1 LIMIT 5', [term, term]);
+    const [ins] = await pool.query('SELECT id, title, page FROM insights WHERE (title LIKE ? OR excerpt LIKE ?) AND published = 1 LIMIT 5', [term, term]);
     ins.forEach(r => results.push({ _id: r.id, title: r.title, type: 'Insight', page: r.page }));
     return results;
 }
 
-// Auth & User
+// Auth
 async function getUserByUsername(username) {
-    return db.get('SELECT * FROM users WHERE username = ?', [username]);
+    const [rows] = await pool.query('SELECT * FROM users WHERE username = ?', [username]);
+    return rows[0];
+}
+
+async function createUser(data) {
+    const id = uuidv4();
+    const hash = bcrypt.hashSync(data.password, 10);
+    await pool.query('INSERT INTO users (id, username, email, passwordHash, role, createdAt) VALUES (?, ?, ?, ?, ?, ?)',
+        [id, data.username, data.email, hash, data.role || 'admin', now()]);
+    return getUserByUsername(data.username);
+}
+
+// WebAuthn
+async function getCredentialsByUsername(username) {
+    const [rows] = await pool.query('SELECT * FROM webauthn_credentials WHERE username = ?', [username]);
+    return rows.map(credentialHelper);
+}
+
+async function saveCredential(data) {
+    const id = uuidv4();
+    await pool.query(
+        'INSERT INTO webauthn_credentials (id, username, credential_id, public_key, sign_count, transports, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [id, data.username, data.credId, data.publicKey, data.signCount, JSON.stringify(data.transports || []), now()]
+    );
+}
+
+async function saveChallenge(username, challenge) {
+    const expiresAt = String(Date.now() / 1000 + 300);
+    await pool.query(
+        'INSERT INTO webauthn_challenges (username, challenge, expires_at) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE challenge = VALUES(challenge), expires_at = VALUES(expires_at)',
+        [username, challenge, expiresAt]
+    );
+}
+
+async function getChallenge(username) {
+    const [rows] = await pool.query('SELECT challenge, expires_at FROM webauthn_challenges WHERE username = ?', [username]);
+    if (!rows.length) return null;
+    if (parseFloat(rows[0].expires_at) < Date.now() / 1000) return null;
+    return rows[0].challenge;
+}
+
+// Missing Deletes
+async function deleteJob(id, permanent = false) {
+    if (permanent) {
+        const [res] = await pool.query('DELETE FROM jobs WHERE id = ?', [id]);
+        return res.affectedRows > 0;
+    } else {
+        const [res] = await pool.query('UPDATE jobs SET isArchived = 1, active = 0 WHERE id = ?', [id]);
+        return res.affectedRows > 0;
+    }
+}
+
+async function updateJob(id, data) {
+    const d = { ...data, updatedAt: now() };
+    const sets = Object.keys(d).map(k => `\`${k}\` = ?`).join(', ');
+    await pool.query(`UPDATE jobs SET ${sets} WHERE id = ?`, [...Object.values(d), id]);
+    return getJobById(id);
+}
+
+async function deleteResearch(id) {
+    const [res] = await pool.query('DELETE FROM research WHERE id = ?', [id]);
+    return res.affectedRows > 0;
+}
+
+async function deleteShowcaseItem(id) {
+    const [res] = await pool.query('DELETE FROM showcase WHERE id = ?', [id]);
+    return res.affectedRows > 0;
+}
+
+async function updateShowcaseItem(id, data) {
+    const d = { ...data, updatedAt: now() };
+    const sets = Object.keys(d).map(k => `\`${k}\` = ?`).join(', ');
+    await pool.query(`UPDATE showcase SET ${sets} WHERE id = ?`, [...Object.values(d), id]);
+    const [rows] = await pool.query('SELECT * FROM showcase WHERE id = ?', [id]);
+    return showcaseHelper(rows[0]);
 }
 
 module.exports = {
-    initDb, getSiteSettings, getAllInsights, getInsightById, getAllShowcaseItems,
-    getAllJobs, getJobById, getAllApplications, createJobApplication,
-    getPageConfig, getAllCustomPages, globalSearch, getUserByUsername
+    initDb, getSiteSettings, updateSiteSettings, getAllInsights, getInsightById, createInsight, updateInsight, deleteInsight,
+    getAllResearch, getResearchById, createResearch, updateResearch, deleteResearch,
+    getAllShowcaseItems, createShowcaseItem, updateShowcaseItem, deleteShowcaseItem,
+    getAllJobs, getJobById, createJob, updateJob, deleteJob,
+    getAllApplications, createJobApplication, updateApplicationStatus, deleteApplication, restoreApplication,
+    getPageConfig, getAllCustomPages, upsertPageConfig, deletePageConfig,
+    globalSearch, getUserByUsername, createUser,
+    getCredentialsByUsername, saveCredential, saveChallenge, getChallenge
 };

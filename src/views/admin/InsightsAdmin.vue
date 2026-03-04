@@ -204,7 +204,7 @@ const hardcodedPages = [
   { id: 'ai-work', label: 'ai for work', icon: '💡' },
   { id: 'ai-service', label: 'ai for service', icon: '🎧' },
   { id: 'ai-enterprise', label: 'ai for enterprise', icon: '🏢' },
-  { id: 'superfiitter', label: 'superfitter', icon: '👕' },
+  { id: 'superfitter', label: 'superfitter', icon: '👕' },
   { id: 'echo-ai', label: 'echoai', icon: '🗣️' },
   { id: 'about', label: 'about us', icon: '📖' },
   { id: 'leadership', label: 'leadership', icon: '👥' },
