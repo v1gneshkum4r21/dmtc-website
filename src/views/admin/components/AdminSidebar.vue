@@ -34,6 +34,15 @@
         </div>
         <div 
           class="synapse-link"
+          :class="{ active: activeModule === 'contacts' }"
+          @click="resetToModule('contacts')"
+        >
+          <div class="link-glow"></div>
+          <span class="link-icon">📫</span>
+          <span class="link-text">Network Comms</span>
+        </div>
+        <div 
+          class="synapse-link"
           :class="{ active: activeModule === 'settings' }"
           @click="resetToModule('settings')"
         >

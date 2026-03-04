@@ -349,6 +349,26 @@ export const adminAPI = {
     verifyRegistration: async (registrationData) => {
         const response = await apiClient.post('/admin/mfa/register/verify', registrationData)
         return response.data
+    },
+
+    // Contacts Management
+    getContacts: async () => {
+        const response = await apiClient.get('/admin/contacts')
+        return response.data
+    },
+    updateContactStatus: async (id, status) => {
+        const response = await apiClient.patch(`/admin/contacts/${id}/status`, { status })
+        return response.data
+    },
+    deleteContact: async (id) => {
+        await apiClient.delete(`/admin/contacts/${id}`)
+    }
+}
+
+export const contactAPI = {
+    submit: async (contactData) => {
+        const response = await apiClient.post('/contacts', contactData)
+        return response.data
     }
 }
 
@@ -360,5 +380,6 @@ export default {
     search: searchAPI,
     pages: pagesAPI,
     auth: authAPI,
+    contact: contactAPI,
     admin: adminAPI
 }

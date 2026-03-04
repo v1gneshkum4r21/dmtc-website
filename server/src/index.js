@@ -112,6 +112,11 @@ app.get('/api/pages/:id', async (req, res, next) => {
     } catch (e) { next(e); }
 });
 
+// Contacts Public
+app.post('/api/contacts', async (req, res, next) => {
+    try { res.status(201).json(await db.createContact(req.body)); } catch (e) { next(e); }
+});
+
 // Auth
 app.post('/api/auth/login', upload.none(), async (req, res, next) => {
     try {
@@ -252,6 +257,23 @@ admin.delete('/applications/:id', async (req, res, next) => {
 admin.post('/applications/:id/restore', async (req, res, next) => {
     try {
         await db.restoreApplication(req.params.id) ? res.json({ message: 'Restored' }) : res.status(404).json({ detail: 'Not found' });
+    } catch (e) { next(e); }
+});
+
+admin.get('/contacts', async (req, res, next) => {
+    try { res.json(await db.getContacts()); } catch (e) { next(e); }
+});
+admin.patch('/contacts/:id/status', async (req, res, next) => {
+    try {
+        if (!req.body.status) return res.status(400).json({ detail: 'Status is required' });
+        await db.updateContactStatus(req.params.id, req.body.status)
+            ? res.json({ message: 'Status updated' })
+            : res.status(404).json({ detail: 'Contact not found' });
+    } catch (e) { next(e); }
+});
+admin.delete('/contacts/:id', async (req, res, next) => {
+    try {
+        await db.deleteContact(req.params.id) ? res.json({ message: 'Deleted' }) : res.status(404).json({ detail: 'Not found' });
     } catch (e) { next(e); }
 });
 

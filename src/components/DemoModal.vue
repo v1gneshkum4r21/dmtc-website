@@ -84,6 +84,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+import api from '@/services/api'
 
 const props = defineProps({
   isOpen: Boolean,
@@ -109,16 +110,26 @@ const form = ref({
 const loading = ref(false)
 const success = ref(false)
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   loading.value = true
-  setTimeout(() => {
+  try {
+    const submissionData = {
+      name: form.value.name,
+      email: form.value.email,
+      subject: `${props.modalType === 'trial' ? 'Trial Request' : 'Demo Request'}: ${form.value.vertical}`,
+      message: `Website: ${form.value.website || 'N/A'}\n\nUse Case: ${form.value.message}`
+    }
+    await api.contact.submit(submissionData)
     loading.value = false
     success.value = true
     setTimeout(() => {
       success.value = false
       emit('close')
     }, 4000)
-  }, 2000)
+  } catch (err) {
+    console.error('Failed to submit demo/trial request:', err)
+    loading.value = false
+  }
 }
 
 watch(() => props.isOpen, (newVal) => {

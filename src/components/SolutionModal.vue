@@ -73,6 +73,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+import api from '@/services/api'
 
 const props = defineProps({
   isOpen: Boolean,
@@ -95,16 +96,25 @@ const form = ref({
 const submitting = ref(false)
 const submitted = ref(false)
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   submitting.value = true
-  setTimeout(() => {
+  try {
+    const submissionData = {
+      ...form.value,
+      subject: `Solution Inquiry: ${props.solutionTitle || 'Custom Architecture'}`
+    }
+    await api.contact.submit(submissionData)
     submitting.value = false
     submitted.value = true
     setTimeout(() => {
       submitted.value = false
       emit('close')
     }, 3000)
-  }, 1500)
+  } catch (err) {
+    console.error('Failed to submit solution inquiry:', err)
+    submitting.value = false
+    // You could add an error message state here if needed
+  }
 }
 
 watch(() => props.isOpen, (newVal) => {

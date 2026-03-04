@@ -58,10 +58,10 @@
             {{ job.type }}
           </div>
           <div class="ops-cluster">
-            <button class="op-btn" @click="$emit('edit', job)" title="Refine Protocol">✎</button>
-            <button class="op-btn" @click="$emit('archive', job._id)" v-if="!job.isArchived" title="Deactivate Signal">📦</button>
-            <button class="op-btn" @click="$emit('restore', job._id)" v-if="job.isArchived" title="Reactivate Signal">🔓</button>
-            <button class="op-btn delete" @click="$emit('delete', job._id)" title="Terminate Protocol">🗑</button>
+            <button class="op-btn" @click="$emit('edit', job)" title="Refine Protocol Specification">✎</button>
+            <button class="op-btn" @click="$emit('archive', job._id)" v-if="!job.isArchived" title="Deactivate Orbital Signal">📦</button>
+            <button class="op-btn" @click="$emit('restore', job._id)" v-if="job.isArchived" title="Reactivate Orbital Signal">🔓</button>
+            <button class="op-btn delete" @click="$emit('delete', job._id)" title="Terminate Protocol Node">🗑</button>
           </div>
         </div>
         

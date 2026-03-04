@@ -163,6 +163,7 @@
 
 <script setup>
 import { ref, watch, computed } from 'vue'
+import api from '@/services/api'
 
 const props = defineProps({
   isOpen: Boolean,
@@ -223,9 +224,10 @@ const vClickOutside = {
 const submitting = ref(false)
 const submitted = ref(false)
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   submitting.value = true
-  setTimeout(() => {
+  try {
+    await api.contact.submit(form.value)
     submitting.value = false
     submitted.value = true
     form.value = { name: '', email: '', subject: '', message: '' }
@@ -233,7 +235,10 @@ const handleSubmit = () => {
       submitted.value = false
       emit('close')
     }, 3000)
-  }, 1800)
+  } catch (err) {
+    console.error('Failed to submit transmission:', err)
+    submitting.value = false
+  }
 }
 
 watch(() => props.isOpen, (newVal) => {

@@ -85,11 +85,19 @@
         <div class="node-strata">
           <div class="strata-item">
             <label>EXPERIENCE_LOG</label>
-            <span>{{ app.experience }}</span>
+            <span>{{ formatExperience(app.experience) }}</span>
+          </div>
+          <div class="strata-item">
+            <label>CONTACT_PAYLOAD</label>
+            <span>{{ app.email }}</span>
           </div>
           <div class="strata-item">
             <label>HUB_LOC</label>
             <span>{{ app.location }}</span>
+          </div>
+          <div class="strata-item">
+            <label>SALARY_SPEC</label>
+            <span>{{ app.salary || 'N/A' }}</span>
           </div>
         </div>
 
@@ -97,6 +105,9 @@
           <template v-if="!app.isDeleted">
             <button @click.stop="$emit('updateStatus', app._id, 'Selected')" class="node-btn admit">
               <span class="btn-icon">⚡</span> Admit
+            </button>
+            <button @click.stop="$emit('updateStatus', app._id, 'Waiting List')" class="node-btn-icon" title="Queue">
+              ⏳
             </button>
             <button @click.stop="$emit('updateStatus', app._id, 'Rejected')" class="node-btn restrict">
               Restrict
@@ -143,6 +154,16 @@ const filteredApplications = computed(() => {
   if (statusFilter.value === 'All') return list
   return list.filter(app => app.status === statusFilter.value)
 })
+
+const formatExperience = (exp) => {
+  const map = {
+    'junior': 'Jr (0-2y)',
+    'mid': 'Mid (3-5y)',
+    'senior': 'Sr (5-8y)',
+    'staff': 'Staff (8y+)'
+  }
+  return map[exp] || exp || 'N/A'
+}
 </script>
 
 <style scoped>

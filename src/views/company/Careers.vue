@@ -45,7 +45,7 @@
               v-for="(perk, index) in perks"
               :key="index"
               class="perk-card"
-              :style="{ '--card-accent': 'linear-gradient(135deg, #f59e0b 0%, #10b981 100%)' }"
+              :style="{ '--card-accent': 'linear-gradient(135deg, #0ea5e9 0%, #22d3ee 100%)' }"
             >
               <div class="card-glow"></div>
               <div class="perk-icon-wrap">
@@ -83,25 +83,33 @@
             <div
               v-for="role in roles"
               :key="role._id || role.title"
-              class="role-card"
+              class="role-card-vessel"
+              @click="selectedJobDetail = role"
             >
-              <div class="role-left">
-                <div class="role-type-badge">{{ role.type || 'Full-time' }}</div>
-                <div class="role-info">
-                  <h3 class="role-title">{{ role.title }}</h3>
-                  <div class="role-meta">
-                    <span>{{ role.team }}</span>
-                    <span class="meta-dot"></span>
-                    <span>{{ role.location }}</span>
+              <div class="role-card">
+                <div class="role-left">
+                  <div class="role-type-badge">{{ role.type || 'Full-time' }}</div>
+                  <div class="role-info">
+                    <h3 class="role-title">{{ role.title }}</h3>
+                    <div class="role-meta">
+                      <span>{{ role.team }}</span>
+                      <span class="meta-dot"></span>
+                      <span>{{ role.location }}</span>
+                    </div>
                   </div>
                 </div>
+                <div class="role-actions">
+                  <button class="protocol-btn" @click.stop="selectedJobDetail = role">
+                    View Protocol
+                  </button>
+                  <button class="apply-btn-primary" @click.stop="openJobModal(role.title)">
+                    Apply Now
+                    <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                  </button>
+                </div>
               </div>
-              <button class="apply-btn" @click="openJobModal(role.title)">
-                Apply Now
-                <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-              </button>
             </div>
 
             <div v-if="roles.length === 0" class="no-roles">
@@ -112,10 +120,28 @@
           </div>
         </div>
 
-        <div class="roles-footer">
-          <p>Don't see your role? Send your resume to
-            <a href="mailto:careers@dreamatic.ai" class="link">careers@dreamatic.ai</a>
-          </p>
+        <div class="speculative-card">
+          <div class="speculative-content">
+            <div class="speculative-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <div class="speculative-text">
+              <h3>Not seeing the <span class="text-gradient">perfect fit</span>?</h3>
+              <p>We're always looking for exceptional talent to orbit our core teams. Send a speculative transmission or reach out directly.</p>
+            </div>
+          </div>
+          <div class="speculative-actions">
+            <a href="mailto:careers@dreamatic.ai" class="secondary-btn">careers@dreamatic.ai</a>
+            <button class="primary-btn" @click="openContactModal({ subject: 'Careers', message: 'I am interested in future opportunities at Dreamactic.' })">
+              General Inquiry
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -137,6 +163,15 @@
         </div>
       </div>
     </section>
+
+    <!-- Detailed Protocol Popup -->
+    <JobDetailModal 
+      v-if="selectedJobDetail"
+      :isOpen="!!selectedJobDetail"
+      :job="selectedJobDetail"
+      @close="selectedJobDetail = null"
+      @apply="j => openJobModal(j.title)"
+    />
   </div>
 </template>
 
@@ -144,6 +179,7 @@
 import { ref, onMounted, inject } from 'vue'
 import { jobsAPI, pagesAPI } from '@/services/api'
 import { useRoute } from 'vue-router'
+import JobDetailModal from './JobDetailModal.vue'
 
 const route = useRoute()
 const openContactModal = inject('openContactModal')
@@ -153,6 +189,7 @@ const perks = ref([])
 const roles = ref([])
 const perksGrid = ref(null)
 const rolesGrid = ref(null)
+const selectedJobDetail = ref(null)
 
 const pageConfig = ref({
   hero_badge: 'CAREERS',
@@ -196,6 +233,24 @@ const scrollRoles = (direction) => {
   rolesGrid.value.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' })
 }
 
+const formatMarkdown = (text) => {
+  if (!text) return ''
+  // Simple markdown conversion for bold and lists until a full lib is added
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+    .replace(/^\* (.*$)/gim, '• $1')
+    .replace(/\n/g, '<br>')
+}
+
+const formatRequirements = (reqs) => {
+  if (!reqs) return []
+  // Split by newlines or bullet points
+  return reqs.split(/\n|•|\*/).map(r => r.trim()).filter(r => r.length > 0)
+}
+
 onMounted(async () => {
   window.scrollTo(0, 0)
   try {
@@ -208,11 +263,11 @@ onMounted(async () => {
       if (careersConfig.perks) perks.value = careersConfig.perks
     }
     if (jobsData?.length) {
-      roles.value = jobsData
+      roles.value = jobsData.map(j => ({ ...j, showDetails: false }))
       
       // Check for ID in query params to auto-open modal
       if (route.query.id) {
-        const targetJob = jobsData.find(j => j._id === route.query.id)
+        const targetJob = jobsData.find(j => j._id === route.query.id || j.id === route.query.id)
         if (targetJob) {
           openJobModal(targetJob.title)
         }
@@ -246,6 +301,7 @@ onMounted(async () => {
   top: -50%; left: -50%;
   width: 200%; height: 200%;
   background: radial-gradient(circle at center, rgba(245, 158, 11, 0.07) 0%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(34, 211, 238, 0.07) 0%, transparent 70%);
   z-index: 0;
   pointer-events: none;
 }
@@ -262,13 +318,13 @@ onMounted(async () => {
 .hero-badge {
   display: inline-block;
   padding: 0.5rem 1.25rem;
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  background: rgba(34, 211, 238, 0.1);
+  border: 1px solid rgba(34, 211, 238, 0.2);
   border-radius: 100px;
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0.15em;
-  color: #f59e0b;
+  color: #22d3ee;
 }
 
 .hero-title {
@@ -280,7 +336,7 @@ onMounted(async () => {
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, #f59e0b 0%, #10b981 100%);
+  background: linear-gradient(135deg, #22d3ee 0%, #3b82f6 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -299,7 +355,7 @@ onMounted(async () => {
 
 .primary-btn {
   padding: 1.1rem 2.5rem;
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  background: linear-gradient(135deg, #22d3ee 0%, #3b82f6 100%);
   color: white;
   border: none;
   border-radius: 14px;
@@ -307,7 +363,7 @@ onMounted(async () => {
   font-weight: 700;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  box-shadow: 0 10px 30px rgba(245, 158, 11, 0.25);
+  box-shadow: 0 10px 30px rgba(34, 211, 238, 0.25);
   display: flex;
   align-items: center;
   gap: 0.8rem;
@@ -328,7 +384,7 @@ onMounted(async () => {
 
 .primary-btn:hover {
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(245, 158, 11, 0.35);
+  box-shadow: 0 20px 40px rgba(34, 211, 238, 0.35);
 }
 
 .primary-btn:hover::before { left: 100%; }
@@ -348,8 +404,8 @@ onMounted(async () => {
   font-family: var(--font-accent);
   display: inline-block;
   padding: 0.3rem 0.75rem;
-  background: rgba(245, 158, 11, 0.1);
-  color: #f59e0b;
+  background: rgba(34, 211, 238, 0.1);
+  color: #22d3ee;
   border-radius: 4px;
   font-size: 0.7rem;
   font-weight: 800;
@@ -396,8 +452,8 @@ onMounted(async () => {
   opacity: 1; pointer-events: auto;
 }
 .carousel-arrow:hover {
-  background: rgba(245, 158, 11, 0.1);
-  border-color: rgba(245, 158, 11, 0.3);
+  background: rgba(34, 211, 238, 0.1);
+  border-color: rgba(34, 211, 238, 0.3);
   transform: translateY(-50%) scale(1.1);
 }
 .carousel-arrow svg { width: 24px; height: 24px; }
@@ -438,7 +494,7 @@ onMounted(async () => {
   position: absolute; inset: 0;
   border-radius: 32px;
   padding: 1px;
-  background: var(--card-accent);
+  background: linear-gradient(135deg, #22d3ee 0%, #3b82f6 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
           mask-composite: exclude;
@@ -451,7 +507,7 @@ onMounted(async () => {
 
 .card-glow {
   position: absolute; inset: 0;
-  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--card-accent) 0%, transparent 60%);
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), #22d3ee 0%, transparent 60%);
   opacity: 0;
   transition: opacity 0.5s ease;
   pointer-events: none;
@@ -462,12 +518,12 @@ onMounted(async () => {
 
 .perk-icon-wrap {
   width: 56px; height: 56px;
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  background: rgba(34, 211, 238, 0.1);
+  border: 1px solid rgba(34, 211, 238, 0.2);
   border-radius: 18px;
   display: flex; align-items: center; justify-content: center;
   margin-bottom: 2rem;
-  color: #f59e0b;
+  color: #22d3ee;
 }
 .perk-icon { width: 26px; height: 26px; }
 
@@ -496,100 +552,182 @@ onMounted(async () => {
 .roles-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
   margin-top: 3rem;
+}
+
+.role-card-vessel {
+  background: var(--bg-primary);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.role-card-vessel.is-expanded {
+  border-color: rgba(34, 211, 238, 0.4);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
 .role-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 2rem 2.5rem;
-  background: var(--bg-primary);
-  border: 1px solid var(--glass-border);
-  border-radius: 24px;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.role-card:hover {
-  border-color: rgba(245, 158, 11, 0.35);
-  transform: translateX(6px);
-  background: rgba(245, 158, 11, 0.02);
+  padding: 2.25rem 2.75rem;
+  cursor: pointer;
 }
 
-.role-left { display: flex; align-items: center; gap: 1.5rem; }
+.role-card-vessel:hover {
+  border-color: rgba(34, 211, 238, 0.3);
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.role-left { display: flex; align-items: center; gap: 1.75rem; }
 
 .role-type-badge {
-  padding: 0.35rem 0.9rem;
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.2);
-  border-radius: 8px;
+  padding: 0.4rem 1rem;
+  background: rgba(34, 211, 238, 0.1);
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  border-radius: 10px;
   font-size: 0.65rem;
-  font-weight: 900;
-  color: #f59e0b;
+  font-weight: 950;
+  color: #22d3ee;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   white-space: nowrap;
 }
 
 .role-title {
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: var(--text-primary);
-  margin-bottom: 0.4rem;
-  letter-spacing: -0.02em;
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: white;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
 }
 
 .role-meta {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 .meta-dot {
-  width: 3px; height: 3px;
-  background: var(--text-muted, rgba(255,255,255,0.2));
+  width: 4px; height: 4px;
+  background: rgba(245, 158, 11, 0.4);
   border-radius: 50%;
 }
 
-.apply-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.75rem 1.75rem;
+.role-actions { display: flex; align-items: center; gap: 1.25rem; }
+
+.protocol-btn {
   background: transparent;
   border: 1px solid var(--glass-border);
-  border-radius: 12px;
   color: var(--text-secondary);
+  padding: 0.8rem 1.75rem;
+  border-radius: 14px;
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
-  transition: all 0.3s ease;
-  white-space: nowrap;
+  transition: all 0.3s;
 }
-.apply-btn:hover {
-  background: rgba(245, 158, 11, 0.1);
-  border-color: rgba(245, 158, 11, 0.35);
-  color: #f59e0b;
-}
-.apply-btn:hover .btn-arrow { transform: translateX(4px); }
+.protocol-btn:hover { border-color: rgba(14, 165, 233, 0.5); color: #0ea5e9; }
 
-.no-roles {
-  text-align: center;
-  padding: 6rem 2rem;
-  color: var(--text-secondary);
+.apply-btn-primary {
+  padding: 0.8rem 2rem;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  font-weight: 850;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.no-roles-icon { font-size: 3rem; margin-bottom: 1.5rem; opacity: 0.3; }
-.no-roles h3 { font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.75rem; }
+/* ── Speculative Card ───────────────────────────────────── */
+.speculative-card {
+  margin-top: 5rem;
+  padding: 3.5rem 4rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid var(--glass-border);
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+  box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.4);
+}
 
-.roles-footer {
-  text-align: center;
-  margin-top: 3rem;
+.speculative-content {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.speculative-icon {
+  width: 64px; height: 64px;
+  background: rgba(14, 165, 233, 0.1);
+  border: 1px solid rgba(14, 165, 233, 0.2);
+  border-radius: 20px;
+  display: flex; align-items: center; justify-content: center;
+  color: #0ea5e9;
+  flex-shrink: 0;
+}
+
+.speculative-text h3 {
+  font-size: 1.75rem;
+  font-weight: 850;
+  color: white;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.speculative-text p {
+  font-size: 1.05rem;
   color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 500px;
+}
+
+.speculative-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-shrink: 0;
+}
+
+.speculative-actions .secondary-btn {
+  color: white;
+  font-weight: 700;
+  text-decoration: none;
   font-size: 0.95rem;
+  transition: 0.3s;
 }
-.link { color: #f59e0b; text-decoration: none; font-weight: 700; }
-.link:hover { color: #d97706; }
+.speculative-actions .secondary-btn:hover { color: var(--accent-primary); text-decoration: underline; }
+
+.speculative-actions .primary-btn {
+  padding: 1rem 1.75rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  display: flex; align-items: center; gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.speculative-actions .primary-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3); }
+
+/* Transitions */
+.expand-enter-active, .expand-leave-active { transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); max-height: 1500px; }
+.expand-enter-from, .expand-leave-to { max-height: 0; opacity: 0; transform: translateY(-10px); }
 
 /* ── CTA ─────────────────────────────────────────────────── */
 .page-cta { padding: 8rem 5% 10rem; }
@@ -634,6 +772,17 @@ onMounted(async () => {
 
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 1024px) {
+  .speculative-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 3rem 2rem;
+    gap: 2rem;
+  }
+  .speculative-content { flex-direction: column; }
+  .speculative-text p { max-width: 100%; }
+  .speculative-actions { flex-direction: column; width: 100%; }
+  .speculative-actions .primary-btn { width: 100%; justify-content: center; }
+  
   .perks-grid { grid-template-columns: repeat(2, 1fr); }
   .hero-title { font-size: 3.5rem; }
   .cta-card { padding: 4rem 2rem; }
@@ -664,9 +813,13 @@ onMounted(async () => {
   .perks-grid::-webkit-scrollbar { display: none; }
   .perk-card { min-width: 80vw; scroll-snap-align: center; }
 
-  .role-card { flex-direction: column; align-items: flex-start; gap: 1.25rem; }
-  .role-left { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
-  .apply-btn { width: 100%; justify-content: center; }
+  .role-card { flex-direction: column; align-items: flex-start; gap: 1.75rem; padding: 2rem; }
+  .role-left { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .role-actions { width: 100%; flex-direction: column-reverse; gap: 1rem; }
+  .protocol-btn, .apply-btn-primary { width: 100%; justify-content: center; }
+
+  .role-details-trace { padding: 2rem; }
+  .trace-grid { grid-template-columns: 1fr; gap: 2.5rem; }
 
   .section-header h2 { font-size: 2.5rem; }
 }

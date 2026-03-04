@@ -35,8 +35,45 @@
             </div>
 
             <div class="form-section">
-              <label class="section-label">Protocol Specification (JD - Markdown)</label>
-              <textarea v-model="form.description" rows="12" class="luxury-field code-font" placeholder="# Role Mission\nDetail the objective..." required></textarea>
+              <label class="section-label">Protocol Objective (JD - Markdown)</label>
+              <textarea v-model="form.description" rows="8" class="luxury-field code-font" placeholder="# Role Mission\nDetail the objective..." required></textarea>
+            </div>
+
+            <div class="form-section">
+              <label class="section-label">Technical Requirements / Thresholds</label>
+              <textarea v-model="form.requirements" rows="6" class="luxury-field code-font" placeholder="e.g., Proficient in neural orchestration, 5+ cycles experience..."></textarea>
+            </div>
+
+            <div class="form-row-multi">
+              <div class="form-section">
+                <label class="section-label">Salary Range</label>
+                <input v-model="form.salary_range" type="text" placeholder="e.g., $150k - $200k" class="luxury-field" />
+              </div>
+              <div class="form-section">
+                <label class="section-label">Experience Level</label>
+                <input v-model="form.experience_level" type="text" placeholder="e.g., Senior / Staff" class="luxury-field" />
+              </div>
+            </div>
+
+            <div class="form-row-multi">
+              <div class="form-section">
+                <label class="section-label">Remote Policy</label>
+                <input v-model="form.remote_policy" type="text" placeholder="e.g., Remote-First / Hybrid" class="luxury-field" />
+              </div>
+              <div class="form-section">
+                <label class="section-label">Application Deadline</label>
+                <input v-model="form.deadline" type="datetime-local" class="luxury-field" />
+              </div>
+            </div>
+
+            <div class="form-section">
+              <label class="section-label">Benefits & Perks (Markdown)</label>
+              <textarea v-model="form.benefits" rows="4" class="luxury-field code-font" placeholder="* Comprehensive Health\n* 401k Match..."></textarea>
+            </div>
+
+            <div class="form-section">
+              <label class="section-label">System Tags (Comma Separated)</label>
+              <input v-model="form.tags" type="text" placeholder="AI, Neural, Core, Staff" class="luxury-field" />
             </div>
 
             <div class="form-actions-strata">
@@ -74,9 +111,11 @@
               
               <div class="replica-body">
                 <h4 class="replica-title">{{ form.title || 'Incomplete Designation' }}</h4>
-                <div class="meta-row">
+                <div class="meta-row higher-fidelity">
                   <span class="meta-item">📍 {{ form.location || 'Unknown Hub' }}</span>
                   <span class="meta-item">🛡️ {{ form.team || 'Unassigned Sub-system' }}</span>
+                  <span v-if="form.salary_range" class="meta-item">💰 {{ form.salary_range }}</span>
+                  <span v-if="form.remote_policy" class="meta-item">🏠 {{ form.remote_policy }}</span>
                 </div>
                 
                 <div class="jd-mesh">
@@ -84,6 +123,26 @@
                   <div class="mesh-content">
                     {{ form.description || 'Synthesizing protocol specifications...' }}
                   </div>
+                </div>
+
+                <div v-if="form.requirements" class="jd-mesh secondary">
+                  <div class="mesh-label">TECHNICAL_THRESHOLDS</div>
+                  <div class="mesh-content">
+                    {{ form.requirements }}
+                  </div>
+                </div>
+
+                <div v-if="form.benefits" class="jd-mesh benefits">
+                  <div class="mesh-label">ORBITAL_BENEFITS</div>
+                  <div class="mesh-content">
+                    {{ form.benefits }}
+                  </div>
+                </div>
+
+                <div v-if="form.tags" class="tags-row">
+                  <span v-for="tag in form.tags.split(',')" :key="tag" class="preview-tag">
+                    #{{ tag.trim() }}
+                  </span>
                 </div>
               </div>
 
@@ -96,11 +155,11 @@
             <div class="protocol-health card-premium">
               <div class="health-item">
                 <label>Signal Integrity</label>
-                <div class="health-bar"><div class="fill" style="width: 85%;"></div></div>
+                <div class="health-bar"><div class="fill" :style="{ width: healthScore + '%' }"></div></div>
               </div>
               <div class="health-item">
                 <label>Network Priority</label>
-                <span class="val">CORE_ASSET</span>
+                <span class="val">{{ form.experience_level || 'ENTRY_LEVEL' }} / CORE_ASSET</span>
               </div>
             </div>
           </div>
@@ -111,7 +170,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
 const props = defineProps({
   editing: { type: Object, default: null },
@@ -129,13 +188,35 @@ const form = ref({
   company: 'DREAMATIC',
   tags: '',
   type: 'Full-time',
+  salary_range: '',
+  remote_policy: '',
+  experience_level: '',
+  benefits: '',
+  deadline: '',
   active: true
 })
 
 onMounted(() => {
   if (props.editing) {
     form.value = { ...props.editing }
+    // Clean up deadline format if needed
+    if (form.value.deadline) {
+      form.value.deadline = new Date(form.value.deadline).toISOString().slice(0, 16)
+    }
   }
+})
+
+const healthScore = computed(() => {
+  let score = 20
+  if (form.value.title) score += 10
+  if (form.value.description) score += 10
+  if (form.value.requirements) score += 10
+  if (form.value.salary_range) score += 10
+  if (form.value.remote_policy) score += 10
+  if (form.value.benefits) score += 10
+  if (form.value.tags) score += 10
+  if (form.value.deadline) score += 10
+  return Math.min(score, 100)
 })
 
 const handleSubmit = () => {
@@ -272,9 +353,14 @@ const handleSubmit = () => {
 .meta-row { display: flex; gap: 1.5rem; margin-bottom: 2rem; }
 .meta-item { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); }
 
-.jd-mesh { background: rgba(0,0,0,0.2); border-left: 2px solid var(--primary); padding: 1.5rem; border-radius: 0 12px 12px 0; }
+.jd-mesh { background: rgba(0,0,0,0.2); border-left: 2px solid var(--primary); padding: 1.5rem; border-radius: 0 12px 12px 0; margin-bottom: 1.5rem; }
+.jd-mesh.secondary { border-left-color: var(--success); background: rgba(16, 185, 129, 0.05); }
 .mesh-label { font-size: 0.6rem; font-weight: 950; color: var(--primary); letter-spacing: 0.15em; margin-bottom: 1rem; }
+.jd-mesh.secondary .mesh-label { color: var(--success); }
 .mesh-content { font-size: 0.85rem; line-height: 1.6; color: var(--text-secondary); white-space: pre-wrap; }
+
+.tags-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1rem; }
+.preview-tag { font-size: 0.65rem; font-weight: 800; color: var(--primary); background: rgba(99, 102, 241, 0.1); padding: 4px 10px; border-radius: 6px; }
 
 .replica-footer { padding: 1.5rem 2rem; border-top: 1px solid rgba(255,255,255,0.03); }
 .apply-btn-mock {

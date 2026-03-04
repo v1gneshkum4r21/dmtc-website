@@ -51,21 +51,21 @@
         <div class="hub-header">
           <div class="h-title">
             <span class="h-icon">✍️</span>
-            <h3>Editorial Momentum</h3>
+            <h3>Network Comms</h3>
           </div>
-          <button class="nav-btn-mini" @click="$emit('switch', 'services')">Manage Inventory</button>
+          <button class="nav-btn-mini" @click="$emit('switch', 'contacts')">Dispatch Hub</button>
         </div>
 
         <div class="hub-inventory-wheel">
-          <div v-for="i in recentInsights" :key="i._id" class="inventory-item">
+          <div v-for="c in recentContacts" :key="c.id" class="inventory-item">
             <div class="i-core">
-              <span class="i-title">{{ i.title }}</span>
-              <span class="i-meta">{{ i.page.toUpperCase() }} // {{ i.author }}</span>
+              <span class="i-title">{{ c.name }}</span>
+              <span class="i-meta">{{ c.email }} // {{ c.subject }}</span>
             </div>
-            <div class="i-status" :class="{ live: i.published }">{{ i.published ? 'LIVE' : 'DRAFT' }}</div>
-            <div class="i-date">{{ formatDateShort(i.updatedAt) }}</div>
+            <div class="i-status" :class="c.status">{{ c.status.toUpperCase() }}</div>
+            <div class="i-date">{{ formatDateShort(c.createdAt) }}</div>
           </div>
-          <div v-if="recentInsights.length === 0" class="empty-hub">No editorial assets found.</div>
+          <div v-if="recentContacts.length === 0" class="empty-hub">No incoming transmissions.</div>
         </div>
       </div>
 
@@ -140,18 +140,21 @@ import { computed } from 'vue'
 const props = defineProps({
   insights: { type: Array, default: () => [] },
   applications: { type: Array, default: () => [] },
-  showcase: { type: Array, default: () => [] }
+  showcase: { type: Array, default: () => [] },
+  contacts: { type: Array, default: () => [] }
 })
 
 const emit = defineEmits(['switch'])
 
 const metrics = computed(() => [
   { label: 'Intelligence Nodes', value: props.insights.length, icon: '💎', bg: 'rgba(99, 102, 241, 0.1)', trend: 12 },
+  { label: 'Network Comms', value: props.contacts.length, icon: '📫', bg: 'rgba(16, 185, 129, 0.1)', trend: 0 },
   { label: 'Ecosystem Talent', value: props.applications.length, icon: '🚀', bg: 'rgba(168, 85, 247, 0.1)', trend: 2 },
   { label: 'Visual Masterpieces', value: props.showcase.length, icon: '✨', bg: 'rgba(236, 72, 153, 0.1)', trend: 5 }
 ])
 
 const recentInsights = computed(() => [...props.insights].sort((a,b) => new Date(b.updatedAt) - new Date(a.updatedAt)).slice(0, 6))
+const recentContacts = computed(() => [...props.contacts].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 6))
 const recentApplications = computed(() => [...props.applications].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 4))
 const latestShowcase = computed(() => props.showcase.length > 0 ? props.showcase[props.showcase.length - 1] : null)
 
@@ -241,7 +244,7 @@ const formatDateShort = (date) => new Date(date).toLocaleDateString('en-US', { m
 /* Metrics Matrix */
 .metrics-matrix {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 2rem;
 }
 

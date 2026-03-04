@@ -103,6 +103,11 @@ async function initDb() {
             company VARCHAR(100),
             tags TEXT,
             type VARCHAR(50),
+            salary_range VARCHAR(100),
+            remote_policy VARCHAR(100),
+            experience_level VARCHAR(100),
+            benefits TEXT,
+            deadline DATETIME,
             active BOOLEAN DEFAULT 1,
             isArchived BOOLEAN DEFAULT 0,
             createdAt DATETIME,
@@ -175,6 +180,15 @@ async function initDb() {
             username VARCHAR(255) PRIMARY KEY,
             challenge TEXT NOT NULL,
             expires_at VARCHAR(100)
+        )`,
+        `CREATE TABLE IF NOT EXISTS contacts (
+            id VARCHAR(50) PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            subject VARCHAR(255),
+            message TEXT NOT NULL,
+            status VARCHAR(50) DEFAULT 'unseen',
+            createdAt DATETIME
         )`
     ];
 
@@ -185,6 +199,18 @@ async function initDb() {
         }
     } finally {
         connection.release();
+    }
+
+    // Table Migrations (Add columns if missing)
+    const alterJobs = [
+        "ALTER TABLE jobs ADD COLUMN salary_range VARCHAR(100)",
+        "ALTER TABLE jobs ADD COLUMN remote_policy VARCHAR(100)",
+        "ALTER TABLE jobs ADD COLUMN experience_level VARCHAR(100)",
+        "ALTER TABLE jobs ADD COLUMN benefits TEXT",
+        "ALTER TABLE jobs ADD COLUMN deadline DATETIME"
+    ];
+    for (const sql of alterJobs) {
+        try { await pool.query(sql); } catch (e) { /* Column likely exists */ }
     }
 
     // Default Seed Data
@@ -630,6 +656,28 @@ async function updateShowcaseItem(id, data) {
     return showcaseHelper(rows[0]);
 }
 
+async function createContact(data) {
+    const id = uuidv4();
+    await pool.query('INSERT INTO contacts (id, name, email, subject, message, status, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [id, data.name, data.email, data.subject, data.message, 'unseen', now()]);
+    return id;
+}
+
+async function getContacts() {
+    const [rows] = await pool.query('SELECT * FROM contacts ORDER BY createdAt DESC');
+    return rows;
+}
+
+async function updateContactStatus(id, status) {
+    await pool.query('UPDATE contacts SET status = ? WHERE id = ?', [status, id]);
+    return true;
+}
+
+async function deleteContact(id) {
+    await pool.query('DELETE FROM contacts WHERE id = ?', [id]);
+    return true;
+}
+
 module.exports = {
     initDb, getSiteSettings, updateSiteSettings, getAllInsights, getInsightById, createInsight, updateInsight, deleteInsight,
     getAllResearch, getResearchById, createResearch, updateResearch, deleteResearch,
@@ -638,5 +686,6 @@ module.exports = {
     getAllApplications, createJobApplication, updateApplicationStatus, deleteApplication, restoreApplication,
     getPageConfig, getAllCustomPages, upsertPageConfig, deletePageConfig,
     globalSearch, getUserByUsername, createUser,
-    getCredentialsByUsername, saveCredential, saveChallenge, getChallenge
+    getCredentialsByUsername, saveCredential, saveChallenge, getChallenge,
+    createContact, getContacts, updateContactStatus, deleteContact
 };

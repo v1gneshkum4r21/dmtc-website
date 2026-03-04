@@ -57,6 +57,8 @@
               @delete-app-permanent="handleDeleteApplicationPermanent"
               @edit-showcase="startEditShowcase"
               @delete-showcase="handleDeleteShowcase"
+              @update-status="handleUpdateContactStatus"
+              @delete-contact="handleDeleteContact"
               @configure-page="id => { if (id) selectedPage = id; showPageEditor = true }"
             />
           </transition>
@@ -160,6 +162,7 @@ import ServicesManager from './modules/services/ServicesManager.vue'
 import ProductsManager from './modules/products/ProductsManager.vue'
 import ShowcaseManager from './modules/showcase/ShowcaseManager.vue'
 import CareersManager from './modules/careers/CareersManager.vue'
+import ContactsManager from './modules/contacts/ContactsManager.vue'
 import CompanyManager from './modules/company/CompanyManager.vue'
 import ResourcesManager from './modules/resources/ResourcesManager.vue'
 
@@ -189,6 +192,7 @@ const showcaseItems = ref([])
 const jobs = ref([])
 const applications = ref([])
 const research = ref([])
+const contacts = ref([])
 
 // Interaction State
 const showCreateForm = ref(false)
@@ -246,6 +250,7 @@ const activeComponent = computed(() => {
     products: markRaw(ProductsManager),
     showcase: markRaw(ShowcaseManager),
     careers: markRaw(CareersManager),
+    contacts: markRaw(ContactsManager),
     company: markRaw(CompanyManager),
     resources: markRaw(ResourcesManager)
   }
@@ -253,10 +258,11 @@ const activeComponent = computed(() => {
 })
 
 const componentProps = computed(() => {
-  if (activeModule.value === 'dashboard') return { insights: insights.value, applications: applications.value, showcase: showcaseItems.value }
+  if (activeModule.value === 'dashboard') return { insights: insights.value, applications: applications.value, showcase: showcaseItems.value, contacts: contacts.value }
   if (activeModule.value === 'company') return { selectedPage: selectedPage.value, loading: loading.value }
   if (['services', 'products'].includes(activeModule.value)) return { insights: insights.value, selectedPage: selectedPage.value, loading: loading.value }
   if (activeModule.value === 'showcase') return { showcaseItems: showcaseItems.value, loading: loading.value }
+  if (activeModule.value === 'contacts') return { contacts: contacts.value, loading: loading.value }
   if (activeModule.value === 'careers') return { jobs: jobs.value, applications: applications.value, loading: loading.value, subTab: selectedPage.value || 'jds' }
   if (activeModule.value === 'resources') return { insights: insights.value, research: research.value, selectedPage: selectedPage.value || 'hub', loading: loading.value }
   return {}
@@ -269,12 +275,13 @@ const activeModuleTitle = computed(() => {
     if (selectedPage.value === 'history') return 'Immutable Ledger'
     return 'Talent Orbit'
   }
-  const titles = { 
+  const titles = {
     dashboard: 'Control Center', 
     settings: 'Global Settings', 
     services: 'Services Intelligence', 
     products: 'Product Inventory', 
     showcase: 'Museum Curator',
+    contacts: 'Network Comms',
     company: 'Corporate Strategy',
     resources: 'Intelligence Unit'
   }
@@ -332,7 +339,7 @@ const handleLogin = async (credentials) => {
 
 const handleLogout = () => { authAPI.logout(); isAuthenticated.value = false }
 
-const initDashboard = () => { loadInsights(); loadShowcase(); loadJobs(); loadApplications(); loadResearch() }
+const initDashboard = () => { loadInsights(); loadShowcase(); loadJobs(); loadApplications(); loadResearch(); loadContacts() }
 
 const loadInsights = async () => { 
   loading.value = true
@@ -343,6 +350,7 @@ const loadShowcase = async () => { showcaseItems.value = await adminAPI.getAllSh
 const loadJobs = async () => { jobs.value = await adminAPI.getAllJobs({ active_only: false, include_archived: true }) }
 const loadApplications = async () => { applications.value = await adminAPI.getApplications({ include_deleted: true }) }
 const loadResearch = async () => { research.value = await adminAPI.getAllResearch() }
+const loadContacts = async () => { contacts.value = await adminAPI.getContacts() }
 
 const handleResearchSubmit = async ({ data }) => {
   loading.value = true
@@ -401,6 +409,31 @@ const handleDelete = (id) => {
     }
   }
   showConfirm.value = true
+}
+
+const handleDeleteContact = (id) => {
+  confirmConfig.value = {
+    title: 'Purge Transmission',
+    message: 'Remove this contact transmission? It cannot be recovered.',
+    confirmLabel: 'Delete Contact',
+    isDanger: true,
+    action: async () => {
+      loading.value = true
+      try {
+        await adminAPI.deleteContact(id)
+        loadContacts()
+        showConfirm.value = false
+      } finally { loading.value = false }
+    }
+  }
+  showConfirm.value = true
+}
+
+const handleUpdateContactStatus = async ({ id, status }) => {
+  try {
+    await adminAPI.updateContactStatus(id, status)
+    loadContacts()
+  } catch (err) { console.error('Failed to update status') }
 }
 
 const handleShowcaseSubmit = async ({ data, file }) => {
