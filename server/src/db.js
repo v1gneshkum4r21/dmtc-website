@@ -1,3 +1,4 @@
+const fs = require('fs');
 const sqlite3 = require('sqlite3');
 const { open } = require('sqlite');
 const path = require('path');
@@ -5,10 +6,15 @@ const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
 
 const DB_PATH = path.join(__dirname, '../data/dreamatic.db');
+const DATA_DIR = path.dirname(DB_PATH);
 
 let db;
 
 async function initDb() {
+    if (!fs.existsSync(DATA_DIR)) {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+
     db = await open({
         filename: DB_PATH,
         driver: sqlite3.Database
