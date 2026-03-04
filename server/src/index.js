@@ -100,15 +100,27 @@ async function startServer() {
     console.log('📦 Initializing Database...');
     await db.initDb();
 
-    // Flexible path for the 'dist' folder
-    const DIST_DIR = path.resolve(__dirname, '../../dist');
+    // Try multiple possible locations for the 'dist' folder
+    const pathsToCheck = [
+        path.resolve(__dirname, '../../dist'),      // Local/Standard (up two levels)
+        path.resolve(process.cwd(), 'dist'),       // Hostinger Root
+        path.resolve(__dirname, '../dist'),        // Adjacent to src
+        path.join(process.cwd(), 'public_html/dist') // Some hosting environments
+    ];
 
-    if (fs.existsSync(DIST_DIR)) {
+    let DIST_DIR = null;
+    for (const p of pathsToCheck) {
+        if (fs.existsSync(p)) {
+            DIST_DIR = p;
+            break;
+        }
+    }
+
+    if (DIST_DIR) {
         console.log(`🌐 Serving frontend from: ${DIST_DIR}`);
         app.use(express.static(DIST_DIR));
 
         // Single Page Application (SPA) fallback
-        // This ensures /admin/insights and other routes work!
         app.get('*', (req, res) => {
             if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/static')) {
                 return res.status(404).json({ detail: 'Not Found' });
@@ -116,8 +128,10 @@ async function startServer() {
             res.sendFile(path.join(DIST_DIR, 'index.html'));
         });
     } else {
-        console.warn('⚠️ Warning: dist folder not found. Frontend will not be served.');
-        app.get('/', (req, res) => res.send('Backend is running, but Frontend build (dist) is missing.'));
+        console.warn('⚠️ Warning: dist folder not found.');
+        app.get('/', (req, res) => {
+            res.send(`Backend is running, but Frontend build (dist) is missing.<br><br><b>Paths searched:</b><br>${pathsToCheck.join('<br>')}`);
+        });
     }
 
     app.listen(PORT, () => console.log(`🚀 Server listening on Port ${PORT}`));
