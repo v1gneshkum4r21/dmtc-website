@@ -415,8 +415,8 @@ const loadPageData = async () => {
   // 2. Fallback: fetch from API
   try {
     const res = await pagesAPI.getConfig(pageId)
-    if (res.data && res.data.content) {
-      resolvedPageData.value = res.data
+    if (res && res.content) {
+      resolvedPageData.value = res
     }
   } catch (err) {
     console.warn('DynamicView: could not load page', pageId, err)
@@ -495,8 +495,8 @@ onMounted(async () => {
 
   if (!props.isPreview) {
     try {
-      const res = await insightsAPI.getAll({ page: '', published: true })
-      liveInsights.value = res.data?.items || []
+      const res = await insightsAPI.getAll(null)
+      liveInsights.value = Array.isArray(res) ? res : []
     } catch {
       liveInsights.value = []
     }

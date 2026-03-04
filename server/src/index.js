@@ -279,6 +279,37 @@ admin.post('/settings', async (req, res, next) => {
     try { res.json(await db.updateSiteSettings(req.body)); } catch (e) { next(e); }
 });
 
+// WebAuthn MFA Registration
+admin.get('/mfa/register/options', async (req, res, next) => {
+    try {
+        const user = await db.getUserByUsername(req.user.username);
+        const options = webauthn.getRegistrationOptions(user.username, user.username);
+        await db.saveChallenge(user.username, Buffer.from(options.challenge, 'base64url').toString('base64url'));
+        res.json(options);
+    } catch (e) { next(e); }
+});
+
+admin.post('/mfa/register/verify', async (req, res, next) => {
+    try {
+        const user = await db.getUserByUsername(req.user.username);
+        const challenge = await db.getChallenge(user.username);
+        if (!challenge) return res.status(400).json({ detail: 'Challenge expired or not found' });
+        const verification = await webauthn.verifyRegistration(challenge, req.body);
+        if (verification.verified) {
+            await db.saveCredential({
+                username: user.username,
+                credId: verification.registrationInfo.credentialID,
+                publicKey: Buffer.from(verification.registrationInfo.credentialPublicKey).toString('base64url'),
+                signCount: verification.registrationInfo.counter,
+                transports: req.body.response?.transports || []
+            });
+            res.json({ verified: true, message: 'Security key registered' });
+        } else {
+            res.status(400).json({ detail: 'Registration verification failed' });
+        }
+    } catch (e) { next(e); }
+});
+
 // ─── Bind Server & Static Files ──────────────────────────────────────────────
 
 async function startServer() {
