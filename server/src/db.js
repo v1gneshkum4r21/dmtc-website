@@ -1,543 +1,504 @@
-const Database = require('better-sqlite3');
+const sqlite3 = require('sqlite3');
+const { open } = require('sqlite');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
 
-// Point at the server-local DB file
 const DB_PATH = path.join(__dirname, '../data/dreamatic.db');
 
-const db = new Database(DB_PATH);
+let db;
 
-// Enable WAL mode for better concurrency
-db.pragma('journal_mode = WAL');
-db.pragma('foreign_keys = ON');
+async function initDb() {
+    db = await open({
+        filename: DB_PATH,
+        driver: sqlite3.Database
+    });
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+    console.log('✅ SQLite (async) connected and initialized');
 
-function insightHelper(row) {
-    if (!row) return null;
-    const r = { ...row };
-    r._id = r.id; delete r.id;
-    r.published = Boolean(r.published);
-    return r;
-}
+    await db.exec(`
+        CREATE TABLE IF NOT EXISTS insights (
+            _id TEXT PRIMARY KEY,
+            title TEXT,
+            summary TEXT,
+            content TEXT,
+            category TEXT,
+            author TEXT,
+            date TEXT,
+            readTime TEXT,
+            image TEXT,
+            tags TEXT,
+            slug TEXT UNIQUE,
+            published BOOLEAN,
+            createdAt TEXT
+        );
 
-function researchHelper(row) {
-    if (!row) return null;
-    const r = { ...row };
-    r._id = r.id; delete r.id;
-    r.published = Boolean(r.published);
-    return r;
-}
+        CREATE TABLE IF NOT EXISTS research (
+            _id TEXT PRIMARY KEY,
+            title TEXT,
+            authors TEXT,
+            journal TEXT,
+            year INTEGER,
+            abstract TEXT,
+            doi TEXT,
+            pdfUrl TEXT,
+            tags TEXT,
+            published BOOLEAN,
+            createdAt TEXT
+        );
 
-function showcaseHelper(row) {
-    if (!row) return null;
-    const r = { ...row };
-    r._id = r.id; delete r.id;
-    r.active = Boolean(r.active);
-    return r;
-}
+        CREATE TABLE IF NOT EXISTS showcase (
+            _id TEXT PRIMARY KEY,
+            title TEXT,
+            description TEXT,
+            image TEXT,
+            link TEXT,
+            category TEXT,
+            tags TEXT,
+            published BOOLEAN,
+            createdAt TEXT
+        );
 
-function userHelper(row) {
-    if (!row) return null;
-    const r = { ...row };
-    r._id = r.id; delete r.id;
-    return r;
-}
+        CREATE TABLE IF NOT EXISTS jobs (
+            _id TEXT PRIMARY KEY,
+            title TEXT,
+            department TEXT,
+            location TEXT,
+            type TEXT,
+            description TEXT,
+            requirements TEXT,
+            salary TEXT,
+            active BOOLEAN,
+            archived BOOLEAN,
+            createdAt TEXT
+        );
 
-function jobHelper(row) {
-    if (!row) return null;
-    const r = { ...row };
-    r._id = r.id; delete r.id;
-    r.active = Boolean(r.active);
-    r.isArchived = Boolean(r.isArchived);
-    return r;
-}
+        CREATE TABLE IF NOT EXISTS job_applications (
+            id TEXT PRIMARY KEY,
+            jobId TEXT,
+            jobTitle TEXT,
+            name TEXT,
+            email TEXT,
+            phone TEXT,
+            linkedIn TEXT,
+            resumeUrl TEXT,
+            message TEXT,
+            status TEXT,
+            appliedDate TEXT,
+            deletedAt TEXT,
+            notes TEXT
+        );
 
-function applicationHelper(row) {
-    if (!row) return null;
-    const r = { ...row };
-    r._id = r.id; delete r.id;
-    r.isDeleted = Boolean(r.isDeleted);
-    if (typeof r.history === 'string') {
-        try { r.history = JSON.parse(r.history); } catch { r.history = []; }
+        CREATE TABLE IF NOT EXISTS users (
+            id TEXT PRIMARY KEY,
+            username TEXT UNIQUE,
+            email TEXT,
+            passwordHash TEXT,
+            role TEXT,
+            createdAt TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS credentials (
+            credential_id TEXT PRIMARY KEY,
+            username TEXT,
+            public_key TEXT,
+            sign_count INTEGER,
+            transports TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS challenges (
+            username TEXT PRIMARY KEY,
+            challenge TEXT,
+            expiresAt INTEGER
+        );
+
+        CREATE TABLE IF NOT EXISTS page_configs (
+            page_id TEXT PRIMARY KEY,
+            config TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS site_settings (
+            id TEXT PRIMARY KEY,
+            siteTitle TEXT,
+            tagline TEXT,
+            contactEmail TEXT,
+            seoDescription TEXT,
+            keywords TEXT,
+            indexRobots BOOLEAN,
+            maintenanceMode BOOLEAN,
+            social TEXT
+        );
+    `);
+
+    // Ensure default settings exist
+    const settings = await db.get('SELECT id FROM site_settings WHERE id = "default"');
+    if (!settings) {
+        await db.run(`INSERT INTO site_settings (id, siteTitle, tagline, contactEmail, social) 
+                      VALUES ("default", "DREAMATIC", "The Future of Agentic AI", "hello@dreamatic.ai", "{}")`);
     }
-    return r;
-}
 
-function siteSettingsHelper(row) {
-    if (!row) return null;
-    const r = { ...row };
-    if (typeof r.social === 'string') {
-        try { r.social = JSON.parse(r.social); } catch { r.social = {}; }
-    }
-    r.indexRobots = Boolean(r.indexRobots);
-    r.maintenanceMode = Boolean(r.maintenanceMode);
-    return r;
-}
-
-function pageConfigHelper(row) {
-    if (!row) return null;
-    const r = { ...row };
-    r._id = r.id; delete r.id;
-    r.isCustom = Boolean(r.isCustom);
-    r.visible = r.visible !== undefined ? Boolean(r.visible) : true;
-    const jsonFields = ['solutions', 'approaches', 'values', 'stats', 'team', 'advisors', 'perks', 'content', 'theme'];
-    for (const f of jsonFields) {
-        if (typeof r[f] === 'string') {
-            try { r[f] = JSON.parse(r[f]); } catch { r[f] = null; }
-        }
-    }
-    return r;
-}
-
-function credentialHelper(row) {
-    if (!row) return null;
-    const r = { ...row };
-    r._id = r.id; delete r.id;
-    if (typeof r.transports === 'string') {
-        try { r.transports = JSON.parse(r.transports); } catch { r.transports = []; }
-    }
-    return r;
-}
-
-// ─── Insights CRUD ────────────────────────────────────────────────────────────
-
-function getAllInsights(publishedOnly = true, page = null) {
-    let query = 'SELECT * FROM insights';
-    const conditions = [];
-    const params = [];
-    if (publishedOnly) conditions.push('published = 1');
-    if (page) { conditions.push('page = ?'); params.push(page); }
-    if (conditions.length) query += ' WHERE ' + conditions.join(' AND ');
-    query += ' ORDER BY createdAt DESC';
-    return db.prepare(query).all(...params).map(insightHelper);
-}
-
-function getInsightById(id) {
-    return insightHelper(db.prepare('SELECT * FROM insights WHERE id = ?').get(id));
-}
-
-function createInsight(data) {
-    const id = uuidv4();
-    const now = new Date().toISOString();
-    db.prepare(`
-    INSERT INTO insights (id, title, excerpt, content, author, imageUrl, page, published, journal, year, authors, pdfUrl, linkType, createdAt, updatedAt)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(
-        id, data.title, data.excerpt, data.content,
-        data.author ?? 'DREAMATIC Team', data.imageUrl ?? null,
-        data.page ?? 'ai-work', data.published !== false ? 1 : 0,
-        data.journal ?? null, data.year ?? null, data.authors ?? null,
-        data.pdfUrl ?? null, data.linkType ?? 'download', now, now
-    );
-    return getInsightById(id);
-}
-
-function updateInsight(id, data) {
-    const fields = Object.entries(data).filter(([, v]) => v !== undefined && v !== null);
-    if (!fields.length) return getInsightById(id);
-    const now = new Date().toISOString();
-    const setClauses = fields.map(([k]) => `${k} = ?`).join(', ');
-    const values = fields.map(([k, v]) => k === 'published' ? (v ? 1 : 0) : v);
-    db.prepare(`UPDATE insights SET ${setClauses}, updatedAt = ? WHERE id = ?`).run(...values, now, id);
-    return getInsightById(id);
-}
-
-function deleteInsight(id) {
-    return db.prepare('DELETE FROM insights WHERE id = ?').run(id).changes > 0;
-}
-
-// ─── Research CRUD ────────────────────────────────────────────────────────────
-
-function getAllResearch(publishedOnly = true) {
-    const query = publishedOnly
-        ? 'SELECT * FROM research WHERE published = 1 ORDER BY createdAt DESC'
-        : 'SELECT * FROM research ORDER BY createdAt DESC';
-    return db.prepare(query).all().map(researchHelper);
-}
-
-function getResearchById(id) {
-    return researchHelper(db.prepare('SELECT * FROM research WHERE id = ?').get(id));
-}
-
-function createResearch(data) {
-    const id = uuidv4();
-    const now = new Date().toISOString();
-    db.prepare(`
-    INSERT INTO research (id, title, journal, year, authors, excerpt, abstract, content, imageUrl, pdfUrl, linkType, published, createdAt, updatedAt)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(
-        id, data.title, data.journal, data.year, data.authors, data.excerpt,
-        data.abstract ?? null, data.content, data.imageUrl ?? null,
-        data.pdfUrl ?? null, data.linkType ?? 'download',
-        data.published !== false ? 1 : 0, now, now
-    );
-    return getResearchById(id);
-}
-
-function updateResearch(id, data) {
-    const fields = Object.entries(data).filter(([, v]) => v !== undefined && v !== null);
-    if (!fields.length) return getResearchById(id);
-    const now = new Date().toISOString();
-    const setClauses = fields.map(([k]) => `${k} = ?`).join(', ');
-    const values = fields.map(([k, v]) => k === 'published' ? (v ? 1 : 0) : v);
-    db.prepare(`UPDATE research SET ${setClauses}, updatedAt = ? WHERE id = ?`).run(...values, now, id);
-    return getResearchById(id);
-}
-
-function deleteResearch(id) {
-    return db.prepare('DELETE FROM research WHERE id = ?').run(id).changes > 0;
-}
-
-// ─── Showcase CRUD ────────────────────────────────────────────────────────────
-
-function getAllShowcaseItems(activeOnly = true) {
-    const query = activeOnly
-        ? 'SELECT * FROM showcase WHERE active = 1 ORDER BY `order` ASC, createdAt DESC'
-        : 'SELECT * FROM showcase ORDER BY `order` ASC, createdAt DESC';
-    return db.prepare(query).all().map(showcaseHelper);
-}
-
-function getShowcaseItemById(id) {
-    return showcaseHelper(db.prepare('SELECT * FROM showcase WHERE id = ?').get(id));
-}
-
-function createShowcaseItem(data) {
-    const id = uuidv4();
-    const now = new Date().toISOString();
-    db.prepare(`
-    INSERT INTO showcase (id, title, description, mediaUrl, mediaType, tag, product, \`order\`, active, size, likes, views, createdAt, updatedAt)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(
-        id, data.title, data.description ?? null, data.mediaUrl, data.mediaType,
-        data.tag, data.product, data.order ?? 0,
-        data.active !== false ? 1 : 0, data.size ?? 'medium',
-        0, 0, now, now
-    );
-    return getShowcaseItemById(id);
-}
-
-function updateShowcaseItem(id, data) {
-    const fields = Object.entries(data).filter(([, v]) => v !== undefined && v !== null);
-    if (!fields.length) return getShowcaseItemById(id);
-    const now = new Date().toISOString();
-    const setClauses = fields.map(([k]) => `\`${k}\` = ?`).join(', ');
-    const values = fields.map(([k, v]) => k === 'active' ? (v ? 1 : 0) : v);
-    db.prepare(`UPDATE showcase SET ${setClauses}, updatedAt = ? WHERE id = ?`).run(...values, now, id);
-    return getShowcaseItemById(id);
-}
-
-function deleteShowcaseItem(id) {
-    return db.prepare('DELETE FROM showcase WHERE id = ?').run(id).changes > 0;
-}
-
-// ─── Users CRUD ───────────────────────────────────────────────────────────────
-
-function getUserByUsername(username) {
-    return userHelper(db.prepare('SELECT * FROM users WHERE username = ?').get(username));
-}
-
-function createUser(data) {
-    const id = uuidv4();
-    const now = new Date().toISOString();
-    const hash = bcrypt.hashSync(data.password, 10);
-    db.prepare(`
-    INSERT INTO users (id, username, email, passwordHash, role, createdAt)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `).run(id, data.username, data.email, hash, data.role ?? 'admin', now);
-    return getUserByUsername(data.username);
-}
-
-function initDefaultUser() {
-    const existing = getUserByUsername('admin');
-    if (!existing) {
-        createUser({ username: 'admin', email: 'admin@dreamatic.ai', password: 'admin123', role: 'admin' });
-        console.log('👤 Default admin user created (admin/admin123)');
+    // Ensure default admin exists
+    const admin = await db.get('SELECT username FROM users WHERE username = "admin"');
+    if (!admin) {
+        const hash = bcrypt.hashSync('admin123', 10);
+        await db.run(`INSERT INTO users (id, username, email, passwordHash, role, createdAt) 
+                      VALUES (?, "admin", "admin@dreamatic.com", ?, "admin", ?)`,
+            [uuidv4(), hash, new Date().toISOString()]);
+        console.log('👤 Default admin user created (admin / admin123)');
     }
 }
 
-// ─── Jobs CRUD ────────────────────────────────────────────────────────────────
+// ─── Site Settings ──────────────────────────────────────────────────────────
 
-function getAllJobs(activeOnly = true, includeArchived = false) {
-    let query = 'SELECT * FROM jobs';
-    const conditions = [];
-    if (activeOnly) conditions.push('active = 1');
-    if (!includeArchived) conditions.push('isArchived = 0');
-    if (conditions.length) query += ' WHERE ' + conditions.join(' AND ');
-    query += ' ORDER BY createdAt DESC';
-    return db.prepare(query).all().map(jobHelper);
-}
-
-function getJobById(id) {
-    return jobHelper(db.prepare('SELECT * FROM jobs WHERE id = ?').get(id));
-}
-
-function createJob(data) {
-    const id = uuidv4();
-    const now = new Date().toISOString();
-    db.prepare(`
-    INSERT INTO jobs (id, title, team, location, description, requirements, company, tags, type, active, isArchived, createdAt, updatedAt)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(
-        id, data.title, data.team, data.location, data.description, data.requirements,
-        data.company ?? 'DREAMATIC', data.tags ?? '', data.type ?? 'Full-time',
-        data.active !== false ? 1 : 0, data.isArchived ? 1 : 0, now, now
-    );
-    return getJobById(id);
-}
-
-function updateJob(id, data) {
-    const fields = Object.entries(data).filter(([, v]) => v !== undefined && v !== null);
-    if (!fields.length) return getJobById(id);
-    const now = new Date().toISOString();
-    const setClauses = fields.map(([k]) => `${k} = ?`).join(', ');
-    const values = fields.map(([k, v]) => ['active', 'isArchived'].includes(k) ? (v ? 1 : 0) : v);
-    db.prepare(`UPDATE jobs SET ${setClauses}, updatedAt = ? WHERE id = ?`).run(...values, now, id);
-    return getJobById(id);
-}
-
-function deleteJob(id, permanent = false) {
-    if (permanent) {
-        return db.prepare('DELETE FROM jobs WHERE id = ?').run(id).changes > 0;
+async function getSiteSettings() {
+    const row = await db.get('SELECT * FROM site_settings WHERE id = "default"');
+    if (row) {
+        row.social = JSON.parse(row.social || '{}');
+        row.indexRobots = !!row.indexRobots;
+        row.maintenanceMode = !!row.maintenanceMode;
     }
-    return db.prepare('UPDATE jobs SET isArchived = 1, updatedAt = ? WHERE id = ?').run(new Date().toISOString(), id).changes > 0;
+    return row;
 }
 
-// ─── Applications ─────────────────────────────────────────────────────────────
-
-function getAllApplications(includeDeleted = false) {
-    const query = includeDeleted
-        ? 'SELECT * FROM applications ORDER BY createdAt DESC'
-        : 'SELECT * FROM applications WHERE isDeleted = 0 ORDER BY createdAt DESC';
-    return db.prepare(query).all().map(applicationHelper);
-}
-
-function createJobApplication(data) {
-    const id = uuidv4();
-    const now = new Date().toISOString();
-    db.prepare(`
-    INSERT INTO applications (id, name, email, phone, location, experience, salary, linkedin, portfolio, notice, resume, message, role, jobId, status, history, isDeleted, createdAt)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(
-        id, data.name, data.email, data.phone, data.location, data.experience,
-        data.salary, data.linkedin, data.portfolio, data.notice, data.resume,
-        data.message, data.role, data.jobId ?? null, data.status ?? 'Applied',
-        JSON.stringify(data.history ?? []), 0, now
-    );
-    return applicationHelper(db.prepare('SELECT * FROM applications WHERE id = ?').get(id));
-}
-
-function updateApplicationStatus(id, status, note = null) {
-    const row = db.prepare('SELECT history FROM applications WHERE id = ?').get(id);
-    if (!row) return false;
-    let history = [];
-    try { history = JSON.parse(row.history); } catch { }
-    history.push({ status, note, timestamp: new Date().toISOString() });
-    db.prepare('UPDATE applications SET status = ?, history = ? WHERE id = ?').run(status, JSON.stringify(history), id);
-    return true;
-}
-
-function deleteApplication(id, permanent = false) {
-    if (permanent) {
-        return db.prepare('DELETE FROM applications WHERE id = ?').run(id).changes > 0;
-    }
-    return db.prepare('UPDATE applications SET isDeleted = 1 WHERE id = ?').run(id).changes > 0;
-}
-
-function restoreApplication(id) {
-    return db.prepare('UPDATE applications SET isDeleted = 0 WHERE id = ?').run(id).changes > 0;
-}
-
-// ─── Page Configs ─────────────────────────────────────────────────────────────
-
-function getPageConfig(pageId) {
-    return pageConfigHelper(db.prepare('SELECT * FROM pages WHERE page_id = ?').get(pageId));
-}
-
-function upsertPageConfig(pageId, data) {
-    const existing = getPageConfig(pageId);
-    const now = new Date().toISOString();
-    const jsonFields = ['solutions', 'approaches', 'values', 'stats', 'team', 'advisors', 'perks', 'content', 'theme'];
-    const flat = { ...data };
-    for (const f of jsonFields) {
-        if (f in flat && flat[f] !== null && typeof flat[f] !== 'string') {
-            flat[f] = JSON.stringify(flat[f]);
-        }
-    }
-
-    if (existing) {
-        const fields = Object.entries(flat);
-        const setClauses = fields.map(([k]) => `\`${k}\` = ?`).join(', ');
-        const values = fields.map(([, v]) => v);
-        db.prepare(`UPDATE pages SET ${setClauses}, updatedAt = ? WHERE page_id = ?`).run(...values, now, pageId);
-    } else {
-        const id = uuidv4();
-        const keys = ['id', 'page_id', 'updatedAt', ...Object.keys(flat)];
-        const placeholders = keys.map(() => '?').join(', ');
-        const cols = keys.map(k => `\`${k}\``).join(', ');
-        db.prepare(`INSERT INTO pages (${cols}) VALUES (${placeholders})`).run(id, pageId, now, ...Object.values(flat));
-    }
-    return getPageConfig(pageId);
-}
-
-function getAllCustomPages() {
-    return db.prepare('SELECT * FROM pages WHERE isCustom = 1').all().map(pageConfigHelper);
-}
-
-function deletePageConfig(pageId) {
-    return db.prepare('DELETE FROM pages WHERE page_id = ?').run(pageId).changes > 0;
-}
-
-// ─── Site Settings ────────────────────────────────────────────────────────────
-
-function ensureSiteSettingsTable() {
-    db.exec(`
-    CREATE TABLE IF NOT EXISTS site_settings (
-      id TEXT PRIMARY KEY,
-      siteTitle TEXT,
-      tagline TEXT,
-      contactEmail TEXT,
-      seoDescription TEXT,
-      keywords TEXT,
-      indexRobots INTEGER,
-      maintenanceMode INTEGER,
-      social TEXT
-    )
-  `);
-}
-
-function getSiteSettings() {
-    ensureSiteSettingsTable();
-    let row = db.prepare('SELECT * FROM site_settings LIMIT 1').get();
-    if (!row) {
-        const defaults = {
-            siteTitle: 'DREAMATIC',
-            tagline: 'The Future of Agentic AI',
-            contactEmail: 'hello@dreamatic.ai',
-            seoDescription: 'Leading the bridge between human intuition and agentic automation.',
-            keywords: 'AI, Agents, Enterprise AI, Future Tech',
-            indexRobots: 1,
-            maintenanceMode: 0,
-            social: JSON.stringify({ linkedin: '', twitter: '' })
-        };
-        db.prepare(`
-      INSERT INTO site_settings (id, siteTitle, tagline, contactEmail, seoDescription, keywords, indexRobots, maintenanceMode, social)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run('default', defaults.siteTitle, defaults.tagline, defaults.contactEmail,
-            defaults.seoDescription, defaults.keywords, defaults.indexRobots,
-            defaults.maintenanceMode, defaults.social);
-        row = db.prepare('SELECT * FROM site_settings LIMIT 1').get();
-    }
-    return siteSettingsHelper(row);
-}
-
-function updateSiteSettings(data) {
-    ensureSiteSettingsTable();
-    db.prepare(`
-    UPDATE site_settings SET
-      siteTitle = ?, tagline = ?, contactEmail = ?,
-      seoDescription = ?, keywords = ?,
-      indexRobots = ?, maintenanceMode = ?, social = ?
-    WHERE id = 'default'
-  `).run(
-        data.siteTitle, data.tagline, data.contactEmail,
-        data.seoDescription, data.keywords,
-        data.indexRobots ? 1 : 0, data.maintenanceMode ? 1 : 0,
-        JSON.stringify(data.social ?? {})
-    );
+async function updateSiteSettings(data) {
+    const current = await getSiteSettings();
+    const updated = { ...current, ...data };
+    await db.run(`UPDATE site_settings SET 
+        siteTitle = ?, tagline = ?, contactEmail = ?, seoDescription = ?, 
+        keywords = ?, indexRobots = ?, maintenanceMode = ?, social = ?
+        WHERE id = "default"`,
+        [updated.siteTitle, updated.tagline, updated.contactEmail, updated.seoDescription,
+        updated.keywords, updated.indexRobots ? 1 : 0, updated.maintenanceMode ? 1 : 0, JSON.stringify(updated.social)]);
     return getSiteSettings();
 }
 
-// ─── Global Search ────────────────────────────────────────────────────────────
+// ─── Insights ───────────────────────────────────────────────────────────────
 
-function globalSearch(q) {
-    const like = `%${q}%`;
-    const results = [];
+async function getAllInsights(onlyPublished = false, page = null) {
+    let query = 'SELECT * FROM insights';
+    if (onlyPublished) query += ' WHERE published = 1';
+    query += ' ORDER BY createdAt DESC';
 
-    db.prepare(`SELECT * FROM insights WHERE published = 1 AND (title LIKE ? OR excerpt LIKE ? OR content LIKE ?) LIMIT 5`).all(like, like, like)
-        .map(insightHelper).forEach(item => results.push({
-            id: item._id, title: item.title, description: item.excerpt,
-            type: 'insight', category: 'INSIGHT', url: `/resources/blog?id=${item._id}`
-        }));
+    if (page) {
+        const offset = (parseInt(page) - 1) * 10;
+        query += ` LIMIT 10 OFFSET ${offset}`;
+    }
 
-    db.prepare(`SELECT * FROM research WHERE published = 1 AND (title LIKE ? OR excerpt LIKE ? OR authors LIKE ?) LIMIT 5`).all(like, like, like)
-        .map(researchHelper).forEach(item => results.push({
-            id: item._id, title: item.title, description: item.excerpt,
-            type: 'research', category: 'RESEARCH', url: `/resources/research?id=${item._id}`
-        }));
-
-    db.prepare(`SELECT * FROM showcase WHERE active = 1 AND (title LIKE ? OR description LIKE ? OR tag LIKE ?) LIMIT 5`).all(like, like, like)
-        .map(showcaseHelper).forEach(item => results.push({
-            id: item._id, title: item.title, description: item.description ?? item.tag,
-            type: 'insight', category: 'SHOWCASE', url: `/showcase?id=${item._id}`
-        }));
-
-    db.prepare(`SELECT * FROM jobs WHERE active = 1 AND isArchived = 0 AND (title LIKE ? OR description LIKE ? OR team LIKE ?) LIMIT 5`).all(like, like, like)
-        .map(jobHelper).forEach(item => results.push({
-            id: item._id, title: item.title, description: `${item.team} · ${item.location}`,
-            type: 'job', category: 'CAREERS', url: `/company/careers?id=${item._id}`
-        }));
-
-    return results;
+    const rows = await db.all(query);
+    return rows.map(r => ({ ...r, tags: JSON.parse(r.tags || '[]'), published: !!r.published }));
 }
 
-// ─── WebAuthn / MFA ───────────────────────────────────────────────────────────
-
-function getCredentialsByUsername(username) {
-    return db.prepare('SELECT * FROM webauthn_credentials WHERE username = ?').all(username).map(credentialHelper);
+async function getInsightById(id) {
+    const row = await db.get('SELECT * FROM insights WHERE _id = ?', [id]);
+    return row ? { ...row, tags: JSON.parse(row.tags || '[]'), published: !!row.published } : null;
 }
 
-function saveCredential({ username, credId, publicKey, signCount, transports }) {
+async function createInsight(data) {
+    const insight = {
+        _id: uuidv4(),
+        ...data,
+        tags: JSON.stringify(data.tags || []),
+        createdAt: new Date().toISOString(),
+        published: data.published ? 1 : 0
+    };
+    await db.run(`INSERT INTO insights (_id, title, summary, content, category, author, date, readTime, image, tags, slug, published, createdAt)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [insight._id, insight.title, insight.summary, insight.content, insight.category, insight.author,
+        insight.date, insight.readTime, insight.image, insight.tags, insight.slug, insight.published, insight.createdAt]);
+    return getInsightById(insight._id);
+}
+
+async function updateInsight(id, data) {
+    const current = await getInsightById(id);
+    if (!current) return null;
+    const updated = { ...current, ...data };
+    await db.run(`UPDATE insights SET title=?, summary=?, content=?, category=?, author=?, date=?, readTime=?, image=?, tags=?, slug=?, published=?
+        WHERE _id=?`,
+        [updated.title, updated.summary, updated.content, updated.category, updated.author, updated.date,
+        updated.readTime, updated.image, JSON.stringify(updated.tags), updated.slug, updated.published ? 1 : 0, id]);
+    return getInsightById(id);
+}
+
+async function deleteInsight(id) {
+    const res = await db.run('DELETE FROM insights WHERE _id = ?', [id]);
+    return res.changes > 0;
+}
+
+// ─── Research ───────────────────────────────────────────────────────────────
+
+async function getAllResearch(onlyPublished = false) {
+    let query = 'SELECT * FROM research';
+    if (onlyPublished) query += ' WHERE published = 1';
+    query += ' ORDER BY createdAt DESC';
+    const rows = await db.all(query);
+    return rows.map(r => ({ ...r, tags: JSON.parse(r.tags || '[]'), published: !!r.published }));
+}
+
+async function getResearchById(id) {
+    const row = await db.get('SELECT * FROM research WHERE _id = ?', [id]);
+    return row ? { ...row, tags: JSON.parse(row.tags || '[]'), published: !!row.published } : null;
+}
+
+async function createResearch(data) {
     const id = uuidv4();
-    db.prepare(`
-    INSERT INTO webauthn_credentials (id, username, credential_id, public_key, sign_count, transports, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `).run(id, username, credId, publicKey, signCount, JSON.stringify(transports ?? []), new Date().toISOString());
+    await db.run(`INSERT INTO research (_id, title, authors, journal, year, abstract, doi, pdfUrl, tags, published, createdAt)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [id, data.title, data.authors, data.journal, data.year, data.abstract, data.doi, data.pdfUrl,
+            JSON.stringify(data.tags || []), data.published ? 1 : 0, new Date().toISOString()]);
+    return getResearchById(id);
 }
 
-function saveChallenge(username, challenge) {
-    const expiresAt = (Date.now() / 1000 + 300).toString(); // 5 minutes
-    db.prepare('INSERT OR REPLACE INTO webauthn_challenges (username, challenge, expires_at) VALUES (?, ?, ?)').run(username, challenge, expiresAt);
+async function updateResearch(id, data) {
+    const current = await getResearchById(id);
+    if (!current) return null;
+    const updated = { ...current, ...data };
+    await db.run(`UPDATE research SET title=?, authors=?, journal=?, year=?, abstract=?, doi=?, pdfUrl=?, tags=?, published=?
+        WHERE _id=?`,
+        [updated.title, updated.authors, updated.journal, updated.year, updated.abstract, updated.doi,
+        updated.pdfUrl, JSON.stringify(updated.tags), updated.published ? 1 : 0, id]);
+    return getResearchById(id);
 }
 
-function getChallenge(username) {
-    const row = db.prepare('SELECT challenge, expires_at FROM webauthn_challenges WHERE username = ?').get(username);
-    if (!row) return null;
-    if (parseFloat(row.expires_at) < Date.now() / 1000) return null;
+async function deleteResearch(id) {
+    const res = await db.run('DELETE FROM research WHERE _id = ?', [id]);
+    return res.changes > 0;
+}
+
+// ─── Showcase ───────────────────────────────────────────────────────────────
+
+async function getAllShowcaseItems(onlyPublished = false) {
+    let query = 'SELECT * FROM showcase';
+    if (onlyPublished) query += ' WHERE published = 1';
+    query += ' ORDER BY createdAt DESC';
+    const rows = await db.all(query);
+    return rows.map(r => ({ ...r, tags: JSON.parse(r.tags || '[]'), published: !!r.published }));
+}
+
+async function getShowcaseById(id) {
+    const row = await db.get('SELECT * FROM showcase WHERE _id = ?', [id]);
+    return row ? { ...row, tags: JSON.parse(row.tags || '[]'), published: !!row.published } : null;
+}
+
+async function createShowcaseItem(data) {
+    const id = uuidv4();
+    await db.run(`INSERT INTO showcase (_id, title, description, image, link, category, tags, published, createdAt)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [id, data.title, data.description, data.image, data.link, data.category,
+            JSON.stringify(data.tags || []), data.published ? 1 : 0, new Date().toISOString()]);
+    return getShowcaseById(id);
+}
+
+async function updateShowcaseItem(id, data) {
+    const current = await getShowcaseById(id);
+    if (!current) return null;
+    const updated = { ...current, ...data };
+    await db.run(`UPDATE showcase SET title=?, description=?, image=?, link=?, category=?, tags=?, published=?
+        WHERE _id=?`,
+        [updated.title, updated.description, updated.image, updated.link, updated.category,
+        JSON.stringify(updated.tags), updated.published ? 1 : 0, id]);
+    return getShowcaseById(id);
+}
+
+async function deleteShowcaseItem(id) {
+    const res = await db.run('DELETE FROM showcase WHERE _id = ?', [id]);
+    return res.changes > 0;
+}
+
+// ─── Jobs ───────────────────────────────────────────────────────────────────
+
+async function getAllJobs(activeOnly = false, includeArchived = true) {
+    let conditions = [];
+    if (activeOnly) conditions.push('active = 1');
+    if (!includeArchived) conditions.push('archived = 0');
+
+    let query = 'SELECT * FROM jobs';
+    if (conditions.length) query += ' WHERE ' + conditions.join(' AND ');
+    query += ' ORDER BY createdAt DESC';
+
+    const rows = await db.all(query);
+    return rows.map(r => ({ ...r, active: !!r.active, archived: !!r.archived }));
+}
+
+async function getJobById(id) {
+    const row = await db.get('SELECT * FROM jobs WHERE _id = ?', [id]);
+    return row ? { ...row, active: !!row.active, archived: !!row.archived } : null;
+}
+
+async function createJob(data) {
+    const id = uuidv4();
+    await db.run(`INSERT INTO jobs (_id, title, department, location, type, description, requirements, salary, active, archived, createdAt)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [id, data.title, data.department, data.location, data.type, data.description, data.requirements,
+            data.salary, data.active ? 1 : 0, 0, new Date().toISOString()]);
+    return getJobById(id);
+}
+
+async function updateJob(id, data) {
+    const current = await getJobById(id);
+    if (!current) return null;
+    const updated = { ...current, ...data };
+    await db.run(`UPDATE jobs SET title=?, department=?, location=?, type=?, description=?, requirements=?, salary=?, active=?, archived=?
+        WHERE _id=?`,
+        [updated.title, updated.department, updated.location, updated.type, updated.description,
+        updated.requirements, updated.salary, updated.active ? 1 : 0, updated.archived ? 1 : 0, id]);
+    return getJobById(id);
+}
+
+async function deleteJob(id, permanent = false) {
+    if (permanent) {
+        const res = await db.run('DELETE FROM jobs WHERE _id = ?', [id]);
+        return res.changes > 0;
+    } else {
+        const res = await db.run('UPDATE jobs SET archived = 1, active = 0 WHERE _id = ?', [id]);
+        return res.changes > 0;
+    }
+}
+
+// ─── Job Applications ───────────────────────────────────────────────────────
+
+async function createJobApplication(data) {
+    const id = uuidv4();
+    await db.run(`INSERT INTO job_applications (id, jobId, jobTitle, name, email, phone, linkedIn, resumeUrl, message, status, appliedDate)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "pending", ?)`,
+        [id, data.jobId, data.jobTitle, data.name, data.email, data.phone, data.linkedIn,
+            data.resumeUrl, data.message, new Date().toISOString()]);
+    return { id, message: 'Application submitted' };
+}
+
+async function getAllApplications(includeDeleted = false) {
+    let query = 'SELECT * FROM job_applications';
+    if (!includeDeleted) query += ' WHERE deletedAt IS NULL';
+    query += ' ORDER BY appliedDate DESC';
+    return db.all(query);
+}
+
+async function updateApplicationStatus(id, status, note = '') {
+    const res = await db.run('UPDATE job_applications SET status = ?, notes = ? WHERE id = ?', [status, note, id]);
+    return res.changes > 0;
+}
+
+async function deleteApplication(id, permanent = false) {
+    if (permanent) {
+        const res = await db.run('DELETE FROM job_applications WHERE id = ?', [id]);
+        return res.changes > 0;
+    } else {
+        const res = await db.run('UPDATE job_applications SET deletedAt = ? WHERE id = ?', [new Date().toISOString(), id]);
+        return res.changes > 0;
+    }
+}
+
+async function restoreApplication(id) {
+    const res = await db.run('UPDATE job_applications SET deletedAt = NULL WHERE id = ?', [id]);
+    return res.changes > 0;
+}
+
+// ─── User / Auth ────────────────────────────────────────────────────────────
+
+async function getUserByUsername(username) {
+    return db.get('SELECT * FROM users WHERE username = ?', [username]);
+}
+
+async function createUser(data) {
+    const id = uuidv4();
+    const hash = bcrypt.hashSync(data.password, 10);
+    await db.run('INSERT INTO users (id, username, email, passwordHash, role, createdAt) VALUES (?, ?, ?, ?, ?, ?)',
+        [id, data.username, data.email, hash, data.role || 'admin', new Date().toISOString()]);
+    return getUserByUsername(data.username);
+}
+
+async function getCredentialsByUsername(username) {
+    const rows = await db.all('SELECT * FROM credentials WHERE username = ?', [username]);
+    return rows.map(r => ({ ...r, transports: JSON.parse(r.transports || '[]') }));
+}
+
+async function saveCredential(data) {
+    await db.run('INSERT INTO credentials (credential_id, username, public_key, sign_count, transports) VALUES (?, ?, ?, ?, ?)',
+        [data.credId, data.username, data.publicKey, data.signCount, JSON.stringify(data.transports || [])]);
+}
+
+async function saveChallenge(username, challenge) {
+    const expiresAt = Date.now() + 60000;
+    await db.run('INSERT OR REPLACE INTO challenges (username, challenge, expiresAt) VALUES (?, ?, ?)', [username, challenge, expiresAt]);
+}
+
+async function getChallenge(username) {
+    const row = await db.get('SELECT * FROM challenges WHERE username = ?', [username]);
+    if (!row || row.expiresAt < Date.now()) return null;
     return row.challenge;
 }
 
-// ─── Init ─────────────────────────────────────────────────────────────────────
+// ─── Dynamic Pages ──────────────────────────────────────────────────────────
 
-function initDb() {
-    ensureSiteSettingsTable();
-    initDefaultUser();
-    getSiteSettings(); // seeds defaults if empty
-    console.log('✅ SQLite connected and initialized');
+async function getAllCustomPages() {
+    const rows = await db.all('SELECT page_id FROM page_configs');
+    return rows.map(r => r.page_id);
+}
+
+async function getPageConfig(id) {
+    const row = await db.get('SELECT config FROM page_configs WHERE page_id = ?', [id]);
+    return row ? JSON.parse(row.config) : null;
+}
+
+async function upsertPageConfig(id, config) {
+    await db.run('INSERT OR REPLACE INTO page_configs (page_id, config) VALUES (?, ?)', [id, JSON.stringify(config)]);
+    return { success: true };
+}
+
+async function deletePageConfig(id) {
+    const res = await db.run('DELETE FROM page_configs WHERE page_id = ?', [id]);
+    return res.changes > 0;
+}
+
+// ─── Search ─────────────────────────────────────────────────────────────────
+
+async function globalSearch(q) {
+    const term = `%${q}%`;
+    const [insights, showcase, jobs] = await Promise.all([
+        db.all('SELECT _id, title, category as type FROM insights WHERE title LIKE ? OR summary LIKE ? LIMIT 5', [term, term]),
+        db.all('SELECT _id, title, "showcase" as type FROM showcase WHERE title LIKE ? OR description LIKE ? LIMIT 5', [term, term]),
+        db.all('SELECT _id, title, "job" as type FROM jobs WHERE title LIKE ? OR description LIKE ? LIMIT 5', [term, term])
+    ]);
+    return [...insights, ...showcase, ...jobs];
 }
 
 module.exports = {
-    // Insights
-    getAllInsights, getInsightById, createInsight, updateInsight, deleteInsight,
-    // Research
-    getAllResearch, getResearchById, createResearch, updateResearch, deleteResearch,
-    // Showcase
-    getAllShowcaseItems, getShowcaseItemById, createShowcaseItem, updateShowcaseItem, deleteShowcaseItem,
-    // Users
-    getUserByUsername, createUser, initDefaultUser,
-    // Jobs
-    getAllJobs, getJobById, createJob, updateJob, deleteJob,
-    // Applications
-    getAllApplications, createJobApplication, updateApplicationStatus, deleteApplication, restoreApplication,
-    // Pages
-    getPageConfig, upsertPageConfig, getAllCustomPages, deletePageConfig,
-    // Settings
-    getSiteSettings, updateSiteSettings,
-    // Search
-    globalSearch,
-    // MFA
-    getCredentialsByUsername, saveCredential, saveChallenge, getChallenge,
-    // Init
     initDb,
+    getSiteSettings,
+    updateSiteSettings,
+    getAllInsights,
+    getInsightById,
+    createInsight,
+    updateInsight,
+    deleteInsight,
+    getAllResearch,
+    getResearchById,
+    createResearch,
+    updateResearch,
+    deleteResearch,
+    getAllShowcaseItems,
+    getShowcaseById,
+    createShowcaseItem,
+    updateShowcaseItem,
+    deleteShowcaseItem,
+    getAllJobs,
+    getJobById,
+    createJob,
+    updateJob,
+    deleteJob,
+    createJobApplication,
+    getAllApplications,
+    updateApplicationStatus,
+    deleteApplication,
+    restoreApplication,
+    getUserByUsername,
+    createUser,
+    getCredentialsByUsername,
+    saveCredential,
+    saveChallenge,
+    getChallenge,
+    getAllCustomPages,
+    getPageConfig,
+    upsertPageConfig,
+    deletePageConfig,
+    globalSearch
 };

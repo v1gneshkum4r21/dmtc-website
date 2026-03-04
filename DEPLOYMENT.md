@@ -26,7 +26,7 @@ This project is consolidated for easy deployment on **Hostinger Cloud Startup** 
 2.  In the Hostinger Panel, go to **Node.js**.
 3.  Set **App Directory** to `/` (the root).
 4.  Set **Main File** to `server/src/index.js`.
-5.  Set **Node version** to 18 or 20.
+5.  Set **Node version** to **22.x** (or **20.x** if you face build issues).
 6.  Add **Environment Variables**:
     - `PORT`: 8000 (Hostinger might override this, but the app is flexible)
     - `NODE_ENV`: production
