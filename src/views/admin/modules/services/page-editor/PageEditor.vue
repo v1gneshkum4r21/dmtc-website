@@ -36,7 +36,7 @@
           </section>
 
           <!-- Solutions Section Config (Service/Product) -->
-          <section class="config-section" v-if="['ai-work', 'ai-service', 'ai-enterprise', 'superfiitter', 'echo-ai'].includes(pageId)">
+          <section class="config-section" v-if="['ai-work', 'ai-service', 'ai-enterprise', 'superfitter', 'echo-ai'].includes(pageId)">
             <div class="section-header">
               <h3>Solutions Framework</h3>
               <button class="btn-ghost mini" @click="addItem('solutions')">+ Add Solution</button>
@@ -221,7 +221,7 @@
               </div>
 
               <!-- Solutions Preview (Service/Product) -->
-              <div v-if="['ai-work', 'ai-service', 'ai-enterprise', 'superfiitter', 'echo-ai'].includes(pageId)" class="preview-solutions-grid">
+              <div v-if="['ai-work', 'ai-service', 'ai-enterprise', 'superfitter', 'echo-ai'].includes(pageId)" class="preview-solutions-grid">
                 <div v-for="sol in config.solutions" :key="sol.id" class="p-sol-card" :style="{ '--p-accent': sol.accent }">
                   <div class="p-sol-icon" v-html="sol.icon"></div>
                   <h4 class="p-sol-title">{{ sol.title }}</h4>

@@ -155,7 +155,7 @@ const selectedPageInfo = computed(() => {
     'ai-service': { label: 'ai for service', sub: 'Customer Experience', color: '#10b981' },
     'ai-enterprise': { label: 'ai for enterprice', sub: 'Scale Solutions', color: '#a855f7' },
     'echo-ai': { label: 'echoai', sub: 'Voice Framework', color: '#f59e0b' },
-    'superfiitter': { label: 'superfitter', sub: 'Fashion Intelligence', color: '#ec4899' }
+    'superfitter': { label: 'superfitter', sub: 'Fashion Intelligence', color: '#ec4899' }
   }
   return defaults[props.selectedPage] || { label: 'Network wide', sub: 'Global Inventory', color: '#94a3b8' }
 })

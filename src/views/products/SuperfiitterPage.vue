@@ -244,12 +244,12 @@ onMounted(async () => {
   window.scrollTo(0, 0)
   insightsLoading.value = true
   try {
-    const config = await pagesAPI.getConfig('superfiitter')
+    const config = await pagesAPI.getConfig('superfitter')
     if (config) {
       pageConfig.value = config
       if (config.solutions) solutions.value = config.solutions
     }
-    insights.value = await insightsAPI.getAll('superfiitter') 
+    insights.value = await insightsAPI.getAll('superfitter') 
   } catch (err) {
     console.error('Failed to load page context:', err)
   } finally {

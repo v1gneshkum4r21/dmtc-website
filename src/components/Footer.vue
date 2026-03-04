@@ -28,7 +28,7 @@
         <div class="footer-links-container">
           <div class="link-group">
             <span class="group-title">Products</span>
-            <router-link to="/products/superfiitter">SuperFiitter</router-link>
+            <router-link to="/products/superfitter">SuperFiitter</router-link>
             <router-link to="/products/echoai">EchoAI</router-link>
           </div>
           <div class="link-group">

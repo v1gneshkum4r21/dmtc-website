@@ -11,7 +11,7 @@ const routes = [
     { path: '/services/ai-enterprise', name: 'ai-enterprise', component: () => import('../views/services/AIEnterprise.vue') },
 
     // Products
-    { path: '/products/superfiitter', name: 'superfiitter', component: () => import('../views/products/SuperfiitterPage.vue') },
+    { path: '/products/superfitter', name: 'superfitter', component: () => import('../views/products/SuperfiitterPage.vue') },
     { path: '/products/echoai', name: 'echoai', component: () => import('../views/products/EchoAIPage.vue') },
 
     // Company

@@ -73,9 +73,9 @@
         </li>
 
         <li v-if="navStore.hasVisibleInSection('products')" class="nav-item" @mouseenter="openDropdown('products')">
-          <router-link to="/products/superfiitter" :class="{ active: activeDropdown === 'products' || isProductsActive }">Products</router-link>
+          <router-link to="/products/superfitter" :class="{ active: activeDropdown === 'products' || isProductsActive }">Products</router-link>
           <div class="mega-menu" :class="{ show: activeDropdown === 'products' }">
-             <router-link v-if="navStore.isVisible('superfiitter')" to="/products/superfiitter" class="mega-row row-lavender" @click="closeDropdown">
+             <router-link v-if="navStore.isVisible('superfitter')" to="/products/superfitter" class="mega-row row-lavender" @click="closeDropdown">
               <span class="mega-watermark">SuperFiitter</span>
               <div class="row-content">
                 <div class="row-text">
@@ -449,7 +449,7 @@
             </svg>
           </button>
           <div class="mobile-sub-menu" v-show="openSection === 'products'">
-            <router-link v-if="navStore.isVisible('superfiitter')" to="/products/superfiitter" class="mobile-sub-item lavender" @click="toggleMobileMenu">
+            <router-link v-if="navStore.isVisible('superfitter')" to="/products/superfitter" class="mobile-sub-item lavender" @click="toggleMobileMenu">
               <h3>SuperFiitter</h3>
               <p>AI Virtual Try-On & Real-Time Rendering.</p>
             </router-link>
