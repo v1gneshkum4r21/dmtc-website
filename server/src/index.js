@@ -4,7 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
-require('dotenv').config();
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
 const db = require('./db');
 const { verifyPassword, createAccessToken, authenticateToken, ACCESS_TOKEN_EXPIRE_MINUTES } = require('./auth');
@@ -245,5 +245,18 @@ admin.get('/settings', (req, res) => res.json(db.getSiteSettings()));
 admin.post('/settings', (req, res) => res.json(db.updateSiteSettings(req.body)));
 
 // ─── Bind Server ──────────────────────────────────────────────────────────────
+
+// Serve static files from the frontend dist folder in production
+const DIST_DIR = path.join(__dirname, '../../dist');
+if (fs.existsSync(DIST_DIR)) {
+    app.use(express.static(DIST_DIR));
+    // Serve index.html for any non-API routes (Vue SPA fallback)
+    app.get('*', (req, res, next) => {
+        if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/static')) {
+            return next();
+        }
+        res.sendFile(path.join(DIST_DIR, 'index.html'));
+    });
+}
 
 app.listen(PORT, () => console.log(`🚀 API running on http://localhost:${PORT}`));

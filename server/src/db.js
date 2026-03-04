@@ -3,8 +3,8 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
 
-// Point at the same DB file used by the Python backend
-const DB_PATH = path.join(__dirname, '../../backend/dreamatic.db');
+// Point at the server-local DB file
+const DB_PATH = path.join(__dirname, '../data/dreamatic.db');
 
 const db = new Database(DB_PATH);
 

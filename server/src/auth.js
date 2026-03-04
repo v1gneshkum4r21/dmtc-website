@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-require('dotenv').config();
 
 const SECRET_KEY = process.env.SECRET_KEY || 'your-secret-key-change-this-in-production';
 const ALGORITHM = 'HS256';

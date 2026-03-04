@@ -5,8 +5,6 @@ const {
     verifyAuthenticationResponse,
 } = require('@simplewebauthn/server');
 
-require('dotenv').config();
-
 const RP_NAME = process.env.RP_NAME || 'DREAMATIC';
 const RP_ID = process.env.RP_ID || 'localhost';
 const ORIGIN = process.env.ORIGIN || (process.env.FRONTEND_URL || 'http://localhost:3000');

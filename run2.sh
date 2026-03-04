@@ -28,11 +28,9 @@ cleanup() {
 trap cleanup SIGINT SIGTERM EXIT
 
 echo "[1/2] Starting Express.js backend..."
-cd backend-js
 # Run the node backend in the background
-node src/index.js &
+node server/src/index.js &
 BACKEND_PID=$!
-cd ..
 
 # Give the backend a second to initialize
 sleep 2

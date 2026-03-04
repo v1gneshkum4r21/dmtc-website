@@ -1,41 +1,39 @@
-# Dependencies
+# Node
 node_modules/
-.pnp
-.pnp.js
-
-# Testing
-coverage/
-
-# Production
-dist/
-build/
-
-# Misc
-.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# Backend
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.venv/
-env/
-venv/
-ENV/
-uploads/
-*.db
-backend/.env
+# Vite
+dist/
+dist-ssr/
+*.local
 
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Database
+server/data/*.db
+server/data/*.db-journal
+server/data/*.db-wal
 
-#assets
-assets/
+# Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
+# OS
+.DS_Store
+Thumbs.db
+
+# Backend backups
+backend/
+backend_backup/
+server/uploads/*
+!server/uploads/.gitkeep
