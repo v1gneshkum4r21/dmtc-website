@@ -188,7 +188,11 @@ const addItem = (type) => {
 const saveConfig = async () => {
   loading.value = true
   try {
-    emit('save', config.value)
+    const payload = JSON.parse(JSON.stringify(config.value))
+    delete payload._id
+    delete payload.id
+    delete payload.updatedAt
+    emit('save', payload)
   } finally {
     loading.value = false
   }

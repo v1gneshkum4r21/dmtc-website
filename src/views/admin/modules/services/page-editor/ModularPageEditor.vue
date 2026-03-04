@@ -417,7 +417,7 @@ const addPricingItem     = (b) => { if (!b.items) b.items = []; b.items.push({ n
 const addTimelineItem    = (b) => { if (!b.items) b.items = []; b.items.push({ year: '2025', title: 'New Milestone', description: 'Description...' }) }
 
 const saveChanges = () => {
-  navStore.updateCustomPage(props.pageId, config.value)
+  navStore.updatePage(props.pageId, config.value)
   emit('saved')
   emit('close')
 }

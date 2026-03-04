@@ -18,7 +18,8 @@ app.use(cors({
     origin: [FRONTEND_URL, 'https://slateblue-woodpecker-659704.hostingersite.com', 'https://dreamactic.com', 'https://www.dreamactic.com'],
     credentials: true,
 }));
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Request Logger
 app.use((req, res, next) => {

@@ -11,7 +11,7 @@ const defaultMatrix = {
     'ai-enterprise': { id: 'ai-enterprise', label: 'AI for Enterprise', path: '/services/ai-enterprise', visible: true, group: 'services' },
 
     // Products
-    'superfiitter': { id: 'superfiitter', label: 'SuperFiitter', path: '/products/superfiitter', visible: true, group: 'products' },
+    'superfitter': { id: 'superfitter', label: 'SuperFiitter', path: '/products/superfitter', visible: true, group: 'products' },
     'echoai': { id: 'echoai', label: 'EchoAI', path: '/products/echoai', visible: true, group: 'products' },
 
     // Company
@@ -112,19 +112,19 @@ export const navStore = reactive({
         return true
     },
 
-    updateCustomPage(id, config) {
-        if (this.matrix[id] && this.matrix[id].isCustom) {
+    updatePage(id, config) {
+        if (this.matrix[id]) {
             this.matrix[id] = { ...this.matrix[id], ...config }
             this.save()
 
-            // Push updated content + theme to MongoDB
+            // Push updated content + theme to MySQL
             adminAPI.updatePageConfig(id, {
                 page_id: id,
                 label: this.matrix[id].label,
                 path: this.matrix[id].path,
                 visible: this.matrix[id].visible,
                 group: this.matrix[id].group,
-                isCustom: true,
+                isCustom: !!this.matrix[id].isCustom,
                 theme: this.matrix[id].theme,
                 content: this.matrix[id].content
             }).catch(err => {

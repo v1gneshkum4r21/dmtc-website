@@ -318,7 +318,16 @@ const handleFileUpload = async (event, target) => {
 const saveConfig = async () => {
   loading.value = true
   try {
-    emit('save', config.value)
+    // Clone to avoid mutating the reactive state directly
+    const payload = JSON.parse(JSON.stringify(config.value))
+    
+    // Sanitize payload: remove backend-specific database fields
+    // so older backends don't throw 500 errors trying to update them
+    delete payload._id
+    delete payload.id
+    delete payload.updatedAt
+    
+    emit('save', payload)
   } finally {
     loading.value = false
   }
