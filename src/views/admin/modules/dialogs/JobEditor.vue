@@ -103,7 +103,7 @@
             <!-- Job Card Replica -->
             <div class="preview-job-replica">
               <div class="replica-header">
-                <div class="brand-micro">DREAMATIC // RECRUITMENT</div>
+                <div class="brand-micro">DREAMACTIC // RECRUITMENT</div>
                 <div class="status-marker" :class="{ live: form.active }">
                   {{ form.active ? 'SIGNAL ACTIVE' : 'SIGNAL STAGED' }}
                 </div>
@@ -185,7 +185,7 @@ const form = ref({
   location: '',
   description: '',
   requirements: '',
-  company: 'DREAMATIC',
+  company: 'DREAMACTIC',
   tags: '',
   type: 'Full-time',
   salary_range: '',

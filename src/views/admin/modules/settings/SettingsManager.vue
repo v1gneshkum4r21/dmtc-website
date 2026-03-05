@@ -234,7 +234,7 @@
               <div v-if="showNewPageModal" class="settings-modal-overlay">
                 <div class="settings-modal card-premium">
                   <h3>Initialize <span class="text-gradient-primary">New Node</span></h3>
-                  <p>Define a new segment for the DREAMATIC network architecture.</p>
+                  <p>Define a new segment for the DREAMACTIC network architecture.</p>
                   
                   <div class="modal-form">
                     <div class="field-item">

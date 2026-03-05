@@ -55,7 +55,7 @@
               </div>
               
               <div v-if="mediaSource === 'url'" class="extraction-input-cluster">
-                <input v-model="form.imageUrl" type="text" placeholder="https://cdn.dreamatic.com/assets/visual-01.jpg" class="luxury-field" />
+                <input v-model="form.imageUrl" type="text" placeholder="https://cdn.dreamactic.com/assets/visual-01.jpg" class="luxury-field" />
               </div>
 
               <div v-else class="extraction-upload-surface">
@@ -152,7 +152,7 @@ const form = ref({
   title: '',
   excerpt: '',
   content: '',
-  author: 'DREAMATIC Team',
+  author: 'DREAMACTIC Team',
   imageUrl: '',
   page: 'ai-work',
   published: true

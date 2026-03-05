@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
-DATABASE_NAME = os.getenv("DATABASE_NAME", "dreamatic_cms")
+DATABASE_NAME = os.getenv("DATABASE_NAME", "dreamactic_cms")
 
 # Realistic Unsplash Tech Images
 TECH_IMAGES = [
@@ -65,7 +65,7 @@ RESEARCH_DATA = [
     },
     {
         "title": "Asynchronous Communication Protocols for Sub-Millisecond Agent Sync",
-        "authors": "DREAMATIC Networking Group",
+        "authors": "DREAMACTIC Networking Group",
         "journal": "SIGCOMM 2025",
         "year": "2025",
         "excerpt": "Optimizing the fundamental layer of agent networking for low-latency, high-concurrency environments.",

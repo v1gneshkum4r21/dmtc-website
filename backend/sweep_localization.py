@@ -4,7 +4,7 @@ import requests
 import hashlib
 import json
 
-DB_PATH = "dreamatic.db"
+DB_PATH = "dreamactic.db"
 ASSETS_DIR = "static/assets"
 IMG_DIR = os.path.join(ASSETS_DIR, "images")
 VID_DIR = os.path.join(ASSETS_DIR, "videos")

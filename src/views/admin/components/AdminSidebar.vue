@@ -9,7 +9,7 @@
           <div class="cube-face"></div>
         </div>
         <div class="brand-meta">
-          <h2 class="brand-title">DREAMATIC</h2>
+          <h2 class="brand-title">DREAMACTIC</h2>
           <div class="brand-pulse">
             <span class="status-indicator"></span>
             <span class="pulse-label">NEURAL_ADMIN_ACTIVE</span>

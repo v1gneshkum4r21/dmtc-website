@@ -124,17 +124,17 @@
 
         <div class="cta-content">
           <h2>Ready to initialize the <span class="text-gradient">Agentic Revolution</span>?</h2>
-          <p>Join the world's leading enterprises building the next generation of intelligent work on the DREAMATIC Neural Platform.</p>
+          <p>Join the world's leading enterprises building the next generation of intelligent work on the DREAMACTIC Neural Platform.</p>
           <div class="cta-actions">
             <button class="primary-btn" @click="openDemoModal('trial', { 
               title: 'Initialize your Workforce Trial', 
               subtitle: 'Join the world\'s leading enterprises building the next generation of intelligent work.',
-              message: 'I would like to start a full platform trial for DREAMATIC Neural Platform to enhance our workforce efficiency.'
+              message: 'I would like to start a full platform trial for DREAMACTIC Neural Platform to enhance our workforce efficiency.'
             })">Start Full Platform Trial</button>
             <button class="secondary-btn" @click="openDemoModal('demo', {
               title: 'Schedule a Vision Demo',
               subtitle: 'See how agentic AI can revolutionize your specific industry workflows.',
-              message: 'I want to schedule a vision demo to see the DREAMATIC platform in action for our enterprise.'
+              message: 'I want to schedule a vision demo to see the DREAMACTIC platform in action for our enterprise.'
             })">Schedule Vision Demo</button>
           </div>
         </div>

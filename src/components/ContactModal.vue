@@ -139,7 +139,7 @@
                   </div>
                   <div class="card-details">
                     <span class="card-label">DIRECT LINES</span>
-                    <h3>hello@dreamactic.ai</h3>
+                    <h3>hello@dreamactic.com</h3>
                     <p>+1 (555) 888-2026</p>
                   </div>
                 </div>

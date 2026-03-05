@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
-DATABASE_NAME = os.getenv("DATABASE_NAME", "dreamatic_cms")
+DATABASE_NAME = os.getenv("DATABASE_NAME", "dreamactic_cms")
 
 TECH_IMAGES = [
     "photo-1677442136019-21780ecad995",
@@ -46,7 +46,7 @@ Phase 2 — Build the Intercept Layer: Before your first agent goes live, build 
 Phase 3 — Shadow Testing: Before shifting any live traffic to agents, run them in shadow mode for a minimum of 30 days. Every request processed by the monolith is simultaneously replayed to the agent network; agent outputs are logged but not returned to callers. This gives you an empirical dataset comparing agent decisions to legacy decisions, allowing you to identify divergences before they reach production.
 
 Phase 4 — Traffic Shifting and Decommission: Once shadow testing demonstrates ≥99% output equivalence on non-exceptional cases, begin shifting live traffic at 1% increments. Monitor error rates, exception escalation rates, and downstream system impacts at each increment. Rollback should be a one-click operation throughout this phase. After 100% traffic migration, the legacy module enters a 90-day observation window before decommission is approved.""",
-        "author": "DREAMATIC Platform Engineering",
+        "author": "DREAMACTIC Platform Engineering",
         "page": "blog",
         "category": "Engineering",
         "date": "Mar 01, 2026",
@@ -65,7 +65,7 @@ State management is the orchestrator's second critical function. While specialis
 Failure handling is where most orchestrator designs fall short. Every specialist agent can fail—network timeouts, API limits, ambiguous inputs, unexpected output formats. The orchestrator must have explicit failure handling strategies for every failure mode: retry with exponential backoff for transient failures, alternative agent routing for capability failures, and human escalation for goal-critical failures that cannot be resolved automatically.
 
 Finally, the orchestrator must enforce time and cost budgets. Production agent networks consume real compute and real money. Every goal dispatched to the orchestrator must carry a maximum execution time and a maximum cost ceiling. The orchestrator must continuously monitor execution time and estimated cost, pruning lower-priority sub-tasks if budgets are approaching limits, and escalating to human oversight if a goal appears unachievable within its constraints.""",
-        "author": "DREAMATIC Architecture Team",
+        "author": "DREAMACTIC Architecture Team",
         "page": "blog",
         "category": "Engineering",
         "date": "Feb 22, 2026",
@@ -79,12 +79,12 @@ Finally, the orchestrator must enforce time and cost budgets. Production agent n
 
 Prompt engineering at enterprise scale is software engineering. It requires version control, testing frameworks, staging environments, performance metrics, rollback procedures, and governance processes. Teams that treat it as an art form instead of an engineering discipline will find their agent systems degrading silently over weeks as model providers update their infrastructure and business rules evolve.
 
-The foundation of scalable prompt governance is a Prompt Registry. Every prompt used by every agent in your network should live in a centralized registry with full version history, per-prompt metrics dashboards, and a structured review process for changes. At DREAMATIC, every prompt change requires a minimum of 72 hours of A/B testing in staging before promotion to production, with a defined metrics threshold for approval.
+The foundation of scalable prompt governance is a Prompt Registry. Every prompt used by every agent in your network should live in a centralized registry with full version history, per-prompt metrics dashboards, and a structured review process for changes. At DREAMACTIC, every prompt change requires a minimum of 72 hours of A/B testing in staging before promotion to production, with a defined metrics threshold for approval.
 
 Prompt evaluation is the discipline most teams skip. How do you know if a revised prompt is better or worse than its predecessor? You need a prompt evaluation harness—a curated test dataset of 500-1,000 representative input examples with expected output labels, and an automated evaluation pipeline that runs every prompt candidate against this dataset before it can be merged. Evaluation metrics should include output accuracy, format compliance rate, refusal rate, latency impact, and token cost.
 
 One critical advanced technique is chain-of-thought decomposition auditing. When an agent produces an incorrect or unexpected output, the chain of intermediate reasoning steps should be logged and inspectable. Teams that have visibility into agent reasoning can identify systematically the prompting failures responsible for production errors, rather than patching prompts reactively based on observed output failures.""",
-        "author": "DREAMATIC AI Research Team",
+        "author": "DREAMACTIC AI Research Team",
         "page": "blog",
         "category": "Research",
         "date": "Feb 18, 2026",
@@ -103,7 +103,7 @@ The Cash Intelligence Agent monitors all incoming and outgoing payment flows acr
 The Financial Close Orchestrator manages month-end and quarter-end close processes autonomously. It knows the correct sequence of 340+ journal entry categories, the reconciliation dependencies between sub-ledgers and the general ledger, and the regulatory deadlines for each entity in the corporate structure. It starts the close sequence automatically on the first business day of each period, executing what can be executed autonomously and presenting human accountants with a prioritized queue of exceptions requiring judgment.
 
 The Regulatory Compliance Monitor maintains a continuously updated model of applicable financial regulations across all jurisdictions where your enterprise operates. When regulations change—which they do, constantly—the agent automatically identifies which internal policies, processes, and agent behaviors must be updated, generating a structured change management plan with specific action items and deadlines for each responsible team.""",
-        "author": "DREAMATIC Strategy Team",
+        "author": "DREAMACTIC Strategy Team",
         "page": "blog",
         "category": "Strategy",
         "date": "Feb 12, 2026",
@@ -126,7 +126,7 @@ Prompt Injection is the most underappreciated threat facing enterprise agent dep
 The agent audit trail is your most important forensic tool when things go wrong. Every agent action—every API call made, every record read, every decision taken—should be logged to an immutable audit store with sufficient context to reconstruct exactly what the agent did and why. This audit trail must be queryable by both security analysts and compliance teams, and it must be retained for the applicable regulatory period in your jurisdiction.
 
 Incident response for agent systems requires a kill switch hierarchy. When an agent behaves anomalously—whether due to an attack, a model degradation, or a configuration error—you need the ability to immediately suspend specific agents, suspend entire agent networks, or roll back specific categories of actions if they are reversible. Designing these controls before you need them is not optional; it is a basic prerequisite for responsible agent deployment.""",
-        "author": "DREAMATIC Security Team",
+        "author": "DREAMACTIC Security Team",
         "page": "hub",
         "type": "WHITE PAPER",
         "imageUrl": img(13),
@@ -144,7 +144,7 @@ When health signals degrade below configurable thresholds, the Intervention Orch
 For usage drops, the content agent automatically generates a personalized re-engagement sequence—not a generic drip campaign, but a sequence built from the specific features the customer has used, the outcomes they've achieved, and the adjacent features that customers with similar profiles found most valuable. This content is approved by the responsible CSM before sending, but its creation is fully automated.
 
 The measurable outcomes justify the architecture's complexity. Customers served by the Autonomous Customer Success system exhibit 31% lower churn rates, 24% higher Net Revenue Retention, and CSMs report spending 60% more of their time on strategic expansion conversations—because the autonomous system handles the alert triage and routine intervention that previously consumed their day.""",
-        "author": "DREAMATIC Solutions Team",
+        "author": "DREAMACTIC Solutions Team",
         "page": "hub",
         "type": "CASE STUDY",
         "imageUrl": img(0),
@@ -162,7 +162,7 @@ Query latency is the single most important performance dimension for agent use c
 Hybrid search capability—combining dense vector similarity search with traditional keyword/BM25 search—is now a baseline requirement rather than an advanced feature. Real enterprise knowledge retrieval almost always benefits from hybrid search; semantic similarity without keyword anchoring frequently returns results that are thematically related but informationally wrong. Evaluate candidates on both query modes and their fusion mechanisms.
 
 For teams already operating PostgreSQL in production, pgvector deserves serious consideration. The operational simplicity of adding vector search to an existing, well-understood database system—with familiar backup, monitoring, and access control—is significant. pgvector's query performance has improved substantially with recent IVFFlat and HNSW indexing support and is now competitive with dedicated vector databases for datasets under 10 million vectors.""",
-        "author": "DREAMATIC Platform Engineering",
+        "author": "DREAMACTIC Platform Engineering",
         "page": "hub",
         "type": "GUIDE",
         "imageUrl": img(1),
@@ -180,7 +180,7 @@ Cost Efficiency is rarely measured in pre-production evaluation and is often a s
 Safety and Compliance metrics require automated evaluation against your regulatory and policy requirements. For every agent action class, define the universe of compliant and non-compliant action patterns, and measure the rate at which agents produce non-compliant outputs in both testing and production. Non-compliant output rate should be a first-class metric in every agent monitoring dashboard.
 
 Business Impact is the metric that actually justifies agent deployment, and it is the metric most rarely connected to agent evaluation systems. Define the specific business outcomes your agents are intended to drive—call handle time, customer satisfaction score, processing throughput, error rate—and instrument your evaluation to measure these outcomes directly, with proper control group comparison to separate agent impact from other variables.""",
-        "author": "DREAMATIC Research Team",
+        "author": "DREAMACTIC Research Team",
         "page": "hub",
         "type": "WHITE PAPER",
         "imageUrl": img(2),
@@ -193,7 +193,7 @@ NEW_RESEARCH_PUBLICATIONS = [
     {
         "title": "Memory-Augmented Agents: Long-Horizon Task Completion via Episodic and Semantic Memory",
         "excerpt": "We introduce MARA, a memory architecture for autonomous agents that combines episodic recall of past executions with semantic knowledge retrieval, enabling 89% task completion on horizon-1000 benchmarks.",
-        "content": """Abstract: We present Memory-Augmented Reasoning Architecture (MARA), a framework that equips autonomous agents with dual-memory systems: an episodic memory encoding specific past execution traces and a semantic memory maintaining structured domain knowledge. On the DREAMATIC Long-Horizon Task Benchmark (DLHTB), MARA achieves 89.1% task completion on 1000-step planning horizons, compared to 43.7% for attention-only baseline agents.
+        "content": """Abstract: We present Memory-Augmented Reasoning Architecture (MARA), a framework that equips autonomous agents with dual-memory systems: an episodic memory encoding specific past execution traces and a semantic memory maintaining structured domain knowledge. On the DREAMACTIC Long-Horizon Task Benchmark (DLHTB), MARA achieves 89.1% task completion on 1000-step planning horizons, compared to 43.7% for attention-only baseline agents.
 
 Introduction: The fundamental limitation of contemporary LLM-based agents is the context window. An agent processing a complex, multi-day business workflow cannot hold all relevant execution history, domain rules, and intermediate results in a single context. This limitation forces agents into repeated re-planning from impoverished initial states, accumulating errors with every context reset. MARA directly addresses this constraint through external memory architectures that persist agent state across context boundaries.
 
@@ -261,7 +261,7 @@ Conformal Prediction Background: Conformal prediction is a framework for constru
 
 Application to Agent Actions: We extend conformal prediction to the sequential decision-making setting of autonomous agents. For each candidate agent action, we construct a conformal uncertainty set representing the range of plausible decision outcomes, using a calibration set of historical agent decisions with known outcomes. Actions whose uncertainty sets exceed a configurable threshold trigger automatic escalation to human review.
 
-Regulatory Validation: CONFORMAL-AGENT has been validated with compliance teams at three DREAMATIC enterprise customers in regulated industries. In all three cases, the statistically rigorous uncertainty quantification was sufficient to satisfy model explainability requirements under applicable regulatory frameworks (SR 11-7 for banking, FDA guidance for healthcare AI, GDPR profiling restrictions).""",
+Regulatory Validation: CONFORMAL-AGENT has been validated with compliance teams at three DREAMACTIC enterprise customers in regulated industries. In all three cases, the statistically rigorous uncertainty quantification was sufficient to satisfy model explainability requirements under applicable regulatory frameworks (SR 11-7 for banking, FDA guidance for healthcare AI, GDPR profiling restrictions).""",
         "author": "Singh, A., Chen, J., Williams, T.",
         "page": "research",
         "journal": "AAAI 2025",

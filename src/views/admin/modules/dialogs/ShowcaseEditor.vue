@@ -64,7 +64,7 @@
               </div>
               
               <div v-if="mediaSource === 'url'" class="extraction-input-cluster">
-                <input v-model="form.mediaUrl" type="text" placeholder="https://media.dreamatic.com/node-01.jpg" class="luxury-field fluid" @input="detectType" required />
+                <input v-model="form.mediaUrl" type="text" placeholder="https://media.dreamactic.com/node-01.jpg" class="luxury-field fluid" @input="detectType" required />
                 <div class="type-badge-mini">{{ form.mediaType.toUpperCase() }}</div>
               </div>
 

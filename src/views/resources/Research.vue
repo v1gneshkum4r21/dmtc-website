@@ -58,7 +58,7 @@
                 <span class="pub-year">{{ pub.year || new Date(pub.createdAt).getFullYear() }}</span>
                 <div class="pub-type-badge">RESEARCH PAPER</div>
               </div>
-              <div class="pub-journal-name">{{ pub.journal || 'DREAMATIC Research' }}</div>
+              <div class="pub-journal-name">{{ pub.journal || 'DREAMACTIC Research' }}</div>
               <h3>{{ pub.title }}</h3>
               <p class="pub-authors">{{ pub.authors || pub.author }}</p>
               

@@ -90,7 +90,7 @@
         <div class="cta-glow"></div>
         <div class="cta-content">
           <h2>Stay ahead of the <span class="text-gradient">Curve</span></h2>
-          <p class="cta-desc">Get the DREAMATIC Intelligence Briefing, delivered weekly to your inbox.</p>
+          <p class="cta-desc">Get the DREAMACTIC Intelligence Briefing, delivered weekly to your inbox.</p>
           <div style="display:flex; justify-content:center;">
             <button class="primary-btn" @click="openContactModal">
               Manage Subscriptions

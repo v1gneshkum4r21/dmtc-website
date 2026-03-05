@@ -23,7 +23,7 @@
     <section class="perks-section">
       <div class="section-container">
         <div class="section-header centered">
-          <div class="detail-badge">WHY DREAMATIC</div>
+          <div class="detail-badge">WHY DREAMACTIC</div>
           <h2>The Perks of <span class="text-gradient">High Velocity</span></h2>
           <p class="section-subtitle">We don't just build the future — we make sure you thrive while doing it.</p>
         </div>
@@ -134,7 +134,7 @@
             </div>
           </div>
           <div class="speculative-actions">
-            <a href="mailto:careers@dreamatic.ai" class="secondary-btn">careers@dreamatic.ai</a>
+            <a href="mailto:careers@dreamactic.com" class="secondary-btn">careers@dreamactic.com</a>
             <button class="primary-btn" @click="openContactModal({ subject: 'Careers', message: 'I am interested in future opportunities at Dreamactic.' })">
               General Inquiry
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">

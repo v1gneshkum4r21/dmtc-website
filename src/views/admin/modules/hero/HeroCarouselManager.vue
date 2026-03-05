@@ -11,14 +11,15 @@
         <p>Configure the landing page cinematic slides. Supports videos & images with per-slide timing.</p>
       </div>
       <div class="header-actions">
-        <button class="btn-secondary-header" @click="addSlide">
+        <button class="btn-arctic-secondary" @click="addSlide">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Add Slide
         </button>
-        <button class="btn-primary-header" :disabled="saving" @click="saveAll">
+        <button class="btn-arctic-primary" :disabled="saving" @click="saveAll">
+          <div class="btn-glow"></div>
           <svg v-if="!saving" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
           <span class="loader-spin" v-else></span>
-          {{ saving ? 'Saving…' : 'Save & Publish' }}
+          <span>{{ saving ? 'Saving…' : 'Save & Publish' }}</span>
         </button>
       </div>
     </header>
@@ -89,7 +90,7 @@
         <div class="empty-icon">🎬</div>
         <h3>No Slides Configured</h3>
         <p>Add your first cinematic slide to power the landing hero carousel.</p>
-        <button class="btn-primary-header" @click="addSlide">＋ Add First Slide</button>
+        <button class="btn-arctic-primary luxe-pulse" @click="addSlide">＋ Add First Slide</button>
       </div>
 
       <!-- ── SLIDE LIST + EDITOR ─────────────────────────── -->
@@ -126,7 +127,12 @@
             </div>
           </div>
 
-          <button class="add-slide-btn" @click="addSlide">＋ New Slide</button>
+          <button class="add-slide-cyber" @click="addSlide">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            New Slide
+          </button>
         </div>
 
         <!-- Right: Slide Editor -->
@@ -252,7 +258,7 @@
               </div>
               <div class="field-group">
                 <label class="field-label">Click-through Link <span class="optional-tag">optional</span></label>
-                <input v-model="activeSlide.link" placeholder="https://dreamatic.ai/showcase" class="field-input" />
+                <input v-model="activeSlide.link" placeholder="https://dreamactic.com/showcase" class="field-input" />
                 <span class="field-hint">When set, clicking this slide navigates to this URL</span>
               </div>
             </div>
@@ -493,6 +499,88 @@ const saveAll = async () => {
   font-family: monospace; min-width: 30px;
 }
 
+/* ── ARCTIC BUTTONS ───── */
+.btn-arctic-primary, .btn-arctic-secondary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.6rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 850;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  border: none;
+  white-space: nowrap;
+}
+
+.btn-arctic-primary {
+  background: linear-gradient(135deg, #22d3ee 0%, #0ea5e9 100%);
+  color: #0c0c0c;
+  box-shadow: 0 4px 15px rgba(34, 211, 238, 0.25);
+}
+
+.btn-arctic-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(34, 211, 238, 0.4);
+  background: linear-gradient(135deg, #67e8f9 0%, #38bdf8 100%);
+}
+
+.btn-arctic-primary:active:not(:disabled) {
+  transform: translateY(1px) scale(0.98);
+}
+
+.btn-arctic-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+
+.btn-arctic-secondary {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  backdrop-filter: blur(8px);
+}
+
+.btn-arctic-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.btn-glow {
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.btn-arctic-primary:hover .btn-glow { opacity: 1; }
+
+.luxe-pulse {
+  animation: accent-pulse 2s infinite;
+}
+
+@keyframes accent-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.4); }
+  70% { box-shadow: 0 0 0 15px rgba(34, 211, 238, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0); }
+}
+
+.loader-spin {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(0,0,0,0.1);
+  border-top-color: #0c0c0c;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
 /* Range slider */
 .range-slider {
   -webkit-appearance: none;
@@ -648,18 +736,38 @@ const saveAll = async () => {
 .ta-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 .ta-btn.danger:hover { background: rgba(239,68,68,0.3); border-color: rgba(239,68,68,0.4); }
 
-.add-slide-btn {
+.add-slide-cyber {
   width: 100%;
-  padding: 0.85rem;
-  border-radius: 14px;
-  border: 1px dashed rgba(34,211,238,0.25);
-  background: rgba(34,211,238,0.04);
+  padding: 1rem;
+  border-radius: 16px;
+  border: 2px dashed rgba(34, 211, 238, 0.15);
+  background: rgba(34, 211, 238, 0.02);
   color: #22d3ee;
-  font-size: 0.8rem; font-weight: 800;
-  cursor: pointer; transition: all 0.25s;
-  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 850;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
-.add-slide-btn:hover { background: rgba(34,211,238,0.08); border-color: rgba(34,211,238,0.4); }
+
+.add-slide-cyber:hover {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(34, 211, 238, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.add-slide-cyber svg {
+  transition: transform 0.3s;
+}
+
+.add-slide-cyber:hover svg {
+  transform: rotate(90deg);
+}
 
 /* ── SLIDE EDITOR ───────── */
 .slide-editor {

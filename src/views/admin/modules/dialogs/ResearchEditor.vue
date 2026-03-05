@@ -102,7 +102,7 @@
                 <span class="p-year">{{ form.year || '202X' }}</span>
                 <span class="p-type">RESEARCH PAPER</span>
               </div>
-              <div class="p-journal">{{ form.journal || 'DREAMATIC Research' }}</div>
+              <div class="p-journal">{{ form.journal || 'DREAMACTIC Research' }}</div>
               <h3 class="p-title">{{ form.title || 'Untitled Research' }}</h3>
               <p class="p-authors">{{ form.authors || 'Principal Investigators' }}</p>
               

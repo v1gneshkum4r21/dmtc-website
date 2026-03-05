@@ -80,7 +80,7 @@ from auth import (
 
 load_dotenv()
 
-app = FastAPI(title="DREAMATIC CMS API", version="1.0.0")
+app = FastAPI(title="DREAMACTIC CMS API", version="1.0.0")
 
 # Create uploads directory if it doesn't exist
 UPLOAD_DIR = "uploads"
@@ -116,7 +116,7 @@ async def startup_event():
 # Public endpoints
 @app.get("/")
 async def root():
-    return {"message": "DREAMATIC CMS API", "version": "1.0.0"}
+    return {"message": "DREAMACTIC CMS API", "version": "1.0.0"}
 
 
 @app.get("/api/settings", response_model=SiteSettings)

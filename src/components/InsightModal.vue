@@ -27,7 +27,7 @@
             <div class="author-box">
               <div class="author-avatar">{{ insight.author ? insight.author.charAt(0) : 'D' }}</div>
               <div class="author-info">
-                <span class="author-name">{{ insight.author || 'DREAMATIC Team' }}</span>
+                <span class="author-name">{{ insight.author || 'DREAMACTIC Team' }}</span>
                 <span class="author-role">Research & Insights</span>
               </div>
             </div>

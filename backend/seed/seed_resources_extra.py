@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
-DATABASE_NAME = os.getenv("DATABASE_NAME", "dreamatic_cms")
+DATABASE_NAME = os.getenv("DATABASE_NAME", "dreamactic_cms")
 
 TECH_IMAGES = [
     "photo-1677442136019-21780ecad995",
@@ -36,7 +36,7 @@ EXTRA_BLOG_POSTS = [
 In this analysis, we detail our experiments with parameterized quantum circuits (PQCs) integrated into standard transformer architectures. By offloading high-dimensional feature mapping to quantum layers while maintaining classical logic for decision-making, we observed a significant reduction in total parameter count for equivalent accuracy markers.
 
 The primary challenge remains the coherence time of current-generation NISQ (Noisy Intermediate-Scale Quantum) processors. However, through adaptive error mitigation and localized qubits, we have prototyped a system that maintains operational stability in simulated mobile environments. The transition from purely classical edge compute to quantum-assisted edge compute is no longer a matter of if, but when.""",
-        "author": "DREAMATIC Quantum Lab",
+        "author": "DREAMACTIC Quantum Lab",
         "page": "blog",
         "category": "Engineering",
         "date": "Mar 10, 2026",
@@ -51,7 +51,7 @@ The primary challenge remains the coherence time of current-generation NISQ (Noi
 Imagine a procurement manager who doesn't navigate three different ERP screens to approve a vendor but simply asks an agent to 'Audit the top 5 vendors for compliance and prepare approval drafts.' The agent doesn't just return text; it constructs a temporary dashboard specifically for this task, pulling in data from disparite APIs and presenting only the relevant controls.
 
 This shift requires a fundamental re-architecture of the frontend. We are moveing from component-based UI to generative-UI, where agents utilize a DSL (Domain Specific Language) to describe the interface requires for a specific reasoning step. This ensures that the user is never overwhelmed by complexity and always has exactly the information they need.""",
-        "author": "DREAMATIC UX Research",
+        "author": "DREAMACTIC UX Research",
         "page": "blog",
         "category": "Product",
         "date": "Mar 05, 2026",
@@ -63,10 +63,10 @@ This shift requires a fundamental re-architecture of the frontend. We are movein
         "excerpt": "How enterprises can leverage their dark data for AI training while maintaining absolute compliance with increasingly strict global privacy regulations.",
         "content": """Data privacy is the single largest hurdle to enterprise AI adoption. Companies are sitting on mountaints of 'dark data'—proprietary, high-value information locked in silos because of privacy concerns. Unlocking this data for AI training without creating regulatory exposure is the holy grail of enterprise strategy.
 
-DREAMATIC's Sovereign Learning framework utilizes federated learning and differential privacy to ensure that no raw sensitive data ever leaves the secure entity environment. Instead, models are trained locally within encrypted enclaves, and only anonymized gradient updates are shared with the global model.
+DREAMACTIC's Sovereign Learning framework utilizes federated learning and differential privacy to ensure that no raw sensitive data ever leaves the secure entity environment. Instead, models are trained locally within encrypted enclaves, and only anonymized gradient updates are shared with the global model.
 
 This ensures that the enterprise benefits from the collective intelligence of its entire organization without ever compromising the privacy of individual records. As global regulations like the AI Act and GDPR evolve, sovereign data architectures will become the only viable path for high-performance enterprise intelligence.""",
-        "author": "DREAMATIC Compliance Group",
+        "author": "DREAMACTIC Compliance Group",
         "page": "blog",
         "category": "Strategy",
         "date": "Feb 28, 2026",
@@ -81,7 +81,7 @@ This ensures that the enterprise benefits from the collective intelligence of it
 In the 100-agent company, departments are not silos of people, but clusters of agent-human teams. A single marketing manager might coordinate a swarm of 20 agents handling everything from SEO optimization to real-time ad bidding and content localization. This isn't about job replacement; it's about scope expansion.
 
 The challenge for leadership in this era is not managing tasks, but managing agentic orchestration. The ability to design, deploy, and audit swarms of agents will be the defining leadership skill of the next decade. Companies that embrace this blueprint early will achieve a scale of operation that was previously impossible for organizations of their size.""",
-        "author": "DREAMATIC Executive Team",
+        "author": "DREAMACTIC Executive Team",
         "page": "blog",
         "category": "Strategy",
         "date": "Feb 20, 2026",
@@ -102,7 +102,7 @@ Key sections include:
 2. Autonomous Incident Root Cause Analysis
 3. Self-Healing Kubernetes clusters with LLM-based logic
 4. Scaling Developer Productivity with Agent-Assisted Code Review""",
-        "author": "DREAMATIC Cloud Team",
+        "author": "DREAMACTIC Cloud Team",
         "page": "hub",
         "type": "GUIDE",
         "imageUrl": img(1),
@@ -111,10 +111,10 @@ Key sections include:
     {
         "title": "Healthcare AI Framework: High-Stakes Decision Support",
         "excerpt": "A white paper on the technical and ethical requirements for deploying AI agents in clinical settings, with a focus on auditability and physician-in-the-loop.",
-        "content": """Deploying AI in healthcare requires a 'Safety-First, Always' architecture. This white paper outlines the DREAMATIC Clinical Safety Framework, which ensures that every agentic decision in a triage or diagnostic workflow is backed by peer-reviewed evidence and high-confidence uncertainty markers.
+        "content": """Deploying AI in healthcare requires a 'Safety-First, Always' architecture. This white paper outlines the DREAMACTIC Clinical Safety Framework, which ensures that every agentic decision in a triage or diagnostic workflow is backed by peer-reviewed evidence and high-confidence uncertainty markers.
 
 We explore the use of Conformal Prediction in medical triage and the implementation of immutable reasoning logs for regulatory audit. This is the roadmap for safe, effective, and compliant healthcare AI.""",
-        "author": "DREAMATIC Healthcare Research",
+        "author": "DREAMACTIC Healthcare Research",
         "page": "hub",
         "type": "WHITE PAPER",
         "imageUrl": img(2),
@@ -129,7 +129,7 @@ The results:
 - 85% reduction in NDA turnaround time
 - 40% reduction in external legal spend
 - 100% compliance coverage for new regional regulations""",
-        "author": "DREAMATIC Legal Solutions",
+        "author": "DREAMACTIC Legal Solutions",
         "page": "hub",
         "type": "CASE STUDY",
         "imageUrl": img(3),
@@ -143,7 +143,7 @@ The results:
 - Dynamic Context Injection
 - Hypothetical Document Embeddings (HyDE)
 - Automated Evaluation with RAGAS""",
-        "author": "DREAMATIC Engineering",
+        "author": "DREAMACTIC Engineering",
         "page": "hub",
         "type": "TUTORIAL",
         "imageUrl": img(4),

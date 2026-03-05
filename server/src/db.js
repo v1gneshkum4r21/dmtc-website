@@ -222,13 +222,13 @@ async function initDb() {
         const id = uuidv4();
         const hash = bcrypt.hashSync('admin123', 10);
         await pool.query('INSERT INTO users (id, username, email, passwordHash, role, createdAt) VALUES (?, ?, ?, ?, ?, ?)',
-            [id, 'admin', 'admin@dreamatic.com', hash, 'admin', now()]);
+            [id, 'admin', 'admin@dreamactic.com', hash, 'admin', now()]);
     }
 
     const [sets] = await pool.query('SELECT count(*) as count FROM settings');
     if (sets[0].count === 0) {
         await pool.query('INSERT INTO settings (id, siteTitle, tagline, contactEmail, social, updatedAt) VALUES (?, ?, ?, ?, ?, ?)',
-            ['default', 'DREAMATIC', 'The Future of Agentic AI', 'hello@dreamatic.ai', '{}', now()]);
+            ['default', 'DREAMACTIC', 'The Future of Agentic AI', 'hello@dreamactic.com', '{}', now()]);
     }
 
     return pool;

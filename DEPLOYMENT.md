@@ -15,7 +15,7 @@ This project is consolidated for easy deployment on **Hostinger Cloud Startup** 
     Ensure you have the following in your deployment directory:
     - `dist/` (The compiled frontend)
     - `server/` (The Express backend)
-    - `server/data/dreamatic.db` (The SQLite database)
+    - `server/data/dreamactic.db` (The SQLite database)
     - `package.json`
     - `.env`
 
@@ -41,7 +41,7 @@ If you have SSH access:
 ```bash
 npm install --omit=dev
 npm run build
-pm2 start server/src/index.js --name "dreamatic"
+pm2 start server/src/index.js --name "dreamactic"
 pm2 save
 ```
 

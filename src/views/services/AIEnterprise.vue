@@ -252,7 +252,7 @@ onMounted(async () => {
            title: 'The Sovereign Intelligence Whitepaper',
            excerpt: 'How global enterprises are building private clouds for AI weight autonomy and data sovereignty.',
            createdAt: new Date().toISOString(),
-           author: 'DREAMATIC Research',
+           author: 'DREAMACTIC Research',
            imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800'
          },
          {

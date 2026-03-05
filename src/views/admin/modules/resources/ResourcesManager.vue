@@ -6,7 +6,7 @@
           <span class="context-tag" :style="{ color: '#2563eb' }">KNOWLEDGE HUB</span>
         </div>
         <h1>System <span class="text-gradient-primary">Resources</span></h1>
-        <p>Orchestrating the intellectual capital and strategic insights across the DREAMATIC network.</p>
+        <p>Orchestrating the intellectual capital and strategic insights across the DREAMACTIC network.</p>
       </div>
 
       <div class="header-actions">

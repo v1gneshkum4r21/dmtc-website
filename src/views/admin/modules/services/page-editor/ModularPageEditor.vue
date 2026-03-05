@@ -385,16 +385,16 @@ const addComponent = (type) => {
     solutions:  { title: 'Solutions Framework', items: [{ id: 1, title: 'Solution A', subtitle: 'Category', description: 'What this solves.', accent: 'linear-gradient(135deg,#6366f1,#a855f7)', features: ['Feature 1', 'Feature 2'], featuresRaw: 'Feature 1\nFeature 2' }] },
     insights:   { title: 'Latest Insights', items: [{ image: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?q=80&w=600', category: 'AI', title: 'The Future of Agentic AI', excerpt: 'How autonomous agents are reshaping work.', readTime: '5 min' }] },
     team:       { title: 'Meet the Team', items: [{ name: 'Dr. Alex Chen', role: 'CEO & Co-Founder', initials: 'AC', bio: 'Former AI lead at leading research labs.', accent: 'linear-gradient(135deg,#3b82f6,#2563eb)', image: '' }] },
-    testimonials:{ title: 'What Our Clients Say', items: [{ quote: 'DREAMATIC transformed how we operate at scale.', author: 'Jane Smith', company: 'CTO, Acme Corp', rating: 5 }] },
+    testimonials:{ title: 'What Our Clients Say', items: [{ quote: 'DREAMACTIC transformed how we operate at scale.', author: 'Jane Smith', company: 'CTO, Acme Corp', rating: 5 }] },
     faq:        { title: 'Frequently Asked Questions', items: [{ question: 'How does it work?', answer: 'Our platform uses agentic AI to...' }] },
     ecosystem:  { title: '', label: 'INTEGRATED WITH YOUR ECOSYSTEM', items: [{ name: 'OpenAI', icon: '🤖', color: '#10b981' }, { name: 'Salesforce', icon: '☁️', color: '#3b82f6' }, { name: 'Slack', icon: '💬', color: '#a855f7' }] },
-    video:      { title: 'Product Walkthrough', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', caption: 'See DREAMATIC in action.' },
+    video:      { title: 'Product Walkthrough', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', caption: 'See DREAMACTIC in action.' },
     pricing:    { title: 'Simple, Transparent Pricing', items: [
       { name: 'Starter', price: 'Free', description: 'Get started with the basics.', features: ['5 agents', '1,000 tasks/mo'], featuresRaw: '5 agents\n1,000 tasks/mo', popular: false },
       { name: 'Pro', price: '$49/mo', description: 'For growing teams.', features: ['50 agents', '100K tasks/mo', 'Priority support'], featuresRaw: '50 agents\n100K tasks/mo\nPriority support', popular: true },
       { name: 'Enterprise', price: 'Custom', description: 'Unlimited scale.', features: ['Unlimited agents', 'SLA guarantee', 'Dedicated CSM'], featuresRaw: 'Unlimited agents\nSLA guarantee\nDedicated CSM', popular: false }
     ]},
-    timeline:   { title: 'Our Journey', items: [{ year: '2022', title: 'Founded', description: 'DREAMATIC was born in a small R&D lab.' }, { year: '2024', title: 'Series A', description: 'Raised $20M to accelerate global expansion.' }] },
+    timeline:   { title: 'Our Journey', items: [{ year: '2022', title: 'Founded', description: 'DREAMACTIC was born in a small R&D lab.' }, { year: '2024', title: 'Series A', description: 'Raised $20M to accelerate global expansion.' }] },
   }
 
   const base = { id: Math.random().toString(36).substr(2, 9), type }

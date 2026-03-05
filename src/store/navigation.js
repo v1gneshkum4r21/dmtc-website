@@ -79,7 +79,7 @@ export const navStore = reactive({
                     id: Math.random().toString(36).substr(2, 9),
                     type: 'hero',
                     title: `${title}`,
-                    subtitle: 'Initialize your mission with DREAMATIC.',
+                    subtitle: 'Initialize your mission with DREAMACTIC.',
                     badge: 'MODULAR_NODE'
                 },
                 {

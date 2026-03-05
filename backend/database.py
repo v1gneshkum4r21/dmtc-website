@@ -16,7 +16,7 @@ from auth import get_password_hash
 
 load_dotenv()
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "dreamatic.db")
+DB_PATH = os.path.join(os.path.dirname(__file__), "dreamactic.db")
 
 # Helper functions to convert SQLite rows to dictionaries
 def row_to_dict(row, cursor):
@@ -142,7 +142,7 @@ async def create_insight(insight_data: InsightCreate) -> dict:
             INSERT INTO insights (id, title, excerpt, content, author, imageUrl, page, published, journal, year, authors, pdfUrl, linkType, createdAt, updatedAt)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
-            new_id, data["title"], data["excerpt"], data["content"], data.get("author", "DREAMATIC Team"),
+            new_id, data["title"], data["excerpt"], data["content"], data.get("author", "DREAMACTIC Team"),
             data.get("imageUrl"), data.get("page", "ai-work"), 1 if data.get("published", True) else 0,
             data.get("journal"), data.get("year"), data.get("authors"), data.get("pdfUrl"),
             data.get("linkType", "download"), now, now
@@ -312,7 +312,7 @@ async def init_default_user():
     if not user:
         await create_user(UserCreate(
             username="admin",
-            email="admin@dreamatic.ai",
+            email="admin@dreamactic.com",
             password="admin123",
             role="admin"
         ))
@@ -344,7 +344,7 @@ async def create_job(job_data: JobCreate) -> dict:
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             new_id, data["title"], data["team"], data["location"], data["description"], data["requirements"],
-            data.get("company", "DREAMATIC"), data.get("tags", ""), data.get("type", "Full-time"),
+            data.get("company", "DREAMACTIC"), data.get("tags", ""), data.get("type", "Full-time"),
             1 if data.get("active", True) else 0, 1 if data.get("isArchived", False) else 0, now, now
         ))
         await db.commit()
@@ -510,9 +510,9 @@ async def get_site_settings() -> dict:
             if not row:
                 # Seed default settings
                 default_settings = {
-                    "siteTitle": "DREAMATIC",
+                    "siteTitle": "DREAMACTIC",
                     "tagline": "The Future of Agentic AI",
-                    "contactEmail": "hello@dreamatic.ai",
+                    "contactEmail": "hello@dreamactic.com",
                     "seoDescription": "Leading the bridge between human intuition and agentic automation.",
                     "keywords": "AI, Agents, Enterprise AI, Future Tech",
                     "indexRobots": 1,

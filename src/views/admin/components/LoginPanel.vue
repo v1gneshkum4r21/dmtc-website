@@ -4,7 +4,7 @@
       <div class="restricted-tag">RESTRICTED ACCESS</div>
       <h1>{{ isMfaStep ? '2-Step Verification' : 'Admin Login' }}</h1>
       <p class="login-subtitle">
-        {{ isMfaStep ? 'TOUCH YOUR SECURITY KEY' : 'DREAMATIC CMS • Global Admin' }}
+        {{ isMfaStep ? 'TOUCH YOUR SECURITY KEY' : 'DREAMACTIC CMS • Global Admin' }}
       </p>
       
       <div v-if="!isMfaStep">
@@ -62,7 +62,7 @@
       </transition>
 
       <div class="login-footer">
-        <p>© 2026 Dreamatic Intelligence Network</p>
+        <p>© 2026 Dreamactic Intelligence Network</p>
       </div>
     </div>
   </div>

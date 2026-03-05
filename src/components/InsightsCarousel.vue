@@ -43,7 +43,7 @@
             <h3>{{ insight.title }}</h3>
             <p>{{ insight.excerpt }}</p>
             <div class="card-footer">
-              <span class="team-badge">DREAMATIC Research</span>
+              <span class="team-badge">DREAMACTIC Research</span>
               <div class="arrow-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M5 12h14M12 5l7 7-7 7"/>

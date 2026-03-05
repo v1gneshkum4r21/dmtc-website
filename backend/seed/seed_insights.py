@@ -8,7 +8,7 @@ import random
 load_dotenv()
 
 MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
-DATABASE_NAME = os.getenv("DATABASE_NAME", "dreamatic_cms")
+DATABASE_NAME = os.getenv("DATABASE_NAME", "dreamactic_cms")
 
 # A set of high-quality technology Unsplash IDs
 TECH_IMAGES = [
@@ -44,7 +44,7 @@ def generate_long_content(title, category):
     
     body_p2 = [
         "In practical applications, we have observed teams reclaiming significant portions of their workweek. By offloading the 'cognitive grunt work' to these intelligent systems, humans are finally free to focus on visionary strategy and creative problem-solving. This isn't just about automation; it's about augmentation. The synergy between human oversight and agentic execution creates a force multiplier that we are only just beginning to quantify in our quarterly productivity reports.",
-        "The technical challenges were numerous, particularly in the realm of inter-agent communication. We developed a proprietary JSON-RPC over neural nets protocol that allows diverse agents—from voice interfaces to database managers—to speak the same underlying logic. This interoperability is the secret sauce that allows DREAMATIC to offer a unified platform rather than a fragmented set of tools. It is a cohesive ecosystem where every part is aware of the other's state.",
+        "The technical challenges were numerous, particularly in the realm of inter-agent communication. We developed a proprietary JSON-RPC over neural nets protocol that allows diverse agents—from voice interfaces to database managers—to speak the same underlying logic. This interoperability is the secret sauce that allows DREAMACTIC to offer a unified platform rather than a fragmented set of tools. It is a cohesive ecosystem where every part is aware of the other's state.",
         "Finally, looking at the environmental impact, our optimized token-usage strategies have led to a more sustainable compute footprint. By reducing 'hallucinatory loops' and irrelevant computations, we maximize the value of every Watt consumed. Technology must not only be intelligent but also responsible, and {title} sets a new benchmark for ethical AI performance in the modern enterprise."
     ]
     
@@ -154,7 +154,7 @@ def update_insights():
                 "title": insight["title"],
                 "excerpt": insight["excerpt"],
                 "content": generate_long_content(insight["title"], page.replace('-', ' ')),
-                "author": "DREAMATIC Team",
+                "author": "DREAMACTIC Team",
                 "imageUrl": f"https://images.unsplash.com/{img_id}?w=1200&h=800&fit=crop&q=80",
                 "page": page,
                 "published": True,

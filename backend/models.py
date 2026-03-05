@@ -7,7 +7,7 @@ class InsightBase(BaseModel):
     title: str
     excerpt: str
     content: str
-    author: Optional[str] = "DREAMATIC Team"
+    author: Optional[str] = "DREAMACTIC Team"
     imageUrl: Optional[str] = None
     page: str = "ai-work"
     published: bool = True
@@ -179,7 +179,7 @@ class JobBase(BaseModel):
     location: str
     description: str
     requirements: str
-    company: str = "DREAMATIC"
+    company: str = "DREAMACTIC"
     tags: Optional[str] = ""  # comma-separated tags
     type: str = "Full-time"  # "Full-time", "Contract", "Internship"
     active: bool = True
@@ -310,9 +310,9 @@ class SocialLinks(BaseModel):
 
 
 class SiteSettings(BaseModel):
-    siteTitle: str = "DREAMATIC"
+    siteTitle: str = "DREAMACTIC"
     tagline: str = "The Future of Agentic AI"
-    contactEmail: str = "hello@dreamatic.ai"
+    contactEmail: str = "hello@dreamactic.com"
     seoDescription: str = "Leading the bridge between human intuition and agentic automation."
     keywords: str = "AI, Agents, Enterprise AI, Future Tech"
     indexRobots: bool = True

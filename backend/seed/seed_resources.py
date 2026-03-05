@@ -8,7 +8,7 @@ import random
 load_dotenv()
 
 MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
-DATABASE_NAME = os.getenv("DATABASE_NAME", "dreamatic_cms")
+DATABASE_NAME = os.getenv("DATABASE_NAME", "dreamactic_cms")
 
 # Curated Unsplash image IDs
 TECH_IMAGES = [
@@ -33,7 +33,7 @@ BLOG_POSTS = [
     {
         "title": "Achieving 40ms Voice Latency: The EchoAI Architecture Deep Dive",
         "excerpt": "A comprehensive look at the streaming pipeline, neural voice synthesis, and edge deployment strategies powering real-time conversational AI at enterprise scale.",
-        "content": """The pursuit of sub-50ms voice latency is not simply an engineering achievement—it is a fundamental prerequisite for building AI agents that feel genuinely human. At DREAMATIC, our EchoAI platform achieves an industry-leading 40ms end-to-end latency through a combination of architectural innovations that challenge conventional AI deployment wisdom.
+        "content": """The pursuit of sub-50ms voice latency is not simply an engineering achievement—it is a fundamental prerequisite for building AI agents that feel genuinely human. At DREAMACTIC, our EchoAI platform achieves an industry-leading 40ms end-to-end latency through a combination of architectural innovations that challenge conventional AI deployment wisdom.
 
 The first pillar of our approach is streaming-first architecture. Traditional voice AI systems operate in a request-response model: the user speaks, the audio is transmitted, processed centrally, and a response audio file is returned. This sequential model introduces irreducible latency at every step. EchoAI fundamentally inverts this model. We stream audio chunks of 80ms duration in parallel with neural inference, overlapping transmission, processing, and response generation into a continuous pipeline.
 
@@ -42,7 +42,7 @@ The second critical innovation is our Edge Neural Nodes (ENNs). Rather than rout
 Our custom Voice Activity Detection (VAD) module, trained on 50 million hours of enterprise telephony data, achieves 99.2% accuracy in distinguishing speech from background noise in open-plan offices, call centers, and remote environments. This precision means we can begin processing intent inference 180ms before a user has finished speaking, effectively predictively buffering the most likely response paths.
 
 The results across our deployed enterprise customers speak for themselves. Average handle times in contact centers have dropped by 34%. Customer satisfaction scores have increased by 18 percentage points. And infrastructure costs, despite the edge deployment overhead, have decreased by 22% due to the reduction in central compute requirements. EchoAI represents the new benchmark for what enterprise voice AI should feel like: instantaneous, natural, and effortlessly intelligent.""",
-        "author": "DREAMATIC Engineering Team",
+        "author": "DREAMACTIC Engineering Team",
         "page": "blog",
         "category": "Engineering",
         "date": "Feb 05, 2026",
@@ -51,17 +51,17 @@ The results across our deployed enterprise customers speak for themselves. Avera
     },
     {
         "title": "Alignment at Scale: Ethical Constraints in Multi-Agent Systems",
-        "excerpt": "How DREAMATIC implements moral reasoning and safety guardrails that function reliably across thousands of autonomous agents making independent decisions.",
+        "excerpt": "How DREAMACTIC implements moral reasoning and safety guardrails that function reliably across thousands of autonomous agents making independent decisions.",
         "content": """As autonomous agent networks scale from dozens to thousands of concurrently operating decision-makers, the challenge of alignment becomes exponentially more complex. A single misaligned action in a human workflow is easily corrected. A misaligned action propagated through a network of 10,000 interdependent agents is a cascade failure waiting to happen.
 
-DREAMATIC's approach to alignment at scale rests on three foundational pillars: Constitutional AI layers, Sovereign Governance Frameworks, and Adversarial Red-Team Testing.
+DREAMACTIC's approach to alignment at scale rests on three foundational pillars: Constitutional AI layers, Sovereign Governance Frameworks, and Adversarial Red-Team Testing.
 
 Our Constitutional AI layers function as embedded ethical rulesets within each agent's decision tree. Before any external-facing action is executed—whether sending an email, modifying a database record, or initiating a financial transaction—the agent must pass a five-point ethics checklist derived from our AI Constitution. These rules cover harm prevention, data privacy, stakeholder impact, reversibility of actions, and compliance with applicable regulations. Agents that cannot satisfy all five constraints are required to escalate to human oversight rather than proceed autonomously.
 
 The Sovereign Governance Framework (SGF) is our answer to the coordination problem. When thousands of agents operate simultaneously, individual constitutional compliance is necessary but not sufficient. The SGF provides a shared, immutable ledger of all agent actions taken in real-time. Any agent can query this ledger to understand the broader context of its operating environment. If an agent detects that its planned action would conflict with or duplicate the actions of a peer agent, it enters a conflict resolution protocol before proceeding.
 
 Perhaps most importantly, we conduct continuous adversarial red-team testing. Our dedicated AI Safety team deploys specialized "red agent" networks specifically designed to find exploits in our governance framework. Every vulnerability discovered by red agents is immediately patched and added to our Constitutional rules. As of this publication, our framework has achieved a 99.97% alignment rate across 2.3 billion total agent decisions in production environments.""",
-        "author": "DREAMATIC AI Safety Team",
+        "author": "DREAMACTIC AI Safety Team",
         "page": "blog",
         "category": "Research",
         "date": "Jan 28, 2026",
@@ -71,7 +71,7 @@ Perhaps most importantly, we conduct continuous adversarial red-team testing. Ou
     {
         "title": "The Economics of AI Agents: When Automation Actually Pays Off",
         "excerpt": "Beyond the hype—a quantitative analysis of where autonomous agents deliver real ROI, based on deployments at 50+ enterprise customers across 12 industries.",
-        "content": """The enterprise AI market is flooded with ROI claims that rarely survive contact with a CFO's spreadsheet. After three years of production deployments across 50+ enterprise customers and 12 industries, DREAMATIC has compiled the most rigorous dataset available on where autonomous agents genuinely deliver measurable value—and where they do not.
+        "content": """The enterprise AI market is flooded with ROI claims that rarely survive contact with a CFO's spreadsheet. After three years of production deployments across 50+ enterprise customers and 12 industries, DREAMACTIC has compiled the most rigorous dataset available on where autonomous agents genuinely deliver measurable value—and where they do not.
 
 The headline finding: autonomous agents deliver compelling ROI in exactly three categories of work. First, high-volume, rule-based processes with low exception rates. Second, cross-system data orchestration tasks that currently require manual copy-paste workflows. Third, 24/7 monitoring and alerting functions that demand continuous attention but involve primarily pattern recognition.
 
@@ -80,7 +80,7 @@ In contracts, claims processing, and compliance monitoring, our customers are se
 Where agents do NOT deliver ROI is equally important to understand. Creative work, novel problem-solving, and high-stakes relationship management remain firmly in the human domain. Customers who attempt to deploy agents into these areas consistently see poor outcomes and often damage customer relationships in the process.
 
 The critical success factor across all high-ROI deployments is what we call the "exception escalation architecture." Profitable agent deployments are never fully autonomous. They operate autonomously for 85-95% of work volume while maintaining seamless human handoff for the remainder. Organizations that attempt 100% autonomous operation invariably encounter edge cases that corrupt data, frustrate customers, or create compliance exposure. The winners treat agents as force multipliers for human expertise, not replacements for it.""",
-        "author": "DREAMATIC Strategy Team",
+        "author": "DREAMACTIC Strategy Team",
         "page": "blog",
         "category": "Strategy",
         "date": "Jan 15, 2026",
@@ -100,12 +100,12 @@ Chapter 1 — Architecture Fundamentals: The core challenge of multi-agent orche
 
 Chapter 2 — Communication Protocols: Agents in a production network must communicate reliably without creating bottlenecks. We compare synchronous RPC-based communication against asynchronous message queuing architectures, and explain why the optimal answer depends entirely on your SLA requirements and failure tolerance.
 
-Chapter 3 — State Management: One of the most common failure modes in multi-agent systems is state corruption—when two agents simultaneously modify the same record with conflicting information. We detail DREAMATIC's recommended architecture for distributed state management, including optimistic locking strategies and conflict resolution protocols.
+Chapter 3 — State Management: One of the most common failure modes in multi-agent systems is state corruption—when two agents simultaneously modify the same record with conflicting information. We detail DREAMACTIC's recommended architecture for distributed state management, including optimistic locking strategies and conflict resolution protocols.
 
 Chapter 4 — Monitoring and Governance: A network of autonomous agents operating on production business data requires comprehensive observability. We cover the metrics that matter (decision latency, escalation rate, error rate, cost per decision), the tooling to collect them, and the governance processes to act on them.
 
 Chapter 5 — ROI Calculation Framework: A detailed spreadsheet template and methodology for calculating expected ROI before deployment, tracking actual ROI post-deployment, and identifying optimization opportunities.""",
-        "author": "DREAMATIC Research Team",
+        "author": "DREAMACTIC Research Team",
         "page": "hub",
         "type": "WHITE PAPER",
         "imageUrl": img(3),
@@ -118,12 +118,12 @@ Chapter 5 — ROI Calculation Framework: A detailed spreadsheet template and met
 
 The Challenge: The carrier's claims department employed 450 claims processors handling an average of 120 claims per day each. Error rates were running at 3.2%, regulatory compliance costs were escalating, and customer satisfaction scores for claims handling were at an industry-low 61 NPS. Management needed to scale claims capacity by 40% without a proportional increase in headcount.
 
-Phase 1 — Discovery and Architecture Design (Months 1-3): DREAMATIC's solutions team conducted process mapping workshops with 60 claims processors across four regional offices. We identified 12 distinct task categories in the claims workflow, of which 7 were candidates for autonomous agent execution. The remaining 5 required human judgment involving policy interpretation, legal exposure assessment, or fraud investigation.
+Phase 1 — Discovery and Architecture Design (Months 1-3): DREAMACTIC's solutions team conducted process mapping workshops with 60 claims processors across four regional offices. We identified 12 distinct task categories in the claims workflow, of which 7 were candidates for autonomous agent execution. The remaining 5 required human judgment involving policy interpretation, legal exposure assessment, or fraud investigation.
 
 Phase 2 — Pilot Deployment (Months 4-9): A pilot agent network of 24 specialized agents was deployed on a sandboxed subset of incoming claims (approximately 800 per day). Agents handled first notice of loss processing, medical records retrieval and summarization, payment eligibility verification, and status communication to claimants. Human processors reviewed all agent decisions during this phase, providing feedback that continuously improved the agent models.
 
 Phase 3 — Production Scaling (Months 10-18): Following pilot validation, the agent network was scaled to full production capacity. Today, 15,000 claims enter the automated pipeline daily. Agent autonomous completion rate: 78%. Human review required: 22%. Overall error rate: 0.4% (down from 3.2%). Customer NPS for claims handling: 74 (up from 61). Annual cost savings: $18.4M.""",
-        "author": "DREAMATIC Solutions Team",
+        "author": "DREAMACTIC Solutions Team",
         "page": "hub",
         "type": "CASE STUDY",
         "imageUrl": img(4),
@@ -134,16 +134,16 @@ Phase 3 — Production Scaling (Months 10-18): Following pilot validation, the a
         "excerpt": "A hands-on tutorial for deploying your first EchoAI voice agent with full authentication, streaming response, error handling, and monitoring.",
         "content": """This tutorial guides you through the complete process of deploying a production-grade voice agent using the EchoAI platform. By the end of this guide, you will have a fully operational voice agent that can handle inbound calls, execute business logic, and hand off to human agents when appropriate.
 
-Prerequisites: An active DREAMATIC Neural Platform account, a phone number provisioned through our telephony partner, and basic familiarity with REST APIs. No ML expertise is required—EchoAI abstracts all model complexity behind simple configuration.
+Prerequisites: An active DREAMACTIC Neural Platform account, a phone number provisioned through our telephony partner, and basic familiarity with REST APIs. No ML expertise is required—EchoAI abstracts all model complexity behind simple configuration.
 
-Step 1 — Create Your Agent Blueprint: Log into the DREAMATIC dashboard and navigate to EchoAI > Agent Studio. Click "New Agent" and select the "Inbound Customer Service" template. This template pre-configures the most common voice agent use case: handling customer inquiries, performing account lookups, and escalating to human agents.
+Step 1 — Create Your Agent Blueprint: Log into the DREAMACTIC dashboard and navigate to EchoAI > Agent Studio. Click "New Agent" and select the "Inbound Customer Service" template. This template pre-configures the most common voice agent use case: handling customer inquiries, performing account lookups, and escalating to human agents.
 
 Step 2 — Configure Your Business Logic: In the Agent Studio's Logic Editor, you will define the decision tree your agent follows. Connect your CRM API endpoint for customer lookup. Define the top 5 intents your customers most commonly express. Set escalation thresholds—conditions under which the agent automatically transfers to a human.
 
 Step 3 — Configure Voice and Personality: Select from our 24 voice profiles or create a custom voice that matches your brand. Set formality level, response verbosity, and handling for silence and interruptions. Configure your hold music and transfer messages.
 
 Step 4 — Deploy and Monitor: Click "Deploy to Production" and assign your provisioned phone number. Within 60 seconds, your agent is live. Open the EchoAI dashboard to watch real-time call transcripts, decision logs, and escalation events as they happen. Your first voice agent is now protecting your customer experience 24/7.""",
-        "author": "DREAMATIC Developer Relations",
+        "author": "DREAMACTIC Developer Relations",
         "page": "hub",
         "type": "TUTORIAL",
         "imageUrl": img(5),
@@ -162,7 +162,7 @@ Introduction: The application of reinforcement learning to enterprise automation
 
 Methodology: HTDMARL introduces a Manager-Worker hierarchy where a Manager agent, trained with high-level sparse rewards, generates sub-goal sequences for a fleet of Worker agents. Worker agents are trained with dense reward signals on specific subtask categories: data retrieval, data transformation, external API calls, and decision-making under policy constraints. The Manager agent learns to decompose incoming task descriptions by generating a directed acyclic graph (DAG) of sub-goals, optimizing for parallel execution within Worker capacity constraints.
 
-Results: Across our evaluation suite, HTDMARL achieved statistically significant improvements in all six benchmarks. On the DREAMATIC Enterprise Workflow Benchmark (DEWB), our primary evaluation, HTDMARL achieved 87.3% task completion accuracy versus 71.2% for the flat MARL baseline. Mean task completion time decreased from 12.4 seconds to 7.3 seconds. Error propagation rate—the rate at which a single agent error cascades to full task failure—decreased from 34% to 9%, attributable to the DAG structure isolating errors within sub-branches.
+Results: Across our evaluation suite, HTDMARL achieved statistically significant improvements in all six benchmarks. On the DREAMACTIC Enterprise Workflow Benchmark (DEWB), our primary evaluation, HTDMARL achieved 87.3% task completion accuracy versus 71.2% for the flat MARL baseline. Mean task completion time decreased from 12.4 seconds to 7.3 seconds. Error propagation rate—the rate at which a single agent error cascades to full task failure—decreased from 34% to 9%, attributable to the DAG structure isolating errors within sub-branches.
 
 Conclusion: HTDMARL represents a significant advance in the application of multi-agent reinforcement learning to real-world enterprise automation. The hierarchical decomposition approach naturally handles the long-horizon, heterogeneous nature of enterprise tasks while providing isolation properties that limit the impact of individual agent failures. Future work will explore dynamic Worker specialization and integration with Foundation Model-based Manager agents.""",
         "author": "Chen, J., Singh, A., Martinez, R.",
@@ -181,7 +181,7 @@ Problem Formulation: Consider a swarm of n agents, each capable of executing act
 
 Distributed Policy Gossip: DPG operates as an epidemic broadcast protocol. Each agent maintains a local constraint satisfaction model (CSM) initialized with the current global policy. Before executing any action, an agent broadcasts its planned action to a randomly selected subset of k peer agents (the "gossip fanout"). Receiving agents check for conflicts with their own planned or recently executed actions and respond with a conflict signal if detected. If an agent receives no conflict signals within a configurable timeout window, it proceeds with execution; otherwise, it enters a backoff-and-retry cycle.
 
-Experimental Evaluation: We evaluate DPG on the DREAMATIC Swarm Benchmark, a simulation environment modeling enterprise workflow automation with realistic conflict patterns. At 10,000 agents, DPG achieves 99.97% constraint satisfaction versus 99.91% for the centralized baseline, with 340x lower coordination latency (0.8ms vs 272ms). As swarm size increases beyond 10,000 agents, DPG scales sub-linearly (O(n log n) coordination messages) while the centralized approach degrades rapidly.""",
+Experimental Evaluation: We evaluate DPG on the DREAMACTIC Swarm Benchmark, a simulation environment modeling enterprise workflow automation with realistic conflict patterns. At 10,000 agents, DPG achieves 99.97% constraint satisfaction versus 99.91% for the centralized baseline, with 340x lower coordination latency (0.8ms vs 272ms). As swarm size increases beyond 10,000 agents, DPG scales sub-linearly (O(n log n) coordination messages) while the centralized approach degrades rapidly.""",
         "author": "Okonkwo, S., Chen, J., Williams, T.",
         "page": "research",
         "journal": "ICML 2024",

@@ -19,7 +19,7 @@ from typing import List, Optional
 
 load_dotenv()
 
-RP_NAME = os.getenv("RP_NAME", "DREAMATIC")
+RP_NAME = os.getenv("RP_NAME", "DREAMACTIC")
 RP_ID = os.getenv("RP_ID", "localhost")
 ORIGIN = os.getenv("ORIGIN", "http://localhost:3000")
 

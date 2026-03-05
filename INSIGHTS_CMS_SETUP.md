@@ -38,7 +38,7 @@ pip install -r requirements.txt
 Edit `backend/.env` if needed:
 ```env
 MONGODB_URL=mongodb://localhost:27017
-DATABASE_NAME=dreamatic_cms
+DATABASE_NAME=dreamactic_cms
 SECRET_KEY=your-secret-key-change-this-in-production
 ```
 

@@ -1,4 +1,4 @@
-# DREAMATIC CMS Backend
+# DREAMACTIC CMS Backend
 
 Python FastAPI backend for managing insights dynamically.
 
@@ -21,7 +21,7 @@ sudo systemctl start mongodb
 3. Configure environment variables in `.env`:
 ```
 MONGODB_URL=mongodb://localhost:27017
-DATABASE_NAME=dreamatic_cms
+DATABASE_NAME=dreamactic_cms
 SECRET_KEY=your-secret-key-change-this-in-production
 ```
 

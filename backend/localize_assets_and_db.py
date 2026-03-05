@@ -10,8 +10,8 @@ import hashlib
 load_dotenv()
 
 MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
-DATABASE_NAME = os.getenv("DATABASE_NAME", "dreamatic_cms")
-SQLITE_PATH = "dreamatic.db"
+DATABASE_NAME = os.getenv("DATABASE_NAME", "dreamactic_cms")
+SQLITE_PATH = "dreamactic.db"
 
 ASSETS_DIR = "static/assets"
 IMG_DIR = os.path.join(ASSETS_DIR, "images")
@@ -238,7 +238,7 @@ def migrate():
             doc.get("title"),
             doc.get("excerpt"),
             doc.get("content"),
-            doc.get("author", "DREAMATIC Team"),
+            doc.get("author", "DREAMACTIC Team"),
             doc.get("imageUrl"),
             doc.get("page", "ai-work"),
             1 if doc.get("published", True) else 0,
@@ -331,7 +331,7 @@ def migrate():
             doc.get("location"),
             doc.get("description"),
             doc.get("requirements"),
-            doc.get("company", "DREAMATIC"),
+            doc.get("company", "DREAMACTIC"),
             doc.get("tags", ""),
             doc.get("type", "Full-time"),
             1 if doc.get("active", True) else 0,
