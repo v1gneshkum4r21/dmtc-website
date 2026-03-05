@@ -125,6 +125,19 @@ app.get('/api/hero-slides', async (req, res, next) => {
     } catch (e) { next(e); }
 });
 
+// Google Verification
+app.get('/google:id.html', (req, res) => {
+    const filePath = path.join(__dirname, `../../google${req.params.id}.html`);
+    const publicPath = path.join(__dirname, `../../public/google${req.params.id}.html`);
+
+    if (fs.existsSync(filePath)) {
+        return res.sendFile(filePath);
+    } else if (fs.existsSync(publicPath)) {
+        return res.sendFile(publicPath);
+    }
+    res.status(404).end();
+});
+
 // ─── SEO Endpoints ────────────────────────────────────────────────────────────
 
 app.get('/robots.txt', (req, res) => {
