@@ -43,8 +43,7 @@ export const navStore = reactive({
 
     toggleVisibility(id) {
         if (this.matrix[id]) {
-            this.matrix[id].visible = !this.matrix[id].visible
-            this.save()
+            this.updatePage(id, { visible: !this.matrix[id].visible })
         }
     },
 

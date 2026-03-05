@@ -236,6 +236,30 @@ async function initDb() {
 
 function now() { return new Date().toISOString().slice(0, 19).replace('T', ' '); }
 
+const TABLE_COLUMNS = {
+    settings: ['siteTitle', 'tagline', 'contactEmail', 'seoDescription', 'keywords', 'indexRobots', 'maintenanceMode', 'social', 'hero_slides', 'updatedAt'],
+    insights: ['id', 'title', 'excerpt', 'content', 'author', 'imageUrl', 'page', 'published', 'journal', 'year', 'authors', 'pdfUrl', 'linkType', 'createdAt', 'updatedAt'],
+    research: ['id', 'title', 'journal', 'year', 'authors', 'excerpt', 'abstract', 'content', 'imageUrl', 'pdfUrl', 'linkType', 'published', 'createdAt', 'updatedAt'],
+    showcase: ['id', 'title', 'description', 'mediaUrl', 'mediaType', 'tag', 'product', 'order', 'active', 'size', 'likes', 'views', 'createdAt', 'updatedAt'],
+    jobs: ['id', 'title', 'team', 'location', 'description', 'requirements', 'company', 'tags', 'type', 'salary_range', 'remote_policy', 'experience_level', 'benefits', 'deadline', 'active', 'isArchived', 'createdAt', 'updatedAt']
+};
+
+function sanitize(table, data) {
+    const allowed = TABLE_COLUMNS[table];
+    if (!allowed) return data;
+    const clean = {};
+    for (const key of allowed) {
+        if (key in data) {
+            let val = data[key];
+            if (val !== null && typeof val === 'object' && key !== 'deadline') {
+                val = JSON.stringify(val);
+            }
+            clean[key] = val;
+        }
+    }
+    return clean;
+}
+
 // ─── Shared Helpers ──────────────────────────────────────────────────────────
 
 const insightHelper = (r) => r ? ({ ...r, _id: r.id, published: !!r.published }) : null;
@@ -283,8 +307,8 @@ async function getSiteSettings() {
 }
 
 async function updateSiteSettings(data) {
-    const d = { ...data, updatedAt: now() };
-    if (d.social) d.social = JSON.stringify(d.social);
+    const d = sanitize('settings', { ...data, updatedAt: now() });
+    delete d.id;
     const sets = Object.keys(d).map(k => `\`${k}\` = ?`).join(', ');
     await pool.query(`UPDATE settings SET ${sets} WHERE id = ?`, [...Object.values(d), 'default']);
     return getSiteSettings();
@@ -310,7 +334,7 @@ async function getInsightById(id) {
 
 async function createInsight(data) {
     const id = uuidv4();
-    const d = { ...data, id, createdAt: now(), updatedAt: now() };
+    const d = sanitize('insights', { ...data, id, createdAt: now(), updatedAt: now() });
     const cols = Object.keys(d).map(k => `\`${k}\``).join(', ');
     const placeholders = Object.keys(d).map(() => '?').join(', ');
     await pool.query(`INSERT INTO insights (${cols}) VALUES (${placeholders})`, Object.values(d));
@@ -318,7 +342,8 @@ async function createInsight(data) {
 }
 
 async function updateInsight(id, data) {
-    const d = { ...data, updatedAt: now() };
+    const d = sanitize('insights', { ...data, updatedAt: now() });
+    delete d.id;
     const sets = Object.keys(d).map(k => `\`${k}\` = ?`).join(', ');
     await pool.query(`UPDATE insights SET ${sets} WHERE id = ?`, [...Object.values(d), id]);
     return getInsightById(id);
@@ -345,7 +370,7 @@ async function getResearchById(id) {
 
 async function createResearch(data) {
     const id = uuidv4();
-    const d = { ...data, id, createdAt: now(), updatedAt: now() };
+    const d = sanitize('research', { ...data, id, createdAt: now(), updatedAt: now() });
     const cols = Object.keys(d).map(k => `\`${k}\``).join(', ');
     const placeholders = Object.keys(d).map(() => '?').join(', ');
     await pool.query(`INSERT INTO research (${cols}) VALUES (${placeholders})`, Object.values(d));
@@ -353,7 +378,8 @@ async function createResearch(data) {
 }
 
 async function updateResearch(id, data) {
-    const d = { ...data, updatedAt: now() };
+    const d = sanitize('research', { ...data, updatedAt: now() });
+    delete d.id;
     const sets = Object.keys(d).map(k => `\`${k}\` = ?`).join(', ');
     await pool.query(`UPDATE research SET ${sets} WHERE id = ?`, [...Object.values(d), id]);
     return getResearchById(id);
@@ -370,7 +396,7 @@ async function getAllShowcaseItems(activeOnly = false) {
 
 async function createShowcaseItem(data) {
     const id = uuidv4();
-    const d = { ...data, id, createdAt: now(), updatedAt: now() };
+    const d = sanitize('showcase', { ...data, id, createdAt: now(), updatedAt: now() });
     const cols = Object.keys(d).map(k => `\`${k}\``).join(', ');
     const placeholders = Object.keys(d).map(() => '?').join(', ');
     await pool.query(`INSERT INTO showcase (${cols}) VALUES (${placeholders})`, Object.values(d));
@@ -397,7 +423,7 @@ async function getJobById(id) {
 
 async function createJob(data) {
     const id = uuidv4();
-    const d = { ...data, id, createdAt: now(), updatedAt: now() };
+    const d = sanitize('jobs', { ...data, id, createdAt: now(), updatedAt: now() });
     const cols = Object.keys(d).map(k => `\`${k}\``).join(', ');
     const placeholders = Object.keys(d).map(() => '?').join(', ');
     await pool.query(`INSERT INTO jobs (${cols}) VALUES (${placeholders})`, Object.values(d));
@@ -636,7 +662,8 @@ async function deleteJob(id, permanent = false) {
 }
 
 async function updateJob(id, data) {
-    const d = { ...data, updatedAt: now() };
+    const d = sanitize('jobs', { ...data, updatedAt: now() });
+    delete d.id;
     const sets = Object.keys(d).map(k => `\`${k}\` = ?`).join(', ');
     await pool.query(`UPDATE jobs SET ${sets} WHERE id = ?`, [...Object.values(d), id]);
     return getJobById(id);
@@ -653,7 +680,8 @@ async function deleteShowcaseItem(id) {
 }
 
 async function updateShowcaseItem(id, data) {
-    const d = { ...data, updatedAt: now() };
+    const d = sanitize('showcase', { ...data, updatedAt: now() });
+    delete d.id;
     const sets = Object.keys(d).map(k => `\`${k}\` = ?`).join(', ');
     await pool.query(`UPDATE showcase SET ${sets} WHERE id = ?`, [...Object.values(d), id]);
     const [rows] = await pool.query('SELECT * FROM showcase WHERE id = ?', [id]);
