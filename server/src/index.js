@@ -199,6 +199,9 @@ app.get(['/sitemap.xml', '/sitemap.xml/'], async (req, res, next) => {
         // Add Custom Pages
         pages.filter(p => p.visible).forEach(p => {
             const path = (p.path && p.path.startsWith('/')) ? p.path : `/p/${p.page_id}`;
+            // Explicitly exclude admin or api paths from sitemap
+            if (path.startsWith('/admin') || path.startsWith('/api')) return;
+
             xml += `
   <url>
     <loc>${baseUrl}${path}</loc>
