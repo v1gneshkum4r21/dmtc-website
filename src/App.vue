@@ -184,6 +184,15 @@ watch(() => route.path, (newPath) => {
     document.head.appendChild(metaDesc)
   }
   metaDesc.setAttribute('content', description)
+
+  // Update Canonical URL
+  let canonical = document.querySelector('link[rel="canonical"]')
+  if (!canonical) {
+    canonical = document.createElement('link')
+    canonical.setAttribute('rel', 'canonical')
+    document.head.appendChild(canonical)
+  }
+  canonical.setAttribute('href', `https://dreamactic.com${newPath === '/' ? '' : newPath}`)
 }, { immediate: true })
 </script>
 
