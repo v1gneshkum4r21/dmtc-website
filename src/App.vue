@@ -147,6 +147,44 @@ onMounted(() => {
 onUnmounted(() => {
   if (globalSyncTimer) clearInterval(globalSyncTimer)
 })
+
+// SEO & Title Management
+import { watch } from 'vue'
+watch(() => route.path, (newPath) => {
+  // 1. Check if it's a dynamic page from navStore
+  const page = Object.values(navStore.matrix).find(p => p.path === newPath)
+  let title = 'DREAMACTIC | The Future of AI'
+  let description = 'Building the next generation of autonomous AI infrastructure for enterprises.'
+
+  if (page) {
+    title = `${page.label} | DREAMACTIC`
+    if (page.hero_subtitle) description = page.hero_subtitle
+  } else {
+    // 2. Fallback for static routes
+    const staticTitles = {
+      '/': 'DREAMACTIC | Autonomous AI Orchestration',
+      '/services/ai-work': 'AI for Work | DREAMACTIC',
+      '/services/ai-enterprise': 'Enterprise AI | DREAMACTIC',
+      '/resources/blog': 'Insights & Engineering | DREAMACTIC',
+      '/resources/research': 'Neural Research | DREAMACTIC',
+      '/company/careers': 'Join the Vision | DREAMACTIC CAREERS',
+      '/showcase': 'Agentic Showcase | DREAMACTIC'
+    }
+    if (staticTitles[newPath]) title = staticTitles[newPath]
+  }
+
+  // Update DOM
+  document.title = title
+  
+  // Update Meta Description
+  let metaDesc = document.querySelector('meta[name="description"]')
+  if (!metaDesc) {
+    metaDesc = document.createElement('meta')
+    metaDesc.setAttribute('name', 'description')
+    document.head.appendChild(metaDesc)
+  }
+  metaDesc.setAttribute('content', description)
+}, { immediate: true })
 </script>
 
 <style scoped>

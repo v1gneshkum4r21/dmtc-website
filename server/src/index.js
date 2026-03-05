@@ -125,6 +125,114 @@ app.get('/api/hero-slides', async (req, res, next) => {
     } catch (e) { next(e); }
 });
 
+// ─── SEO Endpoints ────────────────────────────────────────────────────────────
+
+app.get('/robots.txt', (req, res) => {
+    const robots = `User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api
+Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`;
+    res.type('text/plain');
+    res.send(robots);
+});
+
+app.get('/sitemap.xml', async (req, res, next) => {
+    try {
+        const baseUrl = `${req.protocol}://${req.get('host')}`;
+
+        // Static Routes
+        const staticPaths = [
+            '',
+            '/services/ai-work',
+            '/services/ai-service',
+            '/services/ai-enterprise',
+            '/products/superfitter',
+            '/products/echoai',
+            '/company/about',
+            '/company/leadership',
+            '/company/careers',
+            '/resources/hub',
+            '/resources/blog',
+            '/resources/research',
+            '/support/docs',
+            '/support/community',
+            '/support/help',
+            '/showcase'
+        ];
+
+        // Fetch Dynamic Data
+        const [pages, insights, research, jobs] = await Promise.all([
+            db.getAllCustomPages(),
+            db.getAllInsights(true),
+            db.getAllResearch(true),
+            db.getAllJobs(true)
+        ]);
+
+        let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`;
+
+        // Add Static Paths
+        staticPaths.forEach(p => {
+            xml += `
+  <url>
+    <loc>${baseUrl}${p}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>${p === '' ? '1.0' : '0.8'}</priority>
+  </url>`;
+        });
+
+        // Add Custom Pages
+        pages.filter(p => p.visible).forEach(p => {
+            const path = p.path.startsWith('/') ? p.path : `/p/${p.page_id}`;
+            xml += `
+  <url>
+    <loc>${baseUrl}${path}</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>`;
+        });
+
+        // Add Blog Posts / Insights
+        insights.forEach(item => {
+            xml += `
+  <url>
+    <loc>${baseUrl}/resources/blog?id=${item.id}</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>`;
+        });
+
+        // Add Research Papers
+        research.forEach(item => {
+            xml += `
+  <url>
+    <loc>${baseUrl}/resources/research?id=${item.id}</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>`;
+        });
+
+        // Add Career Listings
+        jobs.forEach(item => {
+            xml += `
+  <url>
+    <loc>${baseUrl}/company/careers?id=${item.id}</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>`;
+        });
+
+        xml += `
+</urlset>`;
+
+        res.type('application/xml');
+        res.send(xml);
+    } catch (e) {
+        next(e);
+    }
+});
+
 // Auth
 app.post('/api/auth/login', upload.none(), async (req, res, next) => {
     try {
