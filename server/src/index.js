@@ -428,6 +428,15 @@ admin.delete('/jobs/:id', async (req, res, next) => {
     } catch (e) { next(e); }
 });
 
+admin.get('/pages', async (req, res, next) => {
+    try { res.json(await db.getAllCustomPages()); } catch (e) { next(e); }
+});
+admin.get('/pages/:id', async (req, res, next) => {
+    try {
+        const item = await db.getPageConfig(req.params.id);
+        item ? res.json(item) : res.status(404).json({ detail: 'Page configuration not found' });
+    } catch (e) { next(e); }
+});
 admin.put('/pages/:id', async (req, res, next) => {
     try { res.json(await db.upsertPageConfig(req.params.id, req.body)); } catch (e) { next(e); }
 });
