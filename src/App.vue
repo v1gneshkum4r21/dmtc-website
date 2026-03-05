@@ -150,33 +150,107 @@ onUnmounted(() => {
 
 // SEO & Title Management
 import { watch } from 'vue'
-watch(() => route.path, (newPath) => {
-  // 1. Check if it's a dynamic page from navStore
-  const page = Object.values(navStore.matrix).find(p => p.path === newPath)
-  let title = 'DREAMACTIC | The Future of AI'
-  let description = 'Building the next generation of autonomous AI infrastructure for enterprises.'
+import { insightsAPI, jobsAPI } from '@/services/api' // Fetch titles for query-based pages
 
-  if (page) {
-    title = `${page.label} | DREAMACTIC`
-    if (page.hero_subtitle) description = page.hero_subtitle
-  } else {
-    // 2. Fallback for static routes
-    const staticTitles = {
-      '/': 'DREAMACTIC | Autonomous AI Orchestration',
-      '/services/ai-work': 'AI for Work | DREAMACTIC',
-      '/services/ai-enterprise': 'Enterprise AI | DREAMACTIC',
-      '/resources/blog': 'Insights & Engineering | DREAMACTIC',
-      '/resources/research': 'Neural Research | DREAMACTIC',
-      '/company/careers': 'Join the Vision | DREAMACTIC CAREERS',
-      '/showcase': 'Agentic Showcase | DREAMACTIC'
+const updateSEO = async (newPath, query) => {
+  // 1. Dynamic check from navStore
+  const page = Object.values(navStore.matrix).find(p => p.path === newPath)
+  
+  // 2. Base Defaults
+  let title = 'DREAMACTIC | The Future of AI'
+  let description = 'DREAMACTIC (formerly Dreamatic) provides autonomous AI infrastructure, multi-agent swarms, and neural orchestration for global enterprises.'
+  let keywords = 'dreamactic, dreamatic, agentic ai, autonomous ai, neural orchestration, ai platform'
+
+  // 3. Static metadata mapping for core routes
+  const staticMeta = {
+    '/': {
+      title: 'DREAMACTIC | Autonomous AI Orchestration & Agentic Systems',
+      description: 'DREAMACTIC (formerly Dreamatic) is the leading platform for enterprise-grade autonomous AI. Orchestrate swarms, secure neural nodes, and scale intelligence.',
+      keywords: 'dreamactic, dreamatic, autonomous ai, enterprise ai, ai orchestration, ai agents'
+    },
+    '/services/ai-work': {
+      title: 'AI for Work | Intelligent Workforce Orchestration',
+      description: 'Transform your workforce with DREAMACTIC AI for Work. Deploy autonomous agents that handle complex reasoning, deep research, and process automation.',
+      keywords: 'ai for work, agentic workforce, intelligent automation, dreamactic work'
+    },
+    '/services/ai-service': {
+      title: 'AI for Service | Autonomous Customer Experience',
+      description: 'Scale your support and service operations with sovereign AI agents that understand context, resolve issues, and learn your business logic.',
+      keywords: 'ai customer service, autonomous support, ai agents for service, dreamactic service'
+    },
+    '/services/ai-enterprise': {
+      title: 'AI for Enterprise | Sovereign Neural Infrastructure',
+      description: 'The secure backbone for global AI operations. Private cloud architecture, custom weights, and cross-border data compliance for Fortune 500s.',
+      keywords: 'enterprise ai, sovereign ai, private cloud ai, ai infrastructure, dreamactic enterprise'
+    },
+    '/products/superfitter': {
+      title: 'SuperFiitter | Precision AI Tuning Platform',
+      description: 'The ultimate environment for fine-tuning and optimizing agentic weights for specialized enterprise tasks.',
+      keywords: 'ai fine-tuning, superfitter, model optimization, dreamactic products'
+    },
+    '/products/echoai': {
+      title: 'EchoAI | Real-time Neural Communication',
+      description: 'Sovereign voice and text communication platform powered by low-latency agentic reasoning.',
+      keywords: 'echoai, real-time ai, conversational ai, dreamactic voice'
+    },
+    '/resources/blog': {
+      title: 'Insights & AI Engineering Blog | DREAMACTIC',
+      description: 'Deep dives into neural architecture, multi-agent swarms, and the future of sovereign intelligence.',
+      keywords: 'ai blog, engineering insights, dreamactic research, tech blog'
+    },
+    '/resources/research': {
+      title: 'Neural Research & Whitepapers | DREAMACTIC',
+      description: 'Scientific publications and strategic case studies on the impact of agentic AI in modern systems.',
+      keywords: 'ai research, whitepapers, case studies, neural science, dreamactic research'
+    },
+    '/company/careers': {
+      title: 'Join the Vision | Careers at DREAMACTIC',
+      description: 'Help build the sovereign intelligence layer of the future. Join our team of neural engineers and visionaries.',
+      keywords: 'ai jobs, tech careers, dreamactic careers, work at dreamactic'
+    },
+    '/showcase': {
+      title: 'Agentic Showcase | Real-world AI Implementations',
+      description: 'Explore the portfolio of autonomous workflows and neural nodes currently operational in the DREAMACTIC ecosystem.',
+      keywords: 'ai showcase, agentic portfolio, ai examples, dreamactic showcase'
     }
-    if (staticTitles[newPath]) title = staticTitles[newPath]
   }
 
-  // Update DOM
+  // 4. Apply Logic
+  if (staticMeta[newPath]) {
+    title = staticMeta[newPath].title
+    description = staticMeta[newPath].description
+    keywords = staticMeta[newPath].keywords
+  } else if (page) {
+    title = `${page.label} | DREAMACTIC`
+    if (page.hero_subtitle) description = page.hero_subtitle
+    keywords += `, ${page.label.toLowerCase()}`
+  }
+
+  // 5. Handle Query-based pages (Blog/Research/Jobs) to get specific titles
+  if (query.id) {
+    try {
+      if (newPath === '/resources/blog' || newPath === '/resources/research') {
+        const item = await insightsAPI.getById(query.id)
+        if (item) {
+          title = `${item.title} | DREAMACTIC Insights`
+          if (item.excerpt) description = item.excerpt
+        }
+      } else if (newPath === '/company/careers') {
+        const job = await jobsAPI.getById(query.id)
+        if (job) {
+          title = `${job.title} | Career Opening`
+          description = `Apply for the ${job.title} position in the ${job.team} team at DREAMACTIC.`
+        }
+      }
+    } catch (e) {
+      console.warn('SEO Dynamic Fetch failed:', e)
+    }
+  }
+
+  // 6. Update DOM Elements
   document.title = title
   
-  // Update Meta Description
+  // Meta Description
   let metaDesc = document.querySelector('meta[name="description"]')
   if (!metaDesc) {
     metaDesc = document.createElement('meta')
@@ -185,7 +259,16 @@ watch(() => route.path, (newPath) => {
   }
   metaDesc.setAttribute('content', description)
 
-  // Update Canonical URL
+  // Meta Keywords
+  let metaKeywords = document.querySelector('meta[name="keywords"]')
+  if (!metaKeywords) {
+    metaKeywords = document.createElement('meta')
+    metaKeywords.setAttribute('name', 'keywords')
+    document.head.appendChild(metaKeywords)
+  }
+  metaKeywords.setAttribute('content', keywords)
+
+  // Canonical URL
   let canonical = document.querySelector('link[rel="canonical"]')
   if (!canonical) {
     canonical = document.createElement('link')
@@ -193,7 +276,12 @@ watch(() => route.path, (newPath) => {
     document.head.appendChild(canonical)
   }
   canonical.setAttribute('href', `https://dreamactic.com${newPath === '/' ? '' : newPath}`)
-}, { immediate: true })
+}
+
+// Watch both path and query for SEO updates
+watch(() => [route.path, route.query], ([newPath, query]) => {
+  updateSEO(newPath, query)
+}, { immediate: true, deep: true })
 </script>
 
 <style scoped>

@@ -12,6 +12,10 @@
           <p class="brand-tagline">
             Orchestrating the Agentic Future. Bridging the gap between advanced AI orchestration and human creativity.
           </p>
+          <div class="location-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="loc-icon"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>Bengaluru, India</span>
+          </div>
           <div class="social-wrapper">
             <a href="#" class="social-link" aria-label="Twitter">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
@@ -154,6 +158,21 @@ const logoSrc = computed(() => {
   line-height: 1.6;
   color: var(--text-secondary);
   max-width: 320px;
+}
+
+.location-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: -0.5rem;
+}
+
+.loc-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--accent-primary);
 }
 
 .social-wrapper {
