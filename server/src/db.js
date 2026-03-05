@@ -241,7 +241,8 @@ const TABLE_COLUMNS = {
     insights: ['id', 'title', 'excerpt', 'content', 'author', 'imageUrl', 'page', 'published', 'journal', 'year', 'authors', 'pdfUrl', 'linkType', 'createdAt', 'updatedAt'],
     research: ['id', 'title', 'journal', 'year', 'authors', 'excerpt', 'abstract', 'content', 'imageUrl', 'pdfUrl', 'linkType', 'published', 'createdAt', 'updatedAt'],
     showcase: ['id', 'title', 'description', 'mediaUrl', 'mediaType', 'tag', 'product', 'order', 'active', 'size', 'likes', 'views', 'createdAt', 'updatedAt'],
-    jobs: ['id', 'title', 'team', 'location', 'description', 'requirements', 'company', 'tags', 'type', 'salary_range', 'remote_policy', 'experience_level', 'benefits', 'deadline', 'active', 'isArchived', 'createdAt', 'updatedAt']
+    jobs: ['id', 'title', 'team', 'location', 'description', 'requirements', 'company', 'tags', 'type', 'salary_range', 'remote_policy', 'experience_level', 'benefits', 'deadline', 'active', 'isArchived', 'createdAt', 'updatedAt'],
+    pages: ['id', 'page_id', 'hero_badge', 'hero_title', 'hero_subtitle', 'solutions', 'approaches', 'values_list', 'stats', 'team', 'advisors', 'perks', 'content', 'theme', 'isCustom', 'label', 'path', 'visible', 'group', 'updatedAt']
 };
 
 function sanitize(table, data) {
@@ -509,30 +510,25 @@ async function upsertPageConfig(pageId, configData) {
     const n = now();
     const data = { ...configData };
     if ('values' in data) { data.values_list = data.values; delete data.values; }
-    delete data._id; // Ensure MongoDB legacy/virtual _id isn't saved as a MySQL column
-    delete data.id;  // Ensure primary key isn't overwritten by frontend
-    delete data.updatedAt; // Don't use frontend's timestamp
-    delete data.page_id;   // Don't update the immutable page_id this way
-    const JSON_FIELDS = ['solutions', 'approaches', 'values_list', 'stats', 'team', 'advisors', 'perks', 'content', 'theme'];
-    for (const f of JSON_FIELDS) {
-        if (f in data && typeof data[f] !== 'string') data[f] = JSON.stringify(data[f]);
-    }
+
+    const d = sanitize('pages', { ...data, updatedAt: n });
+    delete d.id;      // Ensure primary key isn't overwritten
+    delete d.page_id; // Don't update the immutable page_id this way
 
     try {
         if (existing) {
-            const sets = Object.keys(data).map(k => `\`${k}\` = ?`).join(', ');
-            await pool.query(`UPDATE pages SET ${sets}, updatedAt = ? WHERE page_id = ?`, [...Object.values(data), n, pageId]);
+            const sets = Object.keys(d).map(k => `\`${k}\` = ?`).join(', ');
+            await pool.query(`UPDATE pages SET ${sets} WHERE page_id = ?`, [...Object.values(d), pageId]);
             return getPageConfig(pageId);
         } else {
             const id = uuidv4();
-            const d = { id, page_id: pageId, updatedAt: n, ...data };
-            const cols = Object.keys(d).map(k => `\`${k}\``).join(', ');
-            const placeholders = Object.keys(d).map(() => '?').join(', ');
-            await pool.query(`INSERT INTO pages (${cols}) VALUES (${placeholders})`, Object.values(d));
+            const insertData = { ...d, id, page_id: pageId };
+            const cols = Object.keys(insertData).map(k => `\`${k}\``).join(', ');
+            const placeholders = Object.keys(insertData).map(() => '?').join(', ');
+            await pool.query(`INSERT INTO pages (${cols}) VALUES (${placeholders})`, Object.values(insertData));
             return getPageConfig(pageId);
         }
     } catch (err) {
-        require('fs').appendFileSync('/tmp/err.log', err.toString() + ' \n ' + err.stack + '\n');
         console.error('❌ upsertPageConfig Error:', err);
         throw err;
     }
