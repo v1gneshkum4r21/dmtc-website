@@ -176,7 +176,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from 'vue'
+import { ref, onMounted, inject, watch } from 'vue'
 import { jobsAPI, pagesAPI } from '@/services/api'
 import { useRoute } from 'vue-router'
 import JobDetailModal from './JobDetailModal.vue'

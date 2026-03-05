@@ -146,7 +146,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch, markRaw } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch, markRaw } from 'vue'
 import { authAPI, adminAPI } from '@/services/api'
 import { navStore } from '@/store/navigation'
 

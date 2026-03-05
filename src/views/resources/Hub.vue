@@ -94,7 +94,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, inject, watch } from 'vue'
 import { insightsAPI, pagesAPI } from '@/services/api'
 import InsightModal from '@/components/InsightModal.vue'
 
