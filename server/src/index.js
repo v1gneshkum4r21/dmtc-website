@@ -140,7 +140,7 @@ app.get('/google:id.html', (req, res) => {
 
 // ─── SEO Endpoints ────────────────────────────────────────────────────────────
 
-app.get('/robots.txt', (req, res) => {
+app.get(['/robots.txt', '/robots.txt/'], (req, res) => {
     const robots = `User-agent: *
 Allow: /
 Disallow: /admin
@@ -150,7 +150,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`;
     res.send(robots);
 });
 
-app.get('/sitemap.xml', async (req, res, next) => {
+app.get(['/sitemap.xml', '/sitemap.xml/'], async (req, res, next) => {
     try {
         const baseUrl = `${req.protocol}://${req.get('host')}`;
 
@@ -197,7 +197,7 @@ app.get('/sitemap.xml', async (req, res, next) => {
 
         // Add Custom Pages
         pages.filter(p => p.visible).forEach(p => {
-            const path = p.path.startsWith('/') ? p.path : `/p/${p.page_id}`;
+            const path = (p.path && p.path.startsWith('/')) ? p.path : `/p/${p.page_id}`;
             xml += `
   <url>
     <loc>${baseUrl}${path}</loc>
