@@ -251,8 +251,9 @@ const formatRequirements = (reqs) => {
   return reqs.split(/\n|•|\*/).map(r => r.trim()).filter(r => r.length > 0)
 }
 
-onMounted(async () => {
-  window.scrollTo(0, 0)
+const refreshCount = inject('refreshCount', ref(0))
+
+const syncData = async () => {
   try {
     const [careersConfig, jobsData] = await Promise.all([
       pagesAPI.getConfig('careers'),
@@ -265,8 +266,8 @@ onMounted(async () => {
     if (jobsData?.length) {
       roles.value = jobsData.map(j => ({ ...j, showDetails: false }))
       
-      // Check for ID in query params to auto-open modal
-      if (route.query.id) {
+      // Check for ID in query params to auto-open modal (only on initial mount)
+      if (route.query.id && !selectedJobDetail.value) {
         const targetJob = jobsData.find(j => j._id === route.query.id || j.id === route.query.id)
         if (targetJob) {
           openJobModal(targetJob.title)
@@ -274,9 +275,17 @@ onMounted(async () => {
       }
     }
   } catch (err) {
-    console.error('Failed to load careers page:', err)
+    console.error('Failed to sync careers data:', err)
   }
+}
+
+onMounted(async () => {
+  window.scrollTo(0, 0)
+  await syncData()
 })
+
+// Listen for global sync heartbeat
+watch(refreshCount, syncData)
 </script>
 
 <style scoped>

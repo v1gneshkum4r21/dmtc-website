@@ -117,6 +117,15 @@
           <span class="link-icon">🎨</span>
           <span class="link-text">Media Showcase</span>
         </div>
+        <div 
+          class="synapse-link"
+          :class="{ active: activeModule === 'hero' }"
+          @click="resetToModule('hero')"
+        >
+          <div class="link-glow"></div>
+          <span class="link-icon">🎬</span>
+          <span class="link-text">Hero Carousel</span>
+        </div>
       </div>
 
       <!-- CORPORATE ORBIT -->

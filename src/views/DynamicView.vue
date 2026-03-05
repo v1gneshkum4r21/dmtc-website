@@ -490,9 +490,10 @@ const formatText = (text = '') =>
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
 
 // ── Lifecycle ──────────────────────────────────────────────────────────
-onMounted(async () => {
-  await loadPageData()
+const refreshCount = inject('refreshCount', ref(0))
 
+const syncContent = async () => {
+  await loadPageData()
   if (!props.isPreview) {
     try {
       const res = await insightsAPI.getAll(null)
@@ -501,7 +502,14 @@ onMounted(async () => {
       liveInsights.value = []
     }
   }
+}
+
+onMounted(async () => {
+  await syncContent()
 })
+
+// Global refresh heartbeat listener
+watch(refreshCount, syncContent)
 
 // Re-fetch if route changes (SPA navigation)
 watch(() => route.params, loadPageData)

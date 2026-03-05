@@ -41,7 +41,7 @@
             <component 
               :is="activeComponent" 
               v-bind="componentProps"
-              @switch="m => activeModule = m"
+              @switch="(m, sub) => { activeModule = m; if (sub) selectedPage = sub }"
               @switch-tab="t => selectedPage = t"
               @create="handleGlobalCreate"
               @edit="startEdit"
@@ -161,6 +161,7 @@ import SettingsManager from './modules/settings/SettingsManager.vue'
 import ServicesManager from './modules/services/ServicesManager.vue'
 import ProductsManager from './modules/products/ProductsManager.vue'
 import ShowcaseManager from './modules/showcase/ShowcaseManager.vue'
+import HeroCarouselManager from './modules/hero/HeroCarouselManager.vue'
 import CareersManager from './modules/careers/CareersManager.vue'
 import ContactsManager from './modules/contacts/ContactsManager.vue'
 import CompanyManager from './modules/company/CompanyManager.vue'
@@ -249,6 +250,7 @@ const activeComponent = computed(() => {
     services: markRaw(ServicesManager),
     products: markRaw(ProductsManager),
     showcase: markRaw(ShowcaseManager),
+    hero: markRaw(HeroCarouselManager),
     careers: markRaw(CareersManager),
     contacts: markRaw(ContactsManager),
     company: markRaw(CompanyManager),
@@ -281,6 +283,7 @@ const activeModuleTitle = computed(() => {
     services: 'Services Intelligence', 
     products: 'Product Inventory', 
     showcase: 'Museum Curator',
+    hero: 'Hero Carousel',
     contacts: 'Network Comms',
     company: 'Corporate Strategy',
     resources: 'Intelligence Unit'
@@ -339,7 +342,20 @@ const handleLogin = async (credentials) => {
 
 const handleLogout = () => { authAPI.logout(); isAuthenticated.value = false }
 
-const initDashboard = () => { loadInsights(); loadShowcase(); loadJobs(); loadApplications(); loadResearch(); loadContacts() }
+const initDashboard = () => { 
+  const fetchAll = () => {
+    loadInsights(); 
+    loadShowcase(); 
+    loadJobs(); 
+    loadApplications(); 
+    loadResearch(); 
+    loadContacts();
+  }
+  fetchAll()
+  // Auto-refresh admin data every 60 seconds
+  const refreshTimer = setInterval(fetchAll, 60000)
+  onUnmounted(() => clearInterval(refreshTimer))
+}
 
 const loadInsights = async () => { 
   loading.value = true

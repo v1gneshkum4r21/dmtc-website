@@ -140,7 +140,15 @@ const scrollResources = (direction) => {
   resourcesGrid.value.scrollBy({ left: direction === 'left' ? -380 : 380, behavior: 'smooth' })
 }
 
-onMounted(() => { window.scrollTo(0, 0); initPage() })
+const refreshCount = inject('refreshCount', ref(0))
+
+onMounted(() => { 
+  window.scrollTo(0, 0)
+  initPage() 
+})
+
+// Listen for global sync heartbeat
+watch(refreshCount, initPage)
 </script>
 
 <style scoped>

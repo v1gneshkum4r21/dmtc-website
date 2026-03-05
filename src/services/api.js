@@ -362,6 +362,16 @@ export const adminAPI = {
     },
     deleteContact: async (id) => {
         await apiClient.delete(`/admin/contacts/${id}`)
+    },
+
+    // Hero Carousel Slides
+    getHeroSlides: async () => {
+        const response = await apiClient.get('/admin/hero-slides')
+        return response.data
+    },
+    saveHeroSlides: async (slides) => {
+        const response = await apiClient.post('/admin/hero-slides', slides)
+        return response.data
     }
 }
 

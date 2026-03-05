@@ -65,7 +65,7 @@
                         <li 
                           v-for="option in options" 
                           :key="option.value"
-                          @click="selectOption(option)"
+                          @mousedown.prevent="selectOption(option)"
                           :class="{ 'is-selected': form.subject === option.value }"
                         >
                           <div class="option-dot"></div>
@@ -214,10 +214,10 @@ const vClickOutside = {
         binding.value(event)
       }
     }
-    document.addEventListener('click', el.clickOutsideEvent)
+    document.addEventListener('mousedown', el.clickOutsideEvent)
   },
   unmounted(el) {
-    document.removeEventListener('click', el.clickOutsideEvent)
+    document.removeEventListener('mousedown', el.clickOutsideEvent)
   }
 }
 

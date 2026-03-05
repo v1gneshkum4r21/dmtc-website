@@ -213,6 +213,9 @@ async function initDb() {
         try { await pool.query(sql); } catch (e) { /* Column likely exists */ }
     }
 
+    // Add hero_slides column to settings if missing
+    try { await pool.query("ALTER TABLE settings ADD COLUMN hero_slides LONGTEXT"); } catch (e) { /* already exists */ }
+
     // Default Seed Data
     const [users] = await pool.query('SELECT count(*) as count FROM users');
     if (users[0].count === 0) {
@@ -259,6 +262,7 @@ const settingsHelper = (r) => {
     if (!r) return null;
     const item = { ...r, indexRobots: !!r.indexRobots, maintenanceMode: !!r.maintenanceMode };
     if (typeof item.social === 'string') item.social = JSON.parse(item.social || '{}');
+    if (typeof item.hero_slides === 'string') item.hero_slides = JSON.parse(item.hero_slides || '[]');
     return item;
 };
 

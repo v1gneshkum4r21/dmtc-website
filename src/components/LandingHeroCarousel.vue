@@ -20,16 +20,25 @@
           class="landing-carousel-slide"
           :class="getSlideClass(index)"
           @click="handleSlideClick(index)"
+          @mouseenter="stopAutoPlay"
+          @mouseleave="startAutoPlay"
         >
           <div class="landing-slide-content-wrapper">
             <div class="landing-slide-video-container">
               <video
+                v-if="slide.mediaType !== 'image'"
                 :ref="el => videoRefs[index] = el"
-                :src="slide.video"
+                :src="slide.url || slide.video"
                 class="landing-slide-video"
                 muted
                 playsinline
                 loop
+              />
+              <img
+                v-else
+                :src="slide.url"
+                class="landing-slide-video"
+                alt=""
               />
               <div class="landing-slide-overlay" />
             </div>
@@ -64,89 +73,122 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
 
-const props = defineProps({
-  slides: {
-    type: Array,
-    default: () => [
-      {
-        id: 1,
-        video: "https://videos.pexels.com/video-files/3129671/3129671-uhd_2560_1440_30fps.mp4",
-        title: "Neural Core",
-        desc: "The heartbeat of synthetic intelligence."
-      },
-      {
-        id: 2,
-        video: "https://videos.pexels.com/video-files/5377684/5377684-hd_1920_1080_25fps.mp4",
-        title: "Future Cities",
-        desc: "Architecting the skyline of tomorrow."
-      },
-      {
-        id: 3,
-        video: "https://videos.pexels.com/video-files/853889/853889-hd_1920_1080_25fps.mp4",
-        title: "Global Grid",
-        desc: "Connecting consciousness across the void."
-      }
-    ]
+const DEFAULT_SLIDES = [
+  { id: 1, mediaType: 'video', url: 'https://videos.pexels.com/video-files/3129671/3129671-uhd_2560_1440_30fps.mp4', title: 'Neural Core', desc: 'The heartbeat of synthetic intelligence.' },
+  { id: 2, mediaType: 'video', url: 'https://videos.pexels.com/video-files/5377684/5377684-hd_1920_1080_25fps.mp4', title: 'Future Cities', desc: 'Architecting the skyline of tomorrow.' },
+  { id: 3, mediaType: 'video', url: 'https://videos.pexels.com/video-files/853889/853889-hd_1920_1080_25fps.mp4', title: 'Global Grid', desc: 'Connecting consciousness across the void.' }
+];
+
+const slides = ref(DEFAULT_SLIDES);
+
+// Fetch dynamic slides from admin
+const fetchSlides = async () => {
+  try {
+    const res = await fetch('/api/hero-slides');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) return;
+
+    // Normalize
+    const newSlides = data.map(s => ({
+      ...s,
+      url: s.url || s.video || '',
+      mediaType: s.mediaType || (s.video ? 'video' : 'image'),
+      duration: s.duration || 5,
+    }));
+
+    // Deep compare to prevent unnecessary state resets
+    if (JSON.stringify(newSlides) === JSON.stringify(slides.value)) return;
+
+    slides.value = newSlides;
+    
+    // Pick up global settings from first slide metadata
+    if (data[0]?._globalDuration) globalDuration.value = data[0]._globalDuration;
+    if (data[0]?._autoplay !== undefined) isAutoPlaying.value = data[0]._autoplay;
+    if (data[0]?._loop !== undefined) loop.value = data[0]._loop;
+  } catch (err) {
+    // Silence errors to keep experience smooth
   }
+};
+
+onMounted(() => {
+  fetchSlides().then(() => startAutoPlay());
+  // Background check for carousel updates every 60 seconds
+  const syncTimer = setInterval(fetchSlides, 60000);
+  onUnmounted(() => clearInterval(syncTimer));
 });
 
 const currentIndex = ref(0);
 const isAutoPlaying = ref(true);
+const loop = ref(true);
+const globalDuration = ref(5);
 const videoRefs = ref([]);
-let autoPlayInterval = null;
+let autoPlayTimeout = null;
 
 const nextSlide = () => {
-  currentIndex.value = (currentIndex.value + 1) % props.slides.length;
+  if (currentIndex.value < slides.value.length - 1) {
+    currentIndex.value++;
+  } else if (loop.value) {
+    currentIndex.value = 0;
+  }
 };
 
 const prevSlide = () => {
-  currentIndex.value = (currentIndex.value - 1 + props.slides.length) % props.slides.length;
+  currentIndex.value = (currentIndex.value - 1 + slides.value.length) % slides.value.length;
 };
 
 const handleSlideClick = (index) => {
   if (index !== currentIndex.value) {
     currentIndex.value = index;
+  } else if (slides.value[index]?.link) {
+    window.open(slides.value[index].link, '_blank');
   }
 };
 
 const getSlideClass = (index) => {
   if (index === currentIndex.value) return 'active';
-  if (index === (currentIndex.value - 1 + props.slides.length) % props.slides.length) return 'prev';
-  if (index === (currentIndex.value + 1) % props.slides.length) return 'next';
+  if (index === (currentIndex.value - 1 + slides.value.length) % slides.value.length) return 'prev';
+  if (index === (currentIndex.value + 1) % slides.value.length) return 'next';
   return '';
 };
 
 const startAutoPlay = () => {
   stopAutoPlay();
-  if (isAutoPlaying.value) {
-    autoPlayInterval = setInterval(nextSlide, 5000);
-  }
+  if (!isAutoPlaying.value || slides.value.length === 0) return;
+  
+  // If we are at the end and loop is off, don't schedule next
+  if (!loop.value && currentIndex.value === slides.value.length - 1) return;
+
+  const slide = slides.value[currentIndex.value];
+  const ms = ((slide?.duration) || globalDuration.value) * 1000;
+  autoPlayTimeout = setTimeout(() => {
+    nextSlide();
+    startAutoPlay();
+  }, ms);
 };
 
 const stopAutoPlay = () => {
-  if (autoPlayInterval) {
-    clearInterval(autoPlayInterval);
-    autoPlayInterval = null;
+  if (autoPlayTimeout) {
+    clearTimeout(autoPlayTimeout);
+    autoPlayTimeout = null;
   }
 };
 
 watch(currentIndex, (newIndex) => {
+  // Restart the timer on each slide change to use that slide's duration
+  startAutoPlay();
   videoRefs.value.forEach((video, index) => {
     if (!video) return;
     if (index === newIndex) {
-      video.play().catch(() => { });
+      video.play().catch(() => {});
     } else {
       video.pause();
       video.currentTime = 0;
     }
   });
 }, { immediate: true });
-
-onMounted(() => {
-  startAutoPlay();
-});
 
 onUnmounted(() => {
   stopAutoPlay();

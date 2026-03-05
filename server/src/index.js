@@ -117,6 +117,14 @@ app.post('/api/contacts', async (req, res, next) => {
     try { res.status(201).json(await db.createContact(req.body)); } catch (e) { next(e); }
 });
 
+// Hero Slides (Public)
+app.get('/api/hero-slides', async (req, res, next) => {
+    try {
+        const settings = await db.getSiteSettings();
+        res.json(settings?.hero_slides || []);
+    } catch (e) { next(e); }
+});
+
 // Auth
 app.post('/api/auth/login', upload.none(), async (req, res, next) => {
     try {
@@ -309,6 +317,22 @@ admin.get('/settings', async (req, res, next) => {
 });
 admin.post('/settings', async (req, res, next) => {
     try { res.json(await db.updateSiteSettings(req.body)); } catch (e) { next(e); }
+});
+
+// Hero Carousel Slides (stored as JSON in settings)
+admin.get('/hero-slides', async (req, res, next) => {
+    try {
+        const settings = await db.getSiteSettings();
+        res.json(settings?.hero_slides || []);
+    } catch (e) { next(e); }
+});
+admin.post('/hero-slides', async (req, res, next) => {
+    try {
+        const slides = req.body;
+        if (!Array.isArray(slides)) return res.status(400).json({ detail: 'Expected an array of slides' });
+        await db.updateSiteSettings({ hero_slides: JSON.stringify(slides) });
+        res.json({ message: 'Slides saved', count: slides.length });
+    } catch (e) { next(e); }
 });
 
 // WebAuthn MFA Registration

@@ -29,8 +29,9 @@
 </template>
 
 <script setup>
-import { ref, provide, onMounted, computed } from 'vue'
+import { ref, provide, onMounted, onUnmounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { navStore } from './store/navigation'
 import FloatingNavbar from './components/FloatingNavbar.vue'
 import Footer from './components/Footer.vue'
 import ContactModal from './components/ContactModal.vue'
@@ -114,17 +115,37 @@ const closeDemoModal = () => {
   demoModalData.value = { title: '', subtitle: '', message: '' }
 }
 
+// Global refresh signal (incremented by heartbeat)
+const refreshCount = ref(0)
+provide('refreshCount', refreshCount)
+
 // Provide global access to trigger modals
 provide('openContactModal', openContactModal)
 provide('openJobModal', openJobModal)
 provide('openSolutionModal', openSolutionModal)
 provide('openDemoModal', openDemoModal)
 
+// Global Sync Heartbeat (syncs navigation and signals view refresh)
+let globalSyncTimer = null
+const startGlobalHeartbeat = () => {
+  globalSyncTimer = setInterval(async () => {
+    // 1. Sync Modular Pages / Navigation
+    await navStore.syncFromDB()
+    // 2. Increment signal for active views to re-fetch
+    refreshCount.value++
+  }, 60000) // Poll every 60 seconds
+}
+
 // Set default theme on mount
 onMounted(() => {
   if (isDarkMode.value) {
     document.body.classList.add('dark-theme')
   }
+  startGlobalHeartbeat()
+})
+
+onUnmounted(() => {
+  if (globalSyncTimer) clearInterval(globalSyncTimer)
 })
 </script>
 

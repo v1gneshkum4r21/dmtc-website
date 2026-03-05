@@ -1,141 +1,218 @@
 <template>
   <div class="dashboard-home">
-    <header class="module-header luxury-page-title">
-      <div class="header-vessel">
-        <div class="section-context">
-          <span class="context-tag">COMMAND_CORE</span>
+
+    <!-- ── HERO COMMAND BANNER ──────────────────────────────── -->
+    <div class="hero-banner">
+      <div class="hero-bg-glow"></div>
+      <div class="hero-content">
+        <div class="hero-left">
+          <div class="command-badge">
+            <span class="badge-dot"></span>
+            COMMAND_CORE // SYSTEM LIVE
+          </div>
+          <h1>Command <span class="text-gradient-primary">Center</span></h1>
+          <p>Global Intelligence Orchestration &amp; Ecosystem Monitoring. All systems nominal.</p>
         </div>
-        <h1>Command <span class="text-gradient-primary">Center</span></h1>
-        <p>Global Intelligence Orchestration & Ecosystem Monitoring.</p>
-      </div>
-      
-      <div class="header-actions">
-        <div class="system-integrity-premium">
-          <div class="integrity-pulse">
+        <div class="hero-right">
+          <div class="time-block">
+            <span class="time-label">LOCAL TIME</span>
+            <span class="time-val">{{ currentTime }}</span>
+          </div>
+          <div class="integrity-block">
             <svg viewBox="0 0 100 40" class="pulse-svg">
               <polyline points="0,20 20,20 25,10 35,30 40,20 60,20 65,5 75,35 80,20 100,20" class="pulse-line" />
             </svg>
-          </div>
-          <div class="integrity-details">
-            <span class="label">System Integrity</span>
-            <span class="status">OPTIMAL // 99.8%</span>
+            <div>
+              <span class="int-label">System Integrity</span>
+              <span class="int-status">OPTIMAL // 99.8%</span>
+            </div>
           </div>
         </div>
       </div>
-    </header>
+    </div>
 
-    <!-- Essential Metrics Matrix -->
+    <!-- ── METRICS MATRIX ──────────────────────────────────── -->
     <div class="metrics-matrix">
-      <div v-for="stat in metrics" :key="stat.label" class="metric-node card-premium luxe">
-        <div class="node-icon" :style="{ background: stat.bg }">{{ stat.icon }}</div>
-        <div class="node-info">
-          <label class="node-label">{{ stat.label }}</label>
+      <div
+        v-for="stat in metrics" :key="stat.label"
+        class="metric-node card-premium"
+        @click="$emit('switch', stat.module)"
+        style="cursor:pointer"
+      >
+        <div class="node-icon-wrap" :style="{ background: stat.bg }">
+          <span class="node-emoji">{{ stat.icon }}</span>
+        </div>
+        <div class="node-body">
+          <span class="node-label">{{ stat.label }}</span>
           <div class="node-val-row">
-            <span class="val">{{ stat.value }}</span>
+            <span class="node-val">{{ stat.value }}</span>
             <div class="momentum" :class="stat.trend > 0 ? 'up' : 'stable'">
-              <span class="m-icon">{{ stat.trend > 0 ? '▲' : '▬' }}</span>
-              {{ stat.trend }}%
+              {{ stat.trend > 0 ? '▲' : '▬' }} {{ stat.trend }}%
             </div>
           </div>
         </div>
-        <div class="node-pulse-bar">
-          <div class="pulse-fill" :style="{ width: '70%', background: stat.bg.replace('0.1', '0.5') }"></div>
+        <div class="node-bar-bg">
+          <div class="node-bar-fill" :style="{ width: Math.min((stat.value / 20) * 100, 100) + '%', background: stat.color }"></div>
+        </div>
+        <div class="node-arrow">→</div>
+      </div>
+    </div>
+
+    <!-- ── QUICK ACCESS GRID ──────────────────────────────── -->
+    <div class="section-divider">
+      <span class="divider-label">⚡ QUICK ACCESS</span>
+    </div>
+    <div class="quick-access-grid">
+      <div v-for="nav in quickLinks" :key="nav.label"
+        class="quick-tile"
+        :style="{ '--tile-color': nav.color }"
+        @click="nav.sub ? $emit('switch', nav.module, nav.sub) : $emit('switch', nav.module)"
+      >
+        <div class="tile-icon-ring">{{ nav.icon }}</div>
+        <div class="tile-body">
+          <span class="tile-title">{{ nav.label }}</span>
+          <span class="tile-desc">{{ nav.desc }}</span>
+        </div>
+        <div class="tile-arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
         </div>
       </div>
     </div>
 
-    <!-- Dual Activity Hubs -->
-    <div class="activity-hub-grid">
-      <!-- Editorial Momentum (Left) -->
-      <div class="card-premium hub-node editorial-momentum">
-        <div class="hub-header">
-          <div class="h-title">
-            <span class="h-icon">✍️</span>
-            <h3>Network Comms</h3>
-          </div>
-          <button class="nav-btn-mini" @click="$emit('switch', 'contacts')">Dispatch Hub</button>
-        </div>
+    <!-- ── LIVE FEED GRID ─────────────────────────────────── -->
+    <div class="live-feed-grid">
 
-        <div class="hub-inventory-wheel">
-          <div v-for="c in recentContacts" :key="c.id" class="inventory-item">
-            <div class="i-core">
-              <span class="i-title">{{ c.name }}</span>
-              <span class="i-meta">{{ c.email }} // {{ c.subject }}</span>
+      <!-- Network Comms Feed -->
+      <div class="card-premium feed-card">
+        <div class="feed-header">
+          <div class="feed-title">
+            <div class="feed-badge" style="background: rgba(34,211,238,0.15); color: #22d3ee;">📫</div>
+            <div>
+              <h3>Network Comms</h3>
+              <span class="feed-subtitle">{{ unseenContacts }} unseen transmissions</span>
             </div>
-            <div class="i-status" :class="c.status">{{ c.status.toUpperCase() }}</div>
-            <div class="i-date">{{ formatDateShort(c.createdAt) }}</div>
           </div>
-          <div v-if="recentContacts.length === 0" class="empty-hub">No incoming transmissions.</div>
+          <button class="feed-action-btn" @click="$emit('switch', 'contacts')">
+            View All →
+          </button>
+        </div>
+        <div class="feed-list">
+          <div v-for="c in recentContacts" :key="c.id" class="feed-item" @click="$emit('switch', 'contacts')">
+            <div class="fi-avatar" :style="{ background: 'linear-gradient(135deg, #22d3ee, #3b82f6)' }">
+              {{ c.name.charAt(0).toUpperCase() }}
+            </div>
+            <div class="fi-body">
+              <span class="fi-name">{{ c.name }}</span>
+              <span class="fi-meta">{{ c.email }} · {{ c.subject || 'general' }}</span>
+            </div>
+            <div class="fi-status" :class="c.status">{{ c.status.toUpperCase() }}</div>
+            <div class="fi-date">{{ formatDateShort(c.createdAt) }}</div>
+          </div>
+          <div v-if="recentContacts.length === 0" class="feed-empty">
+            <span>📭</span> No transmissions yet
+          </div>
         </div>
       </div>
 
-      <!-- Talent Acquisition (Right) -->
-      <div class="card-premium hub-node talent-acquisition">
-        <div class="hub-header">
-          <div class="h-title">
-            <span class="h-icon">👥</span>
-            <h3>Talent Acquisition</h3>
-          </div>
-          <button class="nav-btn-mini" @click="$emit('switch', 'careers')">Review Pipeline</button>
-        </div>
-
-        <div class="talent-pipeline-stack">
-          <div v-for="a in recentApplications" :key="a._id" class="pipeline-card">
-            <div class="p-avatar">{{ a.name.charAt(0) }}</div>
-            <div class="p-info">
-              <span class="p-name">{{ a.name }}</span>
-              <span class="p-role">{{ a.role }}</span>
+      <!-- Talent Pipeline Feed -->
+      <div class="card-premium feed-card">
+        <div class="feed-header">
+          <div class="feed-title">
+            <div class="feed-badge" style="background: rgba(59,130,246,0.15); color: #3b82f6;">👥</div>
+            <div>
+              <h3>Talent Pipeline</h3>
+              <span class="feed-subtitle">{{ recentApplications.length }} recent candidates</span>
             </div>
-            <div class="p-status-pill" :class="a.status.toLowerCase()">{{ a.status }}</div>
           </div>
-          <div v-if="recentApplications.length === 0" class="empty-hub">Talent pipeline dormant.</div>
+          <button class="feed-action-btn" @click="$emit('switch', 'careers', 'applicants')">
+            Review →
+          </button>
+        </div>
+        <div class="feed-list">
+          <div v-for="a in recentApplications" :key="a._id" class="feed-item" @click="$emit('switch', 'careers', 'applicants')">
+            <div class="fi-avatar" :style="{ background: 'linear-gradient(135deg, #3b82f6, #0ea5e9)' }">
+              {{ a.name.charAt(0).toUpperCase() }}
+            </div>
+            <div class="fi-body">
+              <span class="fi-name">{{ a.name }}</span>
+              <span class="fi-meta">{{ a.role || 'Open Role' }}</span>
+            </div>
+            <div class="fi-status" :class="a.status.toLowerCase()">{{ a.status }}</div>
+            <div class="fi-date">{{ formatDateShort(a.createdAt) }}</div>
+          </div>
+          <div v-if="recentApplications.length === 0" class="feed-empty">
+            <span>💼</span> No applications yet
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Infrastructure Highlights -->
-    <div class="infrastructure-footer">
-      <div class="highlight-node showcase-highlight card-premium">
-        <div class="h-context">
-          <span class="pre">LATEST MUSEUM ADDITION</span>
-          <h4 v-if="latestShowcase">{{ latestShowcase.title }}</h4>
-          <h4 v-else>No showcase media available</h4>
+    <!-- ── BOTTOM ROW ─────────────────────────────────────── -->
+    <div class="bottom-row">
+
+      <!-- Latest Showcase -->
+      <div class="card-premium showcase-card" @click="$emit('switch', 'showcase')" style="cursor:pointer">
+        <div class="sc-label">LATEST SHOWCASE</div>
+        <div class="sc-body" v-if="latestShowcase">
+          <div class="sc-image">
+            <img v-if="latestShowcase.mediaType === 'image'" :src="latestShowcase.mediaUrl" alt="" />
+            <div v-else class="sc-placeholder">🎬</div>
+          </div>
+          <div class="sc-info">
+            <h4>{{ latestShowcase.title }}</h4>
+            <p>{{ latestShowcase.description || latestShowcase.tag }}</p>
+            <span class="sc-link">Open Museum Curator →</span>
+          </div>
         </div>
-        <div class="h-visual" v-if="latestShowcase">
-          <img v-if="latestShowcase.mediaType === 'image'" :src="latestShowcase.mediaUrl" alt="" />
-          <div v-else class="vid-placeholder">🎬</div>
-        </div>
-        <div class="h-action">
-          <button @click="$emit('switch', 'showcase')">Museum Curator →</button>
-        </div>
+        <div v-else class="sc-empty">No showcase media yet. Start adding masterpieces.</div>
       </div>
 
-      <div class="maintenance-cluster card-premium">
-        <div class="cluster-grid">
-          <button class="cluster-tool">
-            <span class="t-icon">⚡</span>
-            <span>Flush Cache</span>
+      <!-- System Quick Tools -->
+      <div class="card-premium tools-card">
+        <div class="tools-header">
+          <h3>⚙️ System Tools</h3>
+          <span class="tools-sub">Quick administrative actions</span>
+        </div>
+        <div class="tools-grid">
+          <button class="tool-btn" @click="$emit('switch', 'settings')">
+            <span class="tb-icon">⚙️</span>
+            <span class="tb-label">System Config</span>
           </button>
-          <button class="cluster-tool" @click="$emit('switch', 'settings')">
-            <span class="t-icon">⚙️</span>
-            <span>System Config</span>
+          <button class="tool-btn" @click="$emit('switch', 'showcase')">
+            <span class="tb-icon">🎨</span>
+            <span class="tb-label">Media Curator</span>
           </button>
-          <button class="cluster-tool">
-            <span class="t-icon">🛡️</span>
-            <span>Audit Trail</span>
+          <button class="tool-btn" @click="$emit('switch', 'careers', 'jds')">
+            <span class="tb-icon">💼</span>
+            <span class="tb-label">Active Jobs</span>
           </button>
-          <button class="cluster-tool">
-            <span class="t-icon">📦</span>
-            <span>Redundancy Export</span>
+          <button class="tool-btn" @click="$emit('switch', 'careers', 'history')">
+            <span class="tb-icon">📜</span>
+            <span class="tb-label">Audit History</span>
+          </button>
+          <button class="tool-btn" @click="$emit('switch', 'hero')">
+            <span class="tb-icon">🎬</span>
+            <span class="tb-label">Hero Manager</span>
+          </button>
+          <button class="tool-btn" @click="$emit('switch', 'contacts')">
+            <span class="tb-icon">📫</span>
+            <span class="tb-label">Network Comms</span>
+          </button>
+          <button class="tool-btn" @click="$emit('switch', 'careers', 'applicants')">
+            <span class="tb-icon">👥</span>
+            <span class="tb-label">Candidates</span>
           </button>
         </div>
       </div>
     </div>
+
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps({
   insights: { type: Array, default: () => [] },
@@ -146,90 +223,183 @@ const props = defineProps({
 
 const emit = defineEmits(['switch'])
 
+// Live time clock
+const currentTime = ref('')
+let timer
+const updateTime = () => {
+  currentTime.value = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+}
+onMounted(() => { updateTime(); timer = setInterval(updateTime, 1000) })
+onUnmounted(() => clearInterval(timer))
+
+// Metrics
 const metrics = computed(() => [
-  { label: 'Intelligence Nodes', value: props.insights.length, icon: '💎', bg: 'rgba(14, 165, 233, 0.1)', trend: 12 },
-  { label: 'Network Comms', value: props.contacts.length, icon: '📫', bg: 'rgba(34, 211, 238, 0.1)', trend: 0 },
-  { label: 'Ecosystem Talent', value: props.applications.length, icon: '🚀', bg: 'rgba(59, 130, 246, 0.1)', trend: 2 },
-  { label: 'Visual Masterpieces', value: props.showcase.length, icon: '✨', bg: 'rgba(6, 182, 212, 0.1)', trend: 5 }
+  { label: 'Intelligence Nodes', value: props.insights.length, icon: '💎', bg: 'rgba(14,165,233,0.12)', color: '#0ea5e9', trend: 12, module: 'insights' },
+  { label: 'Network Comms', value: props.contacts.length, icon: '📫', bg: 'rgba(34,211,238,0.12)', color: '#22d3ee', trend: 0, module: 'contacts' },
+  { label: 'Candidate Mesh', value: props.applications.length, icon: '🚀', bg: 'rgba(59,130,246,0.12)', color: '#3b82f6', trend: 2, module: 'careers' },
+  { label: 'Visual Archive', value: props.showcase.length, icon: '✨', bg: 'rgba(6,182,212,0.12)', color: '#06b6d4', trend: 5, module: 'showcase' }
 ])
 
-const recentInsights = computed(() => [...props.insights].sort((a,b) => new Date(b.updatedAt) - new Date(a.updatedAt)).slice(0, 6))
-const recentContacts = computed(() => [...props.contacts].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 6))
-const recentApplications = computed(() => [...props.applications].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 4))
+// Quick access links
+const quickLinks = [
+  { label: 'Services Intel', desc: 'AI Work · Service · Enterprise', icon: '💡', color: '#0ea5e9', module: 'insights' },
+  { label: 'Products Intel', desc: 'Superfitter · EchoAI pages', icon: '📦', color: '#3b82f6', module: 'insights' },
+  { label: 'Company Strategy', desc: 'About Us · Leadership pages', icon: '🏢', color: '#22d3ee', module: 'company' },
+  { label: 'Active Protocols', desc: 'Manage open job listings', icon: '💼', color: '#0ea5e9', module: 'careers', sub: 'jds' },
+  { label: 'Candidate Mesh', desc: 'Review applications & talent', icon: '👥', color: '#06b6d4', module: 'careers', sub: 'applicants' },
+  { label: 'Knowledge Hub', desc: 'Blog · Research · Resources', icon: '📚', color: '#3b82f6', module: 'resources' },
+  { label: 'Hero Matrix', desc: 'Cinematic landing carousel', icon: '🎬', color: '#22d3ee', module: 'hero' },
+  { label: 'Media Showcase', desc: 'Visual masterpieces archive', icon: '🎨', color: '#0ea5e9', module: 'showcase' },
+  { label: 'Network Comms', desc: 'Incoming contact transmissions', icon: '📫', color: '#22d3ee', module: 'contacts' },
+  { label: 'System Config', desc: 'SEO · Identity · Social settings', icon: '⚙️', color: '#94a3b8', module: 'settings' },
+]
+
+// Live data
+const unseenContacts = computed(() => props.contacts.filter(c => c.status === 'unseen').length)
+const recentContacts = computed(() => [...props.contacts].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5))
+const recentApplications = computed(() => [...props.applications].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5))
 const latestShowcase = computed(() => props.showcase.length > 0 ? props.showcase[props.showcase.length - 1] : null)
 
-const formatDateShort = (date) => new Date(date).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' })
+const formatDateShort = (date) => {
+  if (!date) return ''
+  return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
 </script>
 
 <style scoped>
 .dashboard-home {
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 2rem;
   padding-bottom: 5rem;
-  animation: dashboardFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: dashboardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes dashboardFadeIn {
-  from { opacity: 0; transform: translateY(30px); }
+@keyframes dashboardIn {
+  from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Command Header */
-.command-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--glass-light);
-  padding: 3rem;
-  border-radius: 40px;
+/* ── HERO BANNER ─────────────────────────── */
+.hero-banner {
+  background: var(--bg-elevated);
   border: 1px solid var(--border-subtle);
+  border-radius: 28px;
+  padding: 2.5rem 3rem;
   position: relative;
   overflow: hidden;
 }
 
-.command-header::after {
-  content: '';
+.hero-bg-glow {
   position: absolute;
-  top: 0; right: 0; bottom: 0; left: 0;
-  background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.1), transparent 60%);
+  top: -60px; right: -60px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.12), transparent 70%);
   pointer-events: none;
 }
 
-.header-main { display: flex; gap: 2rem; align-items: center; }
-.command-glyph {
-  width: 70px; height: 70px;
-  background: var(--primary-gradient);
-  border-radius: 22px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 2.2rem;
-  box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+.hero-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  position: relative;
 }
 
-.context h1 { font-size: 2.2rem; font-weight: 900; letter-spacing: -0.04em; margin-bottom: 0.5rem; }
-.context p { color: var(--text-muted); font-size: 1rem; font-weight: 500; }
-.text-gradient { background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.command-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: #22d3ee;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  background: rgba(34, 211, 238, 0.08);
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  padding: 6px 14px;
+  border-radius: 100px;
+  margin-bottom: 1rem;
+}
 
-.system-integrity {
+.badge-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #22d3ee;
+  box-shadow: 0 0 8px #22d3ee;
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.hero-left h1 {
+  font-size: 2.8rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: white;
+  margin: 0 0 0.5rem;
+}
+
+.hero-left p {
+  color: var(--text-muted);
+  font-size: 1rem;
+  font-weight: 500;
+  max-width: 500px;
+}
+
+.hero-right {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 2rem;
+  flex-shrink: 0;
+}
+
+.time-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.time-label {
+  font-size: 0.6rem;
+  font-weight: 900;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.time-val {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: white;
+  font-family: monospace;
+  letter-spacing: 0.05em;
+}
+
+.integrity-block {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   background: rgba(0,0,0,0.3);
-  padding: 1rem 2rem;
-  border-radius: 20px;
+  padding: 1rem 1.5rem;
+  border-radius: 16px;
   border: 1px solid var(--border-subtle);
 }
 
 .pulse-svg { width: 80px; height: 30px; }
 .pulse-line {
   fill: none;
-  stroke: var(--success);
+  stroke: #22d3ee;
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-dasharray: 200;
   stroke-dashoffset: 200;
-  animation: pulse-draw 3s linear infinite;
+  animation: pulse-draw 2.5s linear infinite;
 }
 
 @keyframes pulse-draw {
@@ -237,212 +407,385 @@ const formatDateShort = (date) => new Date(date).toLocaleDateString('en-US', { m
   to { stroke-dashoffset: 0; }
 }
 
-.integrity-details { display: flex; flex-direction: column; }
-.integrity-details .label { font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
-.integrity-details .status { font-size: 0.9rem; font-weight: 950; color: var(--success); }
+.int-label { display: block; font-size: 0.6rem; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+.int-status { display: block; font-size: 0.85rem; font-weight: 900; color: #22d3ee; }
 
-/* Metrics Matrix */
+/* ── METRICS MATRIX ──────────────────────── */
 .metrics-matrix {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .metric-node {
+  padding: 1.75rem !important;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.metric-node:hover {
+  transform: translateY(-6px) !important;
+  border-color: var(--primary) !important;
+}
+
+.metric-node:hover .node-arrow { opacity: 1; transform: translateX(4px); }
+
+.node-icon-wrap {
+  width: 50px; height: 50px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.node-emoji { font-size: 1.4rem; }
+
+.node-body { flex: 1; }
+.node-label { font-size: 0.65rem; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+.node-val-row { display: flex; align-items: baseline; gap: 0.75rem; margin-top: 6px; }
+.node-val { font-size: 2.5rem; font-weight: 900; color: white; line-height: 1; letter-spacing: -0.04em; }
+
+.momentum {
+  font-size: 0.65rem; font-weight: 900;
+  padding: 3px 8px; border-radius: 6px;
+}
+.momentum.up { background: rgba(34, 211, 238, 0.1); color: #22d3ee; }
+.momentum.stable { background: rgba(148, 163, 184, 0.1); color: #94a3b8; }
+
+.node-bar-bg { height: 3px; background: rgba(0,0,0,0.3); border-radius: 100px; overflow: hidden; }
+.node-bar-fill { height: 100%; border-radius: 100px; transition: width 1.5s cubic-bezier(0.16,1,0.3,1); }
+
+.node-arrow {
+  position: absolute; top: 1.75rem; right: 1.75rem;
+  font-size: 1rem; color: var(--text-muted);
+  opacity: 0; transition: all 0.3s;
+}
+
+/* ── SECTION DIVIDER ─────────────────────── */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.section-divider::before, .section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+.divider-label {
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+  padding: 0 1rem;
+}
+
+/* ── QUICK ACCESS GRID ───────────────────── */
+.quick-access-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.quick-tile {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-tile::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--tile-color);
+  opacity: 0;
+  transition: opacity 0.3s;
+  border-radius: 0 2px 2px 0;
+}
+
+.quick-tile:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.12);
+  transform: translateX(4px);
+}
+
+.quick-tile:hover::before { opacity: 1; }
+.quick-tile:hover .tile-arrow { opacity: 1; color: var(--tile-color); }
+
+.tile-icon-ring {
+  width: 40px; height: 40px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+
+.quick-tile:hover .tile-icon-ring {
+  background: color-mix(in srgb, var(--tile-color) 15%, transparent);
+  border-color: color-mix(in srgb, var(--tile-color) 30%, transparent);
+}
+
+.tile-body { flex: 1; min-width: 0; }
+.tile-title { display: block; font-size: 0.9rem; font-weight: 800; color: white; margin-bottom: 2px; }
+.tile-desc { display: block; font-size: 0.7rem; color: var(--text-muted); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.tile-arrow {
+  opacity: 0;
+  color: var(--text-muted);
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+
+/* ── LIVE FEED GRID ──────────────────────── */
+.live-feed-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.feed-card {
   padding: 2rem !important;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  position: relative;
 }
 
-.node-icon {
-  width: 54px; height: 54px;
-  border-radius: 16px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.5rem;
-}
-
-.node-info { flex: 1; }
-.node-label { font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-.node-val-row { display: flex; align-items: baseline; gap: 1rem; margin-top: 8px; }
-.node-val-row .val { font-size: 2.5rem; font-weight: 900; color: white; line-height: 1; letter-spacing: -0.05em; }
-
-.momentum {
-  display: flex; align-items: center; gap: 4px;
-  padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 900;
-}
-.momentum.up { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-.momentum.stable { background: rgba(148, 163, 184, 0.1); color: #94a3b8; }
-.m-icon { font-size: 0.6rem; }
-
-.node-pulse-bar { height: 4px; background: rgba(0,0,0,0.3); border-radius: 100px; overflow: hidden; }
-.pulse-fill { height: 100%; transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1); }
-
-/* Activity Hubs */
-.activity-hub-grid {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 2.5rem;
-}
-
-.hub-node {
-  padding: 2.5rem !important;
+.feed-header {
   display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.hub-header { display: flex; justify-content: space-between; align-items: center; }
-.h-title { display: flex; align-items: center; gap: 1rem; }
-.h-icon { font-size: 1.5rem; }
-.h-title h3 { font-size: 1.25rem; font-weight: 850; color: white; }
-
-.nav-btn-mini {
-  padding: 8px 16px; border-radius: 10px; border: 1px solid var(--border-subtle);
-  background: var(--bg-surface); color: var(--text-muted); font-size: 0.75rem; font-weight: 800;
-  cursor: pointer; transition: all 0.2s;
+.feed-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
-.nav-btn-mini:hover { color: white; border-color: var(--primary); background: var(--bg-elevated); }
 
-.hub-inventory-wheel { display: flex; flex-direction: column; gap: 0.75rem; }
-.inventory-item {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 1rem 1.5rem; background: rgba(255,255,255,0.02);
-  border: 1px solid var(--border-subtle); border-radius: 18px;
+.feed-badge {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.feed-title h3 { font-size: 1.05rem; font-weight: 850; color: white; margin: 0 0 2px; }
+.feed-subtitle { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; }
+
+.feed-action-btn {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.feed-action-btn:hover { color: white; border-color: var(--primary); background: var(--bg-elevated); }
+
+.feed-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.feed-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  cursor: pointer;
   transition: all 0.3s;
 }
-.inventory-item:hover { transform: translateX(8px); background: rgba(255,255,255,0.05); border-color: var(--primary); }
 
-.i-core { display: flex; flex-direction: column; gap: 4px; flex: 1; }
-.i-title { font-size: 0.95rem; font-weight: 800; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px; }
-.i-meta { font-size: 0.65rem; font-weight: 800; color: var(--text-muted); opacity: 0.6; }
+.feed-item:hover { background: rgba(255,255,255,0.04); border-color: var(--primary); transform: translateX(4px); }
 
-.i-status {
-  padding: 4px 10px; border-radius: 6px; font-size: 0.6rem; font-weight: 900;
-  background: rgba(148, 163, 184, 0.1); color: var(--text-muted); margin: 0 1.5rem;
-}
-.i-status.live { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-.i-date { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); font-family: monospace; }
-
-.talent-pipeline-stack { display: flex; flex-direction: column; gap: 1rem; }
-.pipeline-card {
-  display: flex; align-items: center; gap: 1.25rem;
-  padding: 1.25rem; background: var(--bg-surface); border: 1px solid var(--border-subtle);
-  border-radius: 20px; transition: all 0.3s;
-}
-.pipeline-card:hover { transform: translateY(-4px); border-color: var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-
-.p-avatar {
-  width: 44px; height: 44px; background: var(--primary-gradient);
-  border-radius: 14px; display: flex; align-items: center; justify-content: center;
-  font-weight: 900; color: white; font-size: 1.2rem;
+.fi-avatar {
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; font-weight: 900; color: white;
+  flex-shrink: 0;
 }
 
-.p-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-.p-name { font-size: 0.95rem; font-weight: 800; color: white; }
-.p-role { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); }
+.fi-body { flex: 1; min-width: 0; }
+.fi-name { display: block; font-size: 0.85rem; font-weight: 800; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fi-meta { display: block; font-size: 0.65rem; color: var(--text-muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.p-status-pill {
-  padding: 4px 12px; border-radius: 100px; font-size: 0.6rem; font-weight: 900;
-  text-transform: uppercase; letter-spacing: 0.05em; background: rgba(255,255,255,0.05); color: var(--text-secondary);
+.fi-status {
+  font-size: 0.55rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em;
+  padding: 3px 8px; border-radius: 5px;
+  background: rgba(148,163,184,0.1); color: var(--text-muted);
+  flex-shrink: 0;
 }
-.p-status-pill.selected { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+.fi-status.unseen { background: rgba(239,68,68,0.1); color: #ef4444; }
+.fi-status.reviewed { background: rgba(245,158,11,0.1); color: #f59e0b; }
+.fi-status.actioned { background: rgba(34,211,238,0.1); color: #22d3ee; }
+.fi-status.applied { background: rgba(59,130,246,0.1); color: #3b82f6; }
+.fi-status.selected { background: rgba(34,211,238,0.1); color: #22d3ee; }
+.fi-status.rejected { background: rgba(239,68,68,0.1); color: #ef4444; }
+.fi-status.interviewed { background: rgba(168,85,247,0.1); color: #a855f7; }
 
-/* Infrastructure Footer */
-.infrastructure-footer {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2.5rem;
-}
+.fi-date { font-size: 0.65rem; font-weight: 700; color: var(--text-muted); font-family: monospace; flex-shrink: 0; }
 
-.showcase-highlight {
-  padding: 0 !important;
+.feed-empty {
+  padding: 2.5rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  opacity: 0.5;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ── BOTTOM ROW ──────────────────────────── */
+.bottom-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 1.5rem;
+}
+
+/* Showcase Card */
+.showcase-card {
+  padding: 0 !important;
   overflow: hidden;
-  height: 200px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-.h-context { flex: 1.5; padding: 2rem; display: flex; flex-direction: column; justify-content: center; gap: 0.75rem; }
-.h-context .pre { font-size: 0.65rem; font-weight: 900; color: var(--primary); letter-spacing: 0.15em; }
-.h-context h4 { font-size: 1.25rem; font-weight: 850; color: white; margin: 0; }
+.showcase-card:hover { border-color: var(--primary) !important; transform: translateY(-4px) !important; }
 
-.h-visual { flex: 1; position: relative; background: #000; }
-.h-visual img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
-.vid-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 3rem; background: #111; }
-
-.h-action {
-  position: absolute; bottom: 1.5rem; left: 2rem;
-}
-.h-action button {
-  background: transparent; border: none; color: white; font-weight: 800; font-size: 0.85rem;
-  cursor: pointer; padding: 0; transition: color 0.2s;
-}
-.h-action button:hover { color: var(--primary); }
-
-.maintenance-cluster { padding: 2rem !important; }
-.cluster-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; height: 100%; }
-.cluster-tool {
-  background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 18px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 8px; cursor: pointer; transition: all 0.2s;
-}
-.cluster-tool:hover { background: var(--bg-elevated); border-color: var(--primary); transform: scale(1.02); }
-.cluster-tool .t-icon { font-size: 1.2rem; }
-.cluster-tool span:not(.t-icon) { font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
-
-.empty-hub { padding: 3rem; text-align: center; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; opacity: 0.5; }
-
-@media (max-width: 1200px) {
-  .activity-hub-grid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
+.sc-label {
+  font-size: 0.6rem; font-weight: 900; color: var(--primary);
+  letter-spacing: 0.2em; text-transform: uppercase;
+  padding: 1.5rem 2rem 0;
 }
 
-@media (max-width: 1024px) {
-  .metrics-matrix {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .infrastructure-footer {
-    grid-template-columns: 1fr;
-  }
+.sc-body {
+  display: flex;
+  height: 180px;
 }
 
-@media (max-width: 768px) {
-  .module-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1.5rem;
-  }
-  .metrics-matrix {
-    grid-template-columns: 1fr;
-  }
-  .metric-node {
-    padding: 1.5rem !important;
-  }
-  .hub-node {
-    padding: 1.5rem !important;
-  }
-  .inventory-item {
-    padding: 0.75rem 1rem;
-  }
-  .i-title {
-    max-width: 150px;
-  }
-  .i-status {
-    margin: 0 0.5rem;
-  }
-  .showcase-highlight {
-    flex-direction: column;
-    height: auto;
-  }
-  .h-visual {
-    height: 200px;
-  }
-  .h-action {
-    position: static;
-    padding: 0 0 1.5rem 1.5rem;
-  }
+.sc-image {
+  width: 200px;
+  flex-shrink: 0;
+  background: #000;
+  overflow: hidden;
+}
+
+.sc-image img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
+.sc-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 3rem; background: #111; }
+
+.sc-info {
+  flex: 1;
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.sc-info h4 { font-size: 1.05rem; font-weight: 850; color: white; margin: 0; }
+.sc-info p { font-size: 0.8rem; color: var(--text-muted); margin: 0; line-height: 1.4; }
+.sc-link { font-size: 0.8rem; font-weight: 800; color: var(--primary); margin-top: 0.5rem; }
+
+.sc-empty {
+  padding: 3rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  opacity: 0.5;
+}
+
+/* Tools Card */
+.tools-card {
+  padding: 1.75rem !important;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.tools-header h3 { font-size: 1rem; font-weight: 850; color: white; margin: 0 0 4px; }
+.tools-sub { font-size: 0.7rem; color: var(--text-muted); font-weight: 500; }
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.tool-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 1rem 0.5rem;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  min-height: 72px;
+}
+
+.tool-btn:hover {
+  background: var(--bg-elevated);
+  border-color: var(--primary);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.tb-icon { font-size: 1.2rem; }
+.tb-label { font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; text-align: center; line-height: 1.2; }
+.tool-btn:hover .tb-label { color: white; }
+
+/* ── RESPONSIVE ──────────────────────────── */
+@media (max-width: 1280px) {
+  .quick-access-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 1100px) {
+  .metrics-matrix { grid-template-columns: repeat(2, 1fr); }
+  .live-feed-grid { grid-template-columns: 1fr; }
+  .bottom-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+  .quick-access-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero-right { display: none; }
+  .hero-left h1 { font-size: 2rem; }
+}
+
+@media (max-width: 640px) {
+  .metrics-matrix { grid-template-columns: 1fr; }
+  .quick-access-grid { grid-template-columns: 1fr; }
+  .tools-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero-banner { padding: 1.5rem; }
 }
 </style>
