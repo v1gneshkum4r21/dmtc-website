@@ -6,12 +6,70 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const hpp = require('hpp');
+
 const db = require('./db');
 const { verifyPassword, createAccessToken, authenticateToken, ACCESS_TOKEN_EXPIRE_MINUTES } = require('./auth');
 const webauthn = require('./webauthn');
 
 const app = express();
-app.set('trust proxy', true);
+app.set('trust proxy', 1);
+
+// ─── Security Layer ──────────────────────────────────────────────────────────
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+            "img-src": ["'self'", "data:", "https:", "http:"],
+            "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // Needed for some Vue build configs, but keep an eye
+            "connect-src": ["'self'", "https:", "http:"]
+        },
+    },
+    crossOriginEmbedderPolicy: false,
+}));
+app.use(hpp()); // Prevent HTTP Parameter Pollution
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per window
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { detail: 'Too many requests from this IP, please try again later.' }
+});
+
+const authLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 10, // Limit each IP to 10 login attempts per hour
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { detail: 'Too many login attempts, please try again in an hour.' }
+});
+
+app.use('/api/', limiter);
+app.use('/api/auth/', authLimiter);
+
+// ─── Maintenance Mode Check ──────────────────────────────────────────────────
+app.use(async (req, res, next) => {
+    // Skip maintenance check for admin logins to allow fixing things
+    if (req.path.startsWith('/api/auth') || req.path.startsWith('/api/admin')) {
+        return next();
+    }
+    try {
+        const settings = await db.getSiteSettings();
+        if (settings && settings.maintenanceMode && !req.path.startsWith('/admin')) {
+            return res.status(503).json({
+                detail: 'Site is under maintenance',
+                retryAfter: 3600
+            });
+        }
+    } catch (e) {
+        console.error('Maintenance check failed:', e);
+    }
+    next();
+});
+
 const PORT = process.env.PORT || 8000;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
@@ -19,12 +77,14 @@ app.use(cors({
     origin: [FRONTEND_URL, 'https://slateblue-woodpecker-659704.hostingersite.com', 'https://dreamactic.com', 'https://www.dreamactic.com'],
     credentials: true,
 }));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use(express.json({ limit: '1mb' })); // Reduced limit for better security
+app.use(express.urlencoded({ limit: '1mb', extended: true }));
 
 // Request Logger
+const getIP = (req) => req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+
 app.use((req, res, next) => {
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    console.log(`${new Date().toISOString()} - ${getIP(req)} - ${req.method} ${req.url}`);
     next();
 });
 
@@ -252,17 +312,24 @@ app.get(['/sitemap.xml', '/sitemap.xml/'], async (req, res, next) => {
 
 // Auth
 app.post('/api/auth/login', upload.none(), async (req, res, next) => {
+    const ip = getIP(req);
     try {
         const { username, password } = req.body;
         const user = await db.getUserByUsername(username);
+
         if (!user || !verifyPassword(password, user.passwordHash)) {
+            await db.logSecurityEvent('LOGIN_FAILED', username || 'unknown', ip, 'Invalid credentials', 'warning');
             return res.status(401).json({ detail: 'Incorrect username or password' });
         }
+
         const credentials = await db.getCredentialsByUsername(user.username);
         if (credentials.length) {
+            await db.logSecurityEvent('MFA_REQUIRED', user.username, ip, 'MFA Challenge initiated');
             return res.json({ mfa_required: true, username: user.username, message: 'MFA Challenge Required' });
         }
+
         const token = createAccessToken({ sub: user.username });
+        await db.logSecurityEvent('LOGIN_SUCCESS', user.username, ip, 'User logged in successfully');
         res.json({ access_token: token, token_type: 'bearer', mfa_required: false });
     } catch (e) { next(e); }
 });
@@ -309,10 +376,39 @@ admin.post('/upload', upload.single('file'), (req, res) => {
     res.json({ url: `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`, filename: req.file.originalname });
 });
 
+admin.get('/users', async (req, res, next) => {
+    try { res.json(await db.getAllUsers()); } catch (e) { next(e); }
+});
+
 admin.post('/users', async (req, res, next) => {
     try {
         if (await db.getUserByUsername(req.body.username)) return res.status(400).json({ detail: 'Username already exists' });
-        res.status(201).json(await db.createUser(req.body));
+        const user = await db.createUser(req.body);
+        await db.logSecurityEvent('USER_CREATED', req.user.sub, getIP(req), `Created user: ${user.username}`, 'info');
+        res.status(201).json(user);
+    } catch (e) { next(e); }
+});
+
+admin.put('/users/:id', async (req, res, next) => {
+    try {
+        const user = await db.updateUser(req.params.id, req.body);
+        await db.logSecurityEvent('USER_UPDATED', req.user.sub, getIP(req), `Updated user: ${user.username}`, 'info');
+        res.json(user);
+    } catch (e) { next(e); }
+});
+
+admin.delete('/users/:id', async (req, res, next) => {
+    try {
+        const [targetUser] = await db.pool.query('SELECT username FROM users WHERE id = ?', [req.params.id]);
+        if (targetUser[0]?.username === 'admin') return res.status(403).json({ detail: 'Cannot delete master admin' });
+
+        const success = await db.deleteUser(req.params.id);
+        if (success) {
+            await db.logSecurityEvent('USER_DELETED', req.user.sub, getIP(req), `Deleted user ID: ${req.params.id}`, 'warning');
+            res.status(204).end();
+        } else {
+            res.status(404).json({ detail: 'User not found' });
+        }
     } catch (e) { next(e); }
 });
 
@@ -390,6 +486,12 @@ admin.delete('/applications/:id', async (req, res, next) => {
 admin.post('/applications/:id/restore', async (req, res, next) => {
     try {
         await db.restoreApplication(req.params.id) ? res.json({ message: 'Restored' }) : res.status(404).json({ detail: 'Not found' });
+    } catch (e) { next(e); }
+});
+
+admin.get('/security/logs', async (req, res, next) => {
+    try {
+        res.json(await db.getSecurityLogs(100));
     } catch (e) { next(e); }
 });
 

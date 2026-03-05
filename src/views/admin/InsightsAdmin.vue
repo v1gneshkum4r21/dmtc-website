@@ -166,6 +166,7 @@ import CareersManager from './modules/careers/CareersManager.vue'
 import ContactsManager from './modules/contacts/ContactsManager.vue'
 import CompanyManager from './modules/company/CompanyManager.vue'
 import ResourcesManager from './modules/resources/ResourcesManager.vue'
+import UserAdmin from './UserAdmin.vue'
 
 // Dialog Sub-systems
 import InsightEditor from './modules/dialogs/InsightEditor.vue'
@@ -254,7 +255,8 @@ const activeComponent = computed(() => {
     careers: markRaw(CareersManager),
     contacts: markRaw(ContactsManager),
     company: markRaw(CompanyManager),
-    resources: markRaw(ResourcesManager)
+    resources: markRaw(ResourcesManager),
+    users: markRaw(UserAdmin)
   }
   return map[activeModule.value] || null
 })
@@ -286,7 +288,8 @@ const activeModuleTitle = computed(() => {
     hero: 'Hero Carousel',
     contacts: 'Network Comms',
     company: 'Corporate Strategy',
-    resources: 'Intelligence Unit'
+    resources: 'Intelligence Unit',
+    users: 'Neural Access Control'
   }
   return titles[activeModule.value] || activeModule.value.toUpperCase()
 })

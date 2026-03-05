@@ -98,18 +98,17 @@ async function initDb() {
             title VARCHAR(255) NOT NULL,
             team VARCHAR(100),
             location VARCHAR(100),
-            description LONGTEXT,
-            requirements LONGTEXT,
-            company VARCHAR(100),
-            tags TEXT,
             type VARCHAR(50),
+            description LONGTEXT,
+            requirements TEXT,
+            active BOOLEAN DEFAULT 1,
+            isArchived BOOLEAN DEFAULT 0,
+            \`order\` INT DEFAULT 0,
             salary_range VARCHAR(100),
             remote_policy VARCHAR(100),
             experience_level VARCHAR(100),
             benefits TEXT,
             deadline DATETIME,
-            active BOOLEAN DEFAULT 1,
-            isArchived BOOLEAN DEFAULT 0,
             createdAt DATETIME,
             updatedAt DATETIME
         )`,
@@ -189,6 +188,15 @@ async function initDb() {
             message TEXT NOT NULL,
             status VARCHAR(50) DEFAULT 'unseen',
             createdAt DATETIME
+        )`,
+        `CREATE TABLE IF NOT EXISTS audit_logs (
+            id VARCHAR(36) PRIMARY KEY,
+            event_type VARCHAR(100) NOT NULL,
+            username VARCHAR(255),
+            ip_address VARCHAR(100),
+            details TEXT,
+            severity VARCHAR(20) DEFAULT 'info',
+            timestamp DATETIME
         )`
     ];
 
@@ -220,9 +228,10 @@ async function initDb() {
     const [users] = await pool.query('SELECT count(*) as count FROM users');
     if (users[0].count === 0) {
         const id = uuidv4();
-        const hash = bcrypt.hashSync('admin123', 10);
+        const hash = bcrypt.hashSync('ChangeMeImmediately_2026!', 12);
         await pool.query('INSERT INTO users (id, username, email, passwordHash, role, createdAt) VALUES (?, ?, ?, ?, ?, ?)',
             [id, 'admin', 'admin@dreamactic.com', hash, 'admin', now()]);
+        await logSecurityEvent('SYSTEM_INIT', 'admin', '0.0.0.0', 'Default admin created with hardened hash', 'warning');
     }
 
     const [sets] = await pool.query('SELECT count(*) as count FROM settings');
@@ -273,6 +282,23 @@ const credentialHelper = (r) => {
         transports: JSON.parse(r.transports || '[]')
     };
 };
+
+async function logSecurityEvent(eventType, username, ip, details, severity = 'info') {
+    try {
+        const id = uuidv4();
+        await pool.query(
+            'INSERT INTO audit_logs (id, event_type, username, ip_address, details, severity, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [id, eventType, username, ip, details, severity, now()]
+        );
+    } catch (e) {
+        console.error('Failed to log security event:', e);
+    }
+}
+
+async function getSecurityLogs(limit = 100) {
+    const [rows] = await pool.query('SELECT * FROM audit_logs ORDER BY timestamp DESC LIMIT ?', [limit]);
+    return rows;
+}
 
 // ─── API Methods ─────────────────────────────────────────────────────────────
 
@@ -589,10 +615,32 @@ async function getUserByUsername(username) {
 
 async function createUser(data) {
     const id = uuidv4();
-    const hash = bcrypt.hashSync(data.password, 10);
+    const hash = bcrypt.hashSync(data.password, 12);
     await pool.query('INSERT INTO users (id, username, email, passwordHash, role, createdAt) VALUES (?, ?, ?, ?, ?, ?)',
         [id, data.username, data.email, hash, data.role || 'admin', now()]);
     return getUserByUsername(data.username);
+}
+
+async function getAllUsers() {
+    const [rows] = await pool.query('SELECT id, username, email, role, createdAt FROM users');
+    return rows;
+}
+
+async function updateUser(id, data) {
+    const d = { ...data };
+    if (d.password) {
+        d.passwordHash = bcrypt.hashSync(d.password, 12);
+        delete d.password;
+    }
+    const sets = Object.keys(d).map(k => `\`${k}\` = ?`).join(', ');
+    await pool.query(`UPDATE users SET ${sets} WHERE id = ?`, [...Object.values(d), id]);
+    const [rows] = await pool.query('SELECT id, username, email, role, createdAt FROM users WHERE id = ?', [id]);
+    return rows[0];
+}
+
+async function deleteUser(id) {
+    const [res] = await pool.query('DELETE FROM users WHERE id = ?', [id]);
+    return res.affectedRows > 0;
 }
 
 // WebAuthn
@@ -683,7 +731,7 @@ async function deleteContact(id) {
 }
 
 module.exports = {
-    initDb, getSiteSettings, updateSiteSettings, getAllInsights, getInsightById, createInsight, updateInsight, deleteInsight,
+    initDb, getSiteSettings, updateSiteSettings, logSecurityEvent, getSecurityLogs, getAllInsights, getInsightById, createInsight, updateInsight, deleteInsight,
     getAllResearch, getResearchById, createResearch, updateResearch, deleteResearch,
     getAllShowcaseItems, createShowcaseItem, updateShowcaseItem, deleteShowcaseItem,
     getAllJobs, getJobById, createJob, updateJob, deleteJob,
@@ -691,5 +739,6 @@ module.exports = {
     getPageConfig, getAllCustomPages, upsertPageConfig, deletePageConfig,
     globalSearch, getUserByUsername, createUser,
     getCredentialsByUsername, saveCredential, saveChallenge, getChallenge,
-    createContact, getContacts, updateContactStatus, deleteContact
+    createContact, getContacts, updateContactStatus, deleteContact,
+    getAllUsers, updateUser, deleteUser
 };

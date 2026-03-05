@@ -50,6 +50,15 @@
           <span class="link-icon">⚙️</span>
           <span class="link-text">System Config</span>
         </div>
+        <div 
+          class="synapse-link"
+          :class="{ active: activeModule === 'users' }"
+          @click="resetToModule('users')"
+        >
+          <div class="link-glow"></div>
+          <span class="link-icon">🔐</span>
+          <span class="link-text">Neural Access</span>
+        </div>
       </div>
 
       <!-- INSIGHT NODES -->

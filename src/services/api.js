@@ -255,10 +255,24 @@ export const adminAPI = {
         return response.data
     },
 
-    // Create new admin user
+    // User Management
+    getUsers: async () => {
+        const response = await apiClient.get('/admin/users')
+        return response.data
+    },
+
     createUser: async (userData) => {
         const response = await apiClient.post('/admin/users', userData)
         return response.data
+    },
+
+    updateUser: async (id, userData) => {
+        const response = await apiClient.put(`/admin/users/${id}`, userData)
+        return response.data
+    },
+
+    deleteUser: async (id) => {
+        await apiClient.delete(`/admin/users/${id}`)
     },
 
     // Job Management
