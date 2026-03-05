@@ -3,7 +3,7 @@
     <header class="module-header luxury-page-title">
       <div class="header-vessel">
         <div class="section-context">
-          <span class="context-tag" style="background-color: rgba(99, 102, 241, 0.2); color: #6366f1;">
+          <span class="context-tag" style="background-color: rgba(14, 165, 233, 0.2); color: #0ea5e9;">
             Network Comms
           </span>
         </div>
@@ -254,8 +254,8 @@ const formatDateFull = (ds) => new Date(ds).toLocaleString('en-US', { month: 'lo
 .truncation { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .domain-tag {
-  font-size: 0.65rem; font-weight: 800; color: var(--accent-primary);
-  background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2);
+  font-size: 0.65rem; font-weight: 800; color: #0ea5e9;
+  background: rgba(14, 165, 233, 0.1); border: 1px solid rgba(14, 165, 233, 0.2);
   padding: 4px 10px; border-radius: 6px; text-transform: uppercase;
 }
 

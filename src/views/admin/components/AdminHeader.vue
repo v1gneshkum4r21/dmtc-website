@@ -171,7 +171,7 @@ defineEmits(['update:activeModule', 'update:selectedPage', 'create', 'search-sel
 .preview-link-btn:hover { color: white; background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.1); }
 
 .btn-primary-header {
-  background: linear-gradient(135deg, #6366f1, #a855f7);
+  background: var(--primary-gradient);
   color: white;
   border: none;
   padding: 0.7rem 1.5rem;
