@@ -428,7 +428,7 @@ admin.delete('/jobs/:id', async (req, res, next) => {
     } catch (e) { next(e); }
 });
 
-admin.post('/pages/:id', async (req, res, next) => {
+admin.put('/pages/:id', async (req, res, next) => {
     try { res.json(await db.upsertPageConfig(req.params.id, req.body)); } catch (e) { next(e); }
 });
 admin.delete('/pages/:id', async (req, res, next) => {
