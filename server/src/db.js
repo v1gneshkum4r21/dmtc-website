@@ -332,7 +332,7 @@ async function getAllInsights(publishedOnly = false, page = null) {
     if (publishedOnly) wheres.push('published = 1');
     if (page) { wheres.push('page = ?'); params.push(page); }
     if (wheres.length) sql += ' WHERE ' + wheres.join(' AND ');
-    sql += ' ORDER BY createdAt DESC';
+    sql += ' ORDER BY updatedAt DESC';
     const [rows] = await pool.query(sql, params);
     return rows.map(insightHelper);
 }
@@ -368,7 +368,7 @@ async function deleteInsight(id) {
 async function getAllResearch(publishedOnly = false) {
     let sql = 'SELECT * FROM research';
     if (publishedOnly) sql += ' WHERE published = 1';
-    sql += ' ORDER BY createdAt DESC';
+    sql += ' ORDER BY updatedAt DESC';
     const [rows] = await pool.query(sql);
     return rows.map(researchHelper);
 }

@@ -81,6 +81,50 @@
       </div>
     </div>
 
+    <!-- ── NODE INVENTORY BY PAGE ─────────────────────────── -->
+    <div class="section-divider">
+      <span class="divider-label">📁 NODE INVENTORY BY PAGE</span>
+    </div>
+    <div class="inventory-grid">
+      <div 
+        v-for="p in pageInventory" 
+        :key="p.id" 
+        class="inventory-card card-premium"
+        @click="$emit('switch', 'insights', p.id)"
+      >
+        <div class="inv-header">
+          <div class="inv-title">
+            <span class="inv-icon">{{ p.icon }}</span>
+            <h4>{{ p.label }}</h4>
+          </div>
+          <div class="inv-date">MODIFIED: {{ formatDateShort(p.updatedAt) }}</div>
+        </div>
+        <div class="inv-metrics">
+          <div class="inv-stat">
+            <span class="is-label">Total Insights</span>
+            <span class="is-val">{{ p.total }}</span>
+          </div>
+          <div class="inv-stat">
+            <span class="is-label">Broadcast Active</span>
+            <span class="is-val success">{{ p.live }}</span>
+          </div>
+          <div class="inv-stat">
+            <span class="is-label">Encrypted Drafts</span>
+            <span class="is-val warning">{{ p.draft }}</span>
+          </div>
+        </div>
+        <div class="inv-progress">
+          <div class="inv-bar" :style="{ width: (p.live / p.total) * 100 + '%' }"></div>
+        </div>
+        <div class="inv-footer">
+          Navigate to Intelligence Unit →
+        </div>
+      </div>
+      <div v-if="pageInventory.length === 0" class="empty-inventory">
+        <p>No active intelligence nodes found across the network pages.</p>
+      </div>
+    </div>
+
     <!-- ── LIVE FEED GRID ─────────────────────────────────── -->
     <div class="live-feed-grid">
 
@@ -218,10 +262,42 @@ const props = defineProps({
   insights: { type: Array, default: () => [] },
   applications: { type: Array, default: () => [] },
   showcase: { type: Array, default: () => [] },
-  contacts: { type: Array, default: () => [] }
+  contacts: { type: Array, default: () => [] },
+  websitePages: { type: Array, default: () => [] }
 })
 
 const emit = defineEmits(['switch'])
+
+// Node Inventory (Categorized stats)
+const pageInventory = computed(() => {
+  const pageMap = {}
+  
+  // Only include pages that are either in insights or explicitly listed
+  const allKnownPages = [...new Set([
+    ...props.insights.map(i => i.page),
+    ...props.websitePages.filter(p => !p.isModular).map(p => p.id)
+  ])].filter(Boolean)
+
+  allKnownPages.forEach(pId => {
+    const nodes = props.insights.filter(i => i.page === pId)
+    const pageData = props.websitePages.find(wp => wp.id === pId)
+    
+    if (nodes.length > 0) {
+      const mostRecent = [...nodes].sort((a,b) => new Date(b.updatedAt) - new Date(a.updatedAt))[0]
+      pageMap[pId] = {
+        id: pId,
+        label: pageData?.label || pId,
+        icon: pageData?.icon || '✦',
+        total: nodes.length,
+        live: nodes.filter(n => n.published).length,
+        draft: nodes.filter(n => !n.published).length,
+        updatedAt: mostRecent?.updatedAt || mostRecent?.createdAt
+      }
+    }
+  })
+
+  return Object.values(pageMap).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+})
 
 // Live time clock
 const currentTime = ref('')
@@ -552,6 +628,123 @@ const formatDateShort = (date) => {
   color: var(--text-muted);
   transition: all 0.3s;
   flex-shrink: 0;
+}
+
+/* ── INVENTORY GRID ──────────────────────── */
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.inventory-card {
+  padding: 1.5rem !important;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.inventory-card:hover {
+  transform: translateY(-4px) !important;
+  border-color: var(--primary) !important;
+}
+
+.inv-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.inv-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.inv-icon {
+  font-size: 1.2rem;
+  width: 32px; height: 32px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.inv-title h4 {
+  font-size: 0.95rem;
+  font-weight: 850;
+  color: white;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.inv-date {
+  font-size: 0.6rem;
+  font-weight: 900;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.inv-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.inv-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.is-label {
+  font-size: 0.55rem;
+  font-weight: 800;
+  color: #52525b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.is-val {
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: white;
+}
+
+.is-val.success { color: #22c55e; }
+.is-val.warning { color: #f59e0b; }
+
+.inv-progress {
+  height: 4px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.inv-bar {
+  height: 100%;
+  background: var(--primary-gradient);
+  border-radius: 100px;
+}
+
+.inv-footer {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-top: auto;
+  opacity: 0.6;
+}
+
+.empty-inventory {
+  grid-column: 1 / -1;
+  padding: 4rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-weight: 600;
+  background: rgba(255,255,255,0.01);
+  border: 1px dashed var(--border-subtle);
+  border-radius: 20px;
 }
 
 /* ── LIVE FEED GRID ──────────────────────── */

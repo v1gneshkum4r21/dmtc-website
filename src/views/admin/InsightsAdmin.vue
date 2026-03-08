@@ -261,7 +261,13 @@ const activeComponent = computed(() => {
 })
 
 const componentProps = computed(() => {
-  if (activeModule.value === 'dashboard') return { insights: insights.value, applications: applications.value, showcase: showcaseItems.value, contacts: contacts.value }
+  if (activeModule.value === 'dashboard') return { 
+    insights: insights.value, 
+    applications: applications.value, 
+    showcase: showcaseItems.value, 
+    contacts: contacts.value,
+    websitePages: websitePages.value
+  }
   if (activeModule.value === 'company') return { selectedPage: selectedPage.value, loading: loading.value }
   if (['services', 'products'].includes(activeModule.value)) return { insights: insights.value, selectedPage: selectedPage.value, loading: loading.value }
   if (activeModule.value === 'showcase') return { showcaseItems: showcaseItems.value, loading: loading.value }

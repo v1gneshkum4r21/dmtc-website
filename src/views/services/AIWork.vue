@@ -261,7 +261,8 @@ onMounted(async () => {
       if (config.ecosystem && config.ecosystem.length > 0) ecosystem.value = config.ecosystem
     }
     
-    insights.value = await insightsAPI.getAll('ai-work')
+    const allInsights = await insightsAPI.getAll('ai-work')
+    insights.value = [...allInsights].sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt))
   } catch (error) {
     console.error('Failed to load page context:', error)
   } finally {

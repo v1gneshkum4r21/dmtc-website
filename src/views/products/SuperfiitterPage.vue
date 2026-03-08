@@ -250,7 +250,8 @@ onMounted(async () => {
       if (config.solutions) solutions.value = config.solutions
       if (config.ecosystem && config.ecosystem.length > 0) ecosystem.value = config.ecosystem
     }
-    insights.value = await insightsAPI.getAll('superfitter') 
+    const allInsights = await insightsAPI.getAll('superfitter')
+    insights.value = [...allInsights].sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt))
   } catch (err) {
     console.error('Failed to load page context:', err)
   } finally {

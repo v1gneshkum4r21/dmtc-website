@@ -51,16 +51,16 @@
         <!-- Summary Matrix -->
         <div class="matrix-row">
           <div class="matrix-card">
-            <span class="m-label">Active Nodes</span>
-            <span class="m-val">{{ filteredItems.length }}</span>
+            <span class="m-label">Total Insights</span>
+            <span class="m-val">{{ stats.total }}</span>
           </div>
           <div class="matrix-card">
-            <span class="m-label">Intelligence Units</span>
-            <span class="m-val">34</span>
+            <span class="m-label">Broadcast Active</span>
+            <span class="m-val" style="color: #22c55e;">{{ stats.live }}</span>
           </div>
           <div class="matrix-card">
-            <span class="m-label">Sync Pulse</span>
-            <span class="m-success">STABLE</span>
+            <span class="m-label">Encrypted Drafts</span>
+            <span class="m-val" style="color: #f59e0b;">{{ stats.draft }}</span>
           </div>
         </div>
 
@@ -143,10 +143,23 @@ const selectedPageLabel = computed(() => {
 })
 
 const filteredItems = computed(() => {
+  let list = []
   if (props.selectedPage === 'research') {
-    return props.research
+    list = props.research
+  } else {
+    list = props.insights.filter(i => i.page === props.selectedPage)
   }
-  return props.insights.filter(i => i.page === props.selectedPage)
+  return [...list].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+})
+
+const stats = computed(() => {
+  const total = filteredItems.value.length
+  const live = filteredItems.value.filter(i => i.published).length
+  return {
+    total,
+    live,
+    draft: total - live
+  }
 })
 </script>
 

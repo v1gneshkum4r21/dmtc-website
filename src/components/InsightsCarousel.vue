@@ -38,7 +38,7 @@
           <div class="insight-content-box">
             <div class="insight-meta-date">
               <span class="dot"></span>
-              {{ formatDate(insight.createdAt) }}
+              Last Modified: {{ formatDate(insight.updatedAt || insight.createdAt) }}
             </div>
             <h3>{{ insight.title }}</h3>
             <p>{{ insight.excerpt }}</p>

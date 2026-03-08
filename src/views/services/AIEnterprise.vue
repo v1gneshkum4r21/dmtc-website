@@ -245,7 +245,8 @@ onMounted(async () => {
       if (config.solutions) solutions.value = config.solutions
       if (config.ecosystem && config.ecosystem.length > 0) ecosystem.value = config.ecosystem
     }
-    insights.value = await insightsAPI.getAll('ai-enterprise')
+    const allInsights = await insightsAPI.getAll('ai-enterprise')
+    insights.value = [...allInsights].sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt))
     if (insights.value.length === 0) {
        insights.value = [
          {

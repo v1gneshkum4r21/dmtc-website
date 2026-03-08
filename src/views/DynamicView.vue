@@ -497,7 +497,7 @@ const syncContent = async () => {
   if (!props.isPreview) {
     try {
       const res = await insightsAPI.getAll(null)
-      liveInsights.value = Array.isArray(res) ? res : []
+      liveInsights.value = Array.isArray(res) ? [...res].sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt)) : []
     } catch {
       liveInsights.value = []
     }
