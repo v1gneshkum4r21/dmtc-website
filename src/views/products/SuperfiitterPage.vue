@@ -154,7 +154,7 @@ const handleSolutionContact = (solution) => {
   })
 }
 
-const ecosystem = [
+const ecosystem = ref([
   { name: 'AWS', color: '#FF9900', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.5l1.65 6.07 6.13-.53-4.63 4.13 1.34 6.06L12 14.1l-4.49 3.13 1.34-6.06-4.63-4.13 6.13.53L12 1.5M12 24c6.627 0 12-5.373 12-12S18.627 0 12 0 0 5.373 0 12s5.373 12 12 12"/></svg>' }, 
   { name: 'Cloudflare', color: '#F38020', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.44 9.38a4.95 4.95 0 00-4.08 2.16 3.1 3.1 0 00-6.06-.5 3.32 3.32 0 00-4.05 3.21A3.32 3.32 0 006.57 20h10.86A4.57 4.57 0 0022 15.43a4.57 4.57 0 00-4.56-6.05z"/></svg>' },
   { name: 'Stripe', color: '#008CDD', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-7.07-1.855l-.907 5.626c1.472.585 3.785.97 6.479.97 2.651 0 4.88-.636 6.452-1.923 1.528-1.258 2.296-3.047 2.296-5.322 0-3.929-2.28-5.656-6.425-7.151z"/></svg>' },
@@ -168,7 +168,7 @@ const ecosystem = [
   { name: 'PostgreSQL', color: '#336791', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>' },
   { name: 'Redis', color: '#DC382D', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M10.5 2.661l.54.997-1.797.644 2.409.218.748 1.246.467-1.121 2.077-.208-1.61-.613.426-1.017-1.578.519zm6.905 2.077L13.76 6.182l3.292 1.298.353-.146 3.293-1.298zm-10.51.312a2.97 1.153 0 0 0-2.97 1.152 2.97 1.153 0 0 0 2.97 1.153 2.97 1.153 0 0 0 2.97-1.153 2.97 1.153 0 0 0-2.97-1.153z"/></svg>' },
   { name: 'GraphQL', color: '#E10098', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.14 3.73l-4.14 7.17-4.14-7.17L2.43 5.43l5 8.66-5 8.66L7.86 20.27l4.14-7.17 4.14 7.17 5.43-3.14-5-8.66 5-8.66-5.43-3.14z"/></svg>' },
-]
+])
 
 const solutions = ref([])
 
@@ -248,6 +248,7 @@ onMounted(async () => {
     if (config) {
       pageConfig.value = config
       if (config.solutions) solutions.value = config.solutions
+      if (config.ecosystem && config.ecosystem.length > 0) ecosystem.value = config.ecosystem
     }
     insights.value = await insightsAPI.getAll('superfitter') 
   } catch (err) {

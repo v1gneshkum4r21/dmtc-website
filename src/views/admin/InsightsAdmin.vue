@@ -241,6 +241,7 @@ const editingJob = ref(null)
 const editingResearch = ref(null)
 const selectedApplication = ref(null)
 const showPageEditor = ref(false)
+let refreshTimer = null
 
 // Computed Orchestrators
 const activeComponent = computed(() => {
@@ -353,9 +354,13 @@ const initDashboard = () => {
   }
   fetchAll()
   // Auto-refresh admin data every 60 seconds
-  const refreshTimer = setInterval(fetchAll, 60000)
-  onUnmounted(() => clearInterval(refreshTimer))
+  if (refreshTimer) clearInterval(refreshTimer)
+  refreshTimer = setInterval(fetchAll, 60000)
 }
+
+onUnmounted(() => {
+  if (refreshTimer) clearInterval(refreshTimer)
+})
 
 const loadInsights = async () => { 
   loading.value = true

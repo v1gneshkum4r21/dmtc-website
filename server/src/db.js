@@ -146,6 +146,7 @@ async function initDb() {
             team LONGTEXT,
             advisors LONGTEXT,
             perks LONGTEXT,
+            ecosystem LONGTEXT,
             content LONGTEXT,
             theme LONGTEXT,
             isCustom BOOLEAN DEFAULT 0,
@@ -216,6 +217,14 @@ async function initDb() {
     // Add hero_slides column to settings if missing
     try { await pool.query("ALTER TABLE settings ADD COLUMN hero_slides LONGTEXT"); } catch (e) { /* already exists */ }
 
+    // Add ecosystem column to pages if missing
+    try { await pool.query("ALTER TABLE pages ADD COLUMN ecosystem LONGTEXT AFTER perks"); } catch (e) { /* already exists */ }
+    try { await pool.query("ALTER TABLE pages ADD COLUMN isCustom BOOLEAN DEFAULT 0"); } catch (e) { /* already exists */ }
+    try { await pool.query("ALTER TABLE pages ADD COLUMN label VARCHAR(255)"); } catch (e) { /* already exists */ }
+    try { await pool.query("ALTER TABLE pages ADD COLUMN path VARCHAR(255)"); } catch (e) { /* already exists */ }
+    try { await pool.query("ALTER TABLE pages ADD COLUMN visible BOOLEAN DEFAULT 1"); } catch (e) { /* already exists */ }
+    try { await pool.query("ALTER TABLE pages ADD COLUMN `group` VARCHAR(100)"); } catch (e) { /* already exists */ }
+
     // Default Seed Data
     const [users] = await pool.query('SELECT count(*) as count FROM users');
     if (users[0].count === 0) {
@@ -242,7 +251,7 @@ const TABLE_COLUMNS = {
     research: ['id', 'title', 'journal', 'year', 'authors', 'excerpt', 'abstract', 'content', 'imageUrl', 'pdfUrl', 'linkType', 'published', 'createdAt', 'updatedAt'],
     showcase: ['id', 'title', 'description', 'mediaUrl', 'mediaType', 'tag', 'product', 'order', 'active', 'size', 'likes', 'views', 'createdAt', 'updatedAt'],
     jobs: ['id', 'title', 'team', 'location', 'description', 'requirements', 'company', 'tags', 'type', 'salary_range', 'remote_policy', 'experience_level', 'benefits', 'deadline', 'active', 'isArchived', 'createdAt', 'updatedAt'],
-    pages: ['id', 'page_id', 'hero_badge', 'hero_title', 'hero_subtitle', 'solutions', 'approaches', 'values_list', 'stats', 'team', 'advisors', 'perks', 'content', 'theme', 'isCustom', 'label', 'path', 'visible', 'group', 'updatedAt']
+    pages: ['id', 'page_id', 'hero_badge', 'hero_title', 'hero_subtitle', 'solutions', 'approaches', 'values_list', 'stats', 'team', 'advisors', 'perks', 'ecosystem', 'content', 'theme', 'isCustom', 'label', 'path', 'visible', 'group', 'updatedAt']
 };
 
 function sanitize(table, data) {
@@ -277,7 +286,7 @@ const pageConfigHelper = (row) => {
     if (!row) return null;
     const item = { ...row, _id: row.id, isCustom: !!row.isCustom, visible: !!row.visible };
     if ('values_list' in item) { item.values = item.values_list; delete item.values_list; }
-    const JSON_FIELDS = ['solutions', 'approaches', 'values', 'stats', 'team', 'advisors', 'perks', 'content', 'theme'];
+    const JSON_FIELDS = ['solutions', 'approaches', 'values', 'stats', 'team', 'advisors', 'perks', 'ecosystem', 'content', 'theme'];
     for (const f of JSON_FIELDS) {
         if (typeof item[f] === 'string') try { item[f] = JSON.parse(item[f] || 'null'); } catch (e) { }
     }

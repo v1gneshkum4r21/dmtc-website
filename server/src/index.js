@@ -19,8 +19,23 @@ app.use(cors({
     origin: [FRONTEND_URL, 'https://slateblue-woodpecker-659704.hostingersite.com', 'https://dreamactic.com', 'https://www.dreamactic.com'],
     credentials: true,
 }));
+// Security & CSP headers — override Hostinger's restrictive injected headers
+app.use((req, res, next) => {
+    res.setHeader('Content-Security-Policy',
+        "default-src 'self' https:; " +
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; " +
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https:; " +
+        "font-src 'self' https://fonts.gstatic.com https: data:; " +
+        "img-src 'self' https: data: blob:; " +
+        "connect-src 'self' https: wss:; " +
+        "worker-src 'self' blob:;"
+    );
+    res.removeHeader('X-Powered-By');
+    next();
+});
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
 
 // Request Logger
 app.use((req, res, next) => {

@@ -75,6 +75,28 @@
             </div>
           </section>
 
+          <!-- Ecosystem Section -->
+          <section class="config-section" v-if="['ai-work', 'ai-service', 'ai-enterprise', 'superfitter', 'echoai'].includes(pageId)">
+            <div class="section-header">
+              <h3>Ecosystem Infrastructure</h3>
+              <button class="btn-ghost mini" @click="addItem('ecosystem')">+ Add Integration</button>
+            </div>
+            
+            <div class="solutions-list">
+              <div v-for="(item, index) in config.ecosystem" :key="index" class="solution-item-card card-premium">
+                <div class="item-header">
+                  <h4>Node: {{ item.name || 'Untitled' }}</h4>
+                  <button class="remove-btn" @click="config.ecosystem.splice(index, 1)">Purge</button>
+                </div>
+                <div class="form-grid">
+                  <div class="form-group"><label>Provider Name</label><input v-model="item.name" type="text" class="input-premium"></div>
+                  <div class="form-group"><label>Brand Color (Hex)</label><input v-model="item.color" type="color" class="color-input-mini" style="height: 42px; width: 60px;"></div>
+                  <div class="form-group full"><label>Icon (SVG Data)</label><textarea v-model="item.icon" rows="2" class="input-premium" placeholder="<svg>...</svg>"></textarea></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
           <!-- About Us Specific Sections -->
           <template v-if="pageId === 'about'">
             <!-- Approaches -->
@@ -264,7 +286,8 @@ const config = ref({
   team: [],
   advisors: [],
   stats: [],
-  perks: []
+  perks: [],
+  ecosystem: []
 })
 
 const loadConfig = async () => {
@@ -275,6 +298,7 @@ const loadConfig = async () => {
       if (data.team) {
         data.team = data.team.map(m => ({ ...m, socials: m.socials || [] }))
       }
+      data.ecosystem = data.ecosystem || []
       config.value = data
     }
   } catch (err) {
@@ -297,6 +321,9 @@ const addItem = (type) => {
     config.value.advisors.push({ name: 'Advisor Name', position: 'Strategic Role' })
   } else if (type === 'perks') {
     config.value.perks.push({ title: 'New Perk', description: 'Describe...', icon: '' })
+  } else if (type === 'ecosystem') {
+    if (!config.value.ecosystem) config.value.ecosystem = []
+    config.value.ecosystem.push({ name: 'New Provider', color: '#6366f1', icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 12l10 10 10-10L12 2z"/></svg>' })
   }
 }
 
