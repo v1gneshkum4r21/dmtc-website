@@ -333,7 +333,7 @@ export const adminAPI = {
 
     // Page Management
     updatePageConfig: async (page_id, config) => {
-        const response = await apiClient.put(`/admin/pages/${page_id}`, config)
+        const response = await apiClient.post(`/admin/pages/${page_id}`, config)
         return response.data
     },
     deletePageConfig: async (page_id) => {

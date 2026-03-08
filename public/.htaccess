@@ -4,14 +4,15 @@
 Options -MultiViews -Indexes
 RewriteEngine On
 
-# Ensure Authorization header is passed to Node.js (some Apache configs strip it)
+# Ensure Authorization header is passed to Node.js
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
 
-# Allow all common HTTP methods (fixes 403 on PUT/DELETE/PATCH)
-<LimitExcept GET POST OPTIONS PUT DELETE PATCH>
+# Allow all common HTTP methods
+<Limit GET POST OPTIONS PUT DELETE PATCH>
     Order allow,deny
     Allow from all
-</LimitExcept>
+</Limit>
 
 # Handle Preflight OPTIONS requests directly in Apache (optional but helpful)
 RewriteCond %{REQUEST_METHOD} OPTIONS
