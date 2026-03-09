@@ -9,10 +9,10 @@
 
       <div class="header-breadcrumb-luxury">
         <div class="sync-pulse">
-          <span class="pulse-dot"></span> System Live • {{ lastSync }}
+          <span class="pulse-dot"></span> Online • {{ lastSync }}
         </div>
         <div class="path-navigation">
-          <span class="path-root">Command</span>
+          <span class="path-root">Admin</span>
           <span class="path-sep">/</span>
           <span class="path-current">{{ title }}</span>
         </div>
@@ -31,7 +31,7 @@
         <button 
           class="nav-icon-btn" 
           :class="{ active: activeModule === 'careers' && selectedPage === 'history' }"
-          title="System Logs" 
+          title="History" 
           @click="$emit('switch', 'careers', 'history')"
         >
           <i>▤</i>
@@ -39,7 +39,7 @@
         <button 
           class="nav-icon-btn" 
           :class="{ active: activeModule === 'showcase' }"
-          title="Media Library" 
+          title="Showcase" 
           @click="$emit('switch', 'showcase')"
         >
           <i>🖼</i>
@@ -49,7 +49,7 @@
       <div class="divider"></div>
       
       <a :href="previewUrl" target="_blank" class="preview-link-btn">
-        <span>Website Preview</span>
+        <span>View Site</span>
         <span class="icon">↗</span>
       </a>
       

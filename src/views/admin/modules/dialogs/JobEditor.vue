@@ -5,8 +5,8 @@
         <div class="header-vessel">
           <div class="header-glyph">📡</div>
           <div class="header-text">
-            <h2>{{ editing ? 'Modify Recruitment Protocol' : 'Initiate Talent Hunt' }}</h2>
-            <p>Deploying targeted nodes into the global talent mesh.</p>
+            <h2>{{ editing ? 'Edit Job Opening' : 'Add New Job' }}</h2>
+            <p>Fill in the job details below.</p>
           </div>
         </div>
         <button class="close-quantum-btn" @click="$emit('close')">✕</button>
@@ -17,31 +17,31 @@
         <div class="surface-form">
           <form @submit.prevent="handleSubmit" class="protocol-form">
             <div class="form-section">
-              <label class="section-label">Operational Designation</label>
+              <label class="section-label">Job Title</label>
               <div class="input-vessel">
-                <input v-model="form.title" type="text" placeholder="e.g., Lead Neural Architect" class="luxury-field" required />
+                <input v-model="form.title" type="text" placeholder="e.g. Lead Developer" class="luxury-field" required />
               </div>
             </div>
 
             <div class="form-row-multi">
               <div class="form-section">
-                <label class="section-label">Sub-System (Team)</label>
-                <input v-model="form.team" type="text" placeholder="Core Intelligence" class="luxury-field" required />
+                <label class="section-label">Team</label>
+                <input v-model="form.team" type="text" placeholder="e.g. Engineering" class="luxury-field" required />
               </div>
               <div class="form-section">
-                <label class="section-label">Deployment Hub</label>
-                <input v-model="form.location" type="text" placeholder="Distributed / Remote" class="luxury-field" required />
+                <label class="section-label">Location</label>
+                <input v-model="form.location" type="text" placeholder="Remote / City" class="luxury-field" required />
               </div>
             </div>
 
             <div class="form-section">
-              <label class="section-label">Protocol Objective (JD - Markdown)</label>
-              <textarea v-model="form.description" rows="8" class="luxury-field code-font" placeholder="# Role Mission\nDetail the objective..." required></textarea>
+              <label class="section-label">Job Description (Markdown)</label>
+              <textarea v-model="form.description" rows="8" class="luxury-field code-font" placeholder="# Role Overview..." required></textarea>
             </div>
 
             <div class="form-section">
-              <label class="section-label">Technical Requirements / Thresholds</label>
-              <textarea v-model="form.requirements" rows="6" class="luxury-field code-font" placeholder="e.g., Proficient in neural orchestration, 5+ cycles experience..."></textarea>
+              <label class="section-label">Requirements</label>
+              <textarea v-model="form.requirements" rows="6" class="luxury-field code-font" placeholder="e.g. 5+ years of experience..."></textarea>
             </div>
 
             <div class="form-row-multi">
@@ -72,8 +72,8 @@
             </div>
 
             <div class="form-section">
-              <label class="section-label">System Tags (Comma Separated)</label>
-              <input v-model="form.tags" type="text" placeholder="AI, Neural, Core, Staff" class="luxury-field" />
+              <label class="section-label">Tags (Comma Separated)</label>
+              <input v-model="form.tags" type="text" placeholder="AI, remote, full-time" class="luxury-field" />
             </div>
 
             <div class="form-actions-strata">
@@ -81,15 +81,15 @@
                 <input type="checkbox" id="active" v-model="form.active" class="hidden-check" />
                 <label for="active" class="sync-switch-label">
                   <span class="switch-ui"></span>
-                  <span class="label-text">Enable Active Signal Broadcast</span>
+                  <span class="label-text">Publish Job Live</span>
                 </label>
               </div>
               
               <div class="main-actions">
-                <button type="button" @click="$emit('close')" class="btn-cancel-quantum">Abort Mission</button>
+                <button type="button" @click="$emit('close')" class="btn-cancel-quantum">Cancel</button>
                 <button type="submit" class="btn-save-quantum" :disabled="loading">
                   <span class="save-icon">{{ loading ? '⏳' : '🚀' }}</span>
-                  {{ loading ? 'Updating Grid...' : (editing ? 'Apply Protocol Delta' : 'Deploy Protocol') }}
+                  {{ loading ? 'Saving...' : (editing ? 'Save Changes' : 'Create Job') }}
                 </button>
               </div>
             </div>
@@ -98,14 +98,14 @@
 
         <!-- Preview Surface -->
         <div class="surface-preview">
-          <label class="section-label sticky">Neural Protocol Rendering</label>
+          <label class="section-label sticky">Preview</label>
           <div class="preview-vessel">
             <!-- Job Card Replica -->
             <div class="preview-job-replica">
               <div class="replica-header">
                 <div class="brand-micro">DREAMACTIC // RECRUITMENT</div>
                 <div class="status-marker" :class="{ live: form.active }">
-                  {{ form.active ? 'SIGNAL ACTIVE' : 'SIGNAL STAGED' }}
+                  {{ form.active ? 'LIVE' : 'DRAFT' }}
                 </div>
               </div>
               
@@ -119,21 +119,21 @@
                 </div>
                 
                 <div class="jd-mesh">
-                  <div class="mesh-label">MISSION_PARAMETERS</div>
+                  <div class="mesh-label">DESCRIPTION</div>
                   <div class="mesh-content">
                     {{ form.description || 'Synthesizing protocol specifications...' }}
                   </div>
                 </div>
 
                 <div v-if="form.requirements" class="jd-mesh secondary">
-                  <div class="mesh-label">TECHNICAL_THRESHOLDS</div>
+                  <div class="mesh-label">REQUIREMENTS</div>
                   <div class="mesh-content">
                     {{ form.requirements }}
                   </div>
                 </div>
 
                 <div v-if="form.benefits" class="jd-mesh benefits">
-                  <div class="mesh-label">ORBITAL_BENEFITS</div>
+                  <div class="mesh-label">BENEFITS</div>
                   <div class="mesh-content">
                     {{ form.benefits }}
                   </div>
@@ -147,7 +147,7 @@
               </div>
 
               <div class="replica-footer">
-                <div class="apply-btn-mock">Initialize Application</div>
+                <div class="apply-btn-mock">Apply Now</div>
               </div>
             </div>
 
@@ -158,8 +158,8 @@
                 <div class="health-bar"><div class="fill" :style="{ width: healthScore + '%' }"></div></div>
               </div>
               <div class="health-item">
-                <label>Network Priority</label>
-                <span class="val">{{ form.experience_level || 'ENTRY_LEVEL' }} / CORE_ASSET</span>
+                <label>Job Level</label>
+                <span class="val">{{ form.experience_level || 'ENTRY_LEVEL' }}</span>
               </div>
             </div>
           </div>

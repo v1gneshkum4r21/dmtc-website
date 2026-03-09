@@ -3,20 +3,20 @@
     <header class="module-header luxury-page-title">
       <div class="header-vessel">
         <div class="section-context">
-          <span class="context-tag" :style="{ color: '#2563eb' }">KNOWLEDGE HUB</span>
+          <span class="context-tag" :style="{ color: '#2563eb' }">RESOURCES</span>
         </div>
         <h1>System <span class="text-gradient-primary">Resources</span></h1>
-        <p>Orchestrating the intellectual capital and strategic insights across the DREAMACTIC network.</p>
+        <p>Manage articles, blog posts, and research papers.</p>
       </div>
 
       <div class="header-actions">
         <div class="actions-wrapper">
           <button v-if="selectedPage" class="btn-ghost" @click="$emit('configure-page', selectedPage)">
             <span class="icon">⚙️</span>
-            Architect {{ selectedPageLabel }}
+            Edit {{ selectedPageLabel }}
           </button>
           <button class="btn-primary-luxe" @click="$emit('create')">
-            + New Insight Node
+            + Add Content
           </button>
         </div>
       </div>
@@ -44,22 +44,22 @@
     <div class="resources-viewport">
       <div v-if="loading" class="quantum-loader-vessel">
         <div class="pulse-ring"></div>
-        <p>Synchronizing Knowledge Grid...</p>
+        <p>Loading resources...</p>
       </div>
 
       <div v-else class="content-grid">
         <!-- Summary Matrix -->
         <div class="matrix-row">
           <div class="matrix-card">
-            <span class="m-label">Total Insights</span>
+            <span class="m-label">Total Items</span>
             <span class="m-val">{{ stats.total }}</span>
           </div>
           <div class="matrix-card">
-            <span class="m-label">Broadcast Active</span>
+            <span class="m-label">Published</span>
             <span class="m-val" style="color: #22c55e;">{{ stats.live }}</span>
           </div>
           <div class="matrix-card">
-            <span class="m-label">Encrypted Drafts</span>
+            <span class="m-label">Drafts</span>
             <span class="m-val" style="color: #f59e0b;">{{ stats.draft }}</span>
           </div>
         </div>
@@ -67,9 +67,9 @@
         <!-- Insights List -->
         <div class="insights-ledger card-premium">
           <div class="ledger-header">
-            <h3>{{ selectedPageLabel }} Information Ledger</h3>
+            <h3>{{ selectedPageLabel }} List</h3>
             <div class="ledger-search">
-              <input type="text" placeholder="Filter nodes..." class="search-mini">
+              <input type="text" placeholder="Search..." class="search-mini">
             </div>
           </div>
 
@@ -77,11 +77,11 @@
             <table class="ledger-table">
               <thead>
                 <tr>
-                  <th>Node Title</th>
+                  <th>Title</th>
                   <th>Author</th>
                   <th>Status</th>
                   <th>Modified</th>
-                  <th class="actions-cell">Protocols</th>
+                  <th class="actions-cell">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -101,8 +101,8 @@
                   <td><span class="node-meta">{{ new Date(item.updatedAt).toLocaleDateString() }}</span></td>
                   <td class="actions-cell">
                     <div class="action-synapse">
-                      <button class="btn-action" @click="$emit('edit', item)" title="Modify Protocol">✎</button>
-                      <button class="btn-action danger" @click="$emit('delete', item._id)" title="Purge Node">✕</button>
+                      <button class="btn-action" @click="$emit('edit', item)" title="Edit">✎</button>
+                      <button class="btn-action danger" @click="$emit('delete', item._id)" title="Delete">✕</button>
                     </div>
                   </td>
                 </tr>

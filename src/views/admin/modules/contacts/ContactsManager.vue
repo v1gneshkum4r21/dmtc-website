@@ -4,11 +4,11 @@
       <div class="header-vessel">
         <div class="section-context">
           <span class="context-tag" style="background-color: rgba(14, 165, 233, 0.2); color: #0ea5e9;">
-            Network Comms
+            Contacts
           </span>
         </div>
-        <h1>Incoming <span class="text-gradient-primary">Transmissions</span></h1>
-        <p>Review and act continuously on incoming contact form requests.</p>
+        <h1>Incoming <span class="text-gradient-primary">Messages</span></h1>
+        <p>Review and manage contact form submissions.</p>
       </div>
       
       <div class="header-actions">
@@ -25,15 +25,15 @@
     <div class="metrics-row">
       <div class="metric-pill">
         <span class="val">{{ contacts.length }}</span>
-        <span class="label">Total Signals</span>
+        <span class="label">Total Messages</span>
       </div>
       <div class="metric-pill">
         <span class="val warning">{{ unseenCount }}</span>
-        <span class="label">Unseen Bursts</span>
+        <span class="label">New Messages</span>
       </div>
       <div class="metric-pill">
         <span class="val success">{{ actionedCount }}</span>
-        <span class="label">Actioned Resolves</span>
+        <span class="label">Handled</span>
       </div>
     </div>
 
@@ -47,7 +47,7 @@
             <th>Interest</th>
             <th>Message Snippet</th>
             <th>Status</th>
-            <th>Transmission Log</th>
+            <th>Date Sent</th>
             <th class="text-right">Ops</th>
           </tr>
         </thead>
@@ -76,16 +76,16 @@
             <td><span class="delta-time">{{ formatDate(contact.createdAt) }}</span></td>
             <td class="text-right">
               <div class="ops-cluster" @click.stop>
-                <button class="ops-btn" @click="selectedContact = contact" title="Preview Signal">🔭</button>
-                <button class="ops-btn delete" @click="$emit('delete-contact', contact.id)" title="Purge Data">🗑</button>
+                <button class="ops-btn" @click="selectedContact = contact" title="Preview">🔭</button>
+                <button class="ops-btn delete" @click="$emit('delete-contact', contact.id)" title="Delete">🗑</button>
               </div>
             </td>
           </tr>
           <tr v-if="filteredContacts.length === 0">
             <td colspan="7" style="text-align:center; padding: 5rem;">
                <div class="empty-glyph">📭</div>
-               <h3>No transmissions identified</h3>
-               <p style="opacity:0.5; font-size: 0.9rem;">The neural grid returned no matches for your current query.</p>
+               <h3>No messages found</h3>
+               <p style="opacity:0.5; font-size: 0.9rem;">No entries found matching your search.</p>
             </td>
           </tr>
         </tbody>
@@ -112,12 +112,12 @@
 
             <div class="modal-body">
               <div class="detail-row">
-                <label>Interest Architecture</label>
+                <label>Subject</label>
                 <span class="detail-tag">{{ selectedContact.subject }}</span>
               </div>
 
               <div class="detail-row">
-                <label>Transmission Intent</label>
+                <label>Message Content</label>
                 <div class="message-burst">
                   {{ selectedContact.message }}
                 </div>
@@ -128,9 +128,9 @@
                 <div class="status-control">
                   <span class="c-label">Update processing state:</span>
                   <select v-model="selectedContact.status" @change="updateStatus(selectedContact.id, selectedContact.status)" class="status-select large" :class="selectedContact.status">
-                    <option value="unseen">Unseen Burst</option>
-                    <option value="reviewed">Reviewed State</option>
-                    <option value="actioned">Actioned Resolve</option>
+                    <option value="unseen">Unseen</option>
+                    <option value="reviewed">Reviewed</option>
+                    <option value="actioned">Actioned</option>
                   </select>
                 </div>
               </div>
@@ -142,11 +142,11 @@
                   <span class="icon">📋</span> Copy Email
                 </button>
                 <a :href="'mailto:' + selectedContact.email" class="btn-primary-luxe">
-                  <span class="icon">✉️</span> Initialize Outreach
+                  <span class="icon">✉️</span> Send Email
                 </a>
               </div>
               <button class="btn-danger-ghost" @click="handleDelete(selectedContact.id)">
-                Purge From Records
+                Delete Message
               </button>
             </footer>
           </div>

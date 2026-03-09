@@ -5,8 +5,8 @@
         <div class="header-vessel">
           <div class="header-glyph">💎</div>
           <div class="header-text">
-            <h2>{{ editing ? 'Modify Asset Node' : 'Initialize Asset Node' }}</h2>
-            <p>Configuring architectural visualization for the global showcase grid.</p>
+            <h2>{{ editing ? 'Edit Showcase Item' : 'Add New Item' }}</h2>
+            <p>Upload an image or video to the showcase.</p>
           </div>
         </div>
         <button class="close-quantum-btn" @click="$emit('close')">✕</button>
@@ -17,15 +17,15 @@
         <div class="surface-form">
           <form @submit.prevent="handleSubmit" class="intelligence-form">
             <div class="form-section">
-              <label class="section-label">Identity Metadata</label>
+              <label class="section-label">Item Name</label>
               <div class="input-vessel">
-                <input v-model="form.title" type="text" placeholder="Visual name (e.g., Neural Interface v1)" class="luxury-field" required />
+                <input v-model="form.title" type="text" placeholder="Visual name (e.g. App Mockup)" class="luxury-field" required />
               </div>
             </div>
 
             <div class="form-row-multi">
               <div class="form-section">
-                <label class="section-label">Domain Assignment</label>
+                <label class="section-label">Page/Product</label>
                 <select v-model="form.product" class="luxury-field select">
                   <option>SuperFiitter</option>
                   <option>EchoAI</option>
@@ -34,7 +34,7 @@
                 </select>
               </div>
               <div class="form-section">
-                <label class="section-label">Spatial Scale</label>
+                <label class="section-label">Display Size</label>
                 <select v-model="form.size" class="luxury-field select">
                   <option value="small">Small (33%)</option>
                   <option value="medium">Medium (66%)</option>
@@ -44,23 +44,23 @@
             </div>
 
             <div class="form-section">
-              <label class="section-label">Operational Sequence</label>
+              <label class="section-label">Display Order</label>
               <div class="order-control">
                 <input v-model.number="form.order" type="number" placeholder="Order Index" class="luxury-field small" />
-                <span class="helper-text">Defines priority in the global grid.</span>
+                <span class="helper-text">Higher numbers appear first.</span>
               </div>
             </div>
 
             <div class="form-section">
-              <label class="section-label">Classification Tag</label>
+              <label class="section-label">Category Tag</label>
               <input v-model="form.tag" type="text" placeholder="e.g., Core Logic / Design Evolution" class="luxury-field" />
             </div>
 
             <div class="form-section extraction">
-              <label class="section-label">Asset Extraction Method</label>
+              <label class="section-label">Media Upload</label>
               <div class="method-toggles">
-                <button type="button" :class="{ active: mediaSource === 'url' }" @click="mediaSource = 'url'">Network URL</button>
-                <button type="button" :class="{ active: mediaSource === 'upload' }" @click="mediaSource = 'upload'">Physical Upload</button>
+                <button type="button" :class="{ active: mediaSource === 'url' }" @click="mediaSource = 'url'">Image/Video URL</button>
+                <button type="button" :class="{ active: mediaSource === 'upload' }" @click="mediaSource = 'upload'">Upload File</button>
               </div>
               
               <div v-if="mediaSource === 'url'" class="extraction-input-cluster">
@@ -83,18 +83,17 @@
             </div>
 
             <div class="form-actions-strata">
-              <button type="button" @click="$emit('close')" class="btn-cancel-quantum">Abort Mission</button>
+              <button type="button" @click="$emit('close')" class="btn-cancel-quantum">Cancel</button>
               <button type="submit" class="btn-save-quantum" :disabled="loading">
                 <span class="save-icon">{{ loading ? '⏳' : '✅' }}</span>
-                {{ loading ? 'Synchronizing Node...' : (editing ? 'Apply Delta Changes' : 'Initialize Node') }}
+                {{ loading ? 'Saving...' : (editing ? 'Save Changes' : 'Create Item') }}
               </button>
             </div>
           </form>
         </div>
 
-        <!-- Preview Surface -->
         <div class="surface-preview">
-          <label class="section-label sticky">Neural Grid Preview</label>
+          <label class="section-label sticky">Preview</label>
           <div class="preview-vessel">
             <div class="preview-card-replica" :class="form.size">
               <div class="replica-chamber">
@@ -114,7 +113,7 @@
                 </div>
               </div>
               <div class="replica-content">
-                <h4 class="replica-title">{{ form.title || 'Untitled Asset Node' }}</h4>
+                <h4 class="replica-title">{{ form.title || 'Untitled Item' }}</h4>
                 <div class="replica-meta">
                   <span class="domain">{{ form.product }}</span>
                   <span class="tag">{{ form.tag || 'Unlabeled' }}</span>
@@ -123,7 +122,7 @@
             </div>
             
             <div class="configuration-readout">
-              <div class="readout-header">CONFIG_DUMP</div>
+              <div class="readout-header">ITEM_INFO</div>
               <pre class="json-dump"><code>{
   "node_id": "{{ editing ? editing._id : 'NEW' }}",
   "spatial_scale": "{{ form.size }}",

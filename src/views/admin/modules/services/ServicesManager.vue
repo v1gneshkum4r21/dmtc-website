@@ -7,8 +7,8 @@
             {{ selectedPageInfo.sub }}
           </span>
         </div>
-        <h1>{{ selectedPageLabel }} <span class="text-gradient-primary">Intelligence</span></h1>
-        <p>Provisioning cognitive architectural data for the {{ selectedPageLabel }} node.</p>
+        <h1>{{ selectedPageLabel }} <span class="text-gradient-primary">Insights</span></h1>
+        <p>Manage insights for the {{ selectedPageLabel }} page.</p>
       </div>
       
       <div class="header-actions">
@@ -33,7 +33,7 @@
           </button>
           <button class="btn-primary-luxe" @click="$emit('create')">
             <span class="plus-glyph">+</span>
-            <span class="btn-text">Provision Node</span>
+            <span class="btn-text">Add Insight</span>
           </button>
         </div>
       </div>
@@ -47,11 +47,11 @@
       </div>
       <div class="metric-pill">
         <span class="val success">{{ publishedCount }}</span>
-        <span class="label">Broadcast Active</span>
+        <span class="label">Published</span>
       </div>
       <div class="metric-pill">
         <span class="val warning">{{ insights.length - publishedCount }}</span>
-        <span class="label">Encrypted Drafts</span>
+        <span class="label">Drafts</span>
       </div>
     </div>
 
@@ -62,8 +62,8 @@
 
     <div v-else-if="filteredInsights.length === 0" class="empty-intelligence card-premium">
       <div class="empty-glyph">🔭</div>
-      <h3>No insights identified</h3>
-      <p>The neural grid returned no matches for your current query.</p>
+      <h3>No insights found</h3>
+      <p>No insights found matching your search.</p>
       <button class="btn-ghost" @click="localQuery = ''">Reset Search</button>
     </div>
 
@@ -72,7 +72,7 @@
       <div v-for="insight in filteredInsights" :key="insight._id" class="intelligence-card card-premium" :class="{ draft: !insight.published }">
         <div class="card-aura"></div>
         <div class="card-status-pip" :class="insight.published ? 'online' : 'staged'">
-          {{ insight.published ? 'ONLINE' : 'STAGED' }}
+          {{ insight.published ? 'PUBLISHED' : 'DRAFT' }}
         </div>
         
         <div class="card-body">
@@ -86,8 +86,8 @@
               <span class="name">{{ insight.author || 'ROOT' }}</span>
             </div>
             <div class="node-actions">
-              <button class="node-btn" @click="$emit('edit', insight)" title="Edit Logic">✎</button>
-              <button class="node-btn delete" @click="$emit('delete', insight._id)" title="Purge Data">🗑</button>
+              <button class="node-btn" @click="$emit('edit', insight)" title="Edit">✎</button>
+              <button class="node-btn delete" @click="$emit('delete', insight._id)" title="Delete">🗑</button>
             </div>
           </div>
         </div>
@@ -99,12 +99,12 @@
       <table class="futuristic-table">
         <thead>
           <tr>
-            <th>Insight Signature</th>
-            <th>Neural Node</th>
-            <th>Broadcast Status</th>
-            <th>Lead Analyst</th>
-            <th>Last Sequence</th>
-            <th class="text-right">Operations</th>
+            <th>Title</th>
+            <th>Page</th>
+            <th>Status</th>
+            <th>Author</th>
+            <th>Last Modified</th>
+            <th class="text-right">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -117,7 +117,7 @@
             <td>
               <div class="status-indicator" :class="insight.published ? 'online' : 'staged'">
                 <span class="glow-dot"></span>
-                {{ insight.published ? 'Broadcast' : 'Encrypted' }}
+                {{ insight.published ? 'Published' : 'Draft' }}
               </div>
             </td>
             <td><span class="operator-id">{{ insight.author || 'ADMIN' }}</span></td>

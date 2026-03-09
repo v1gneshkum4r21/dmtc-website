@@ -3,11 +3,11 @@
     <div class="page-editor-container card-premium shadow-2xl">
       <header class="editor-header">
         <div class="header-meta">
-          <span class="context-tag">{{ pageId.toUpperCase() }} NODE</span>
-          <h2>Page <span class="text-gradient-primary">Architect</span></h2>
+          <span class="context-tag">{{ pageId.toUpperCase() }} PAGE</span>
+          <h2>Page <span class="text-gradient-primary">Settings</span></h2>
         </div>
         <div class="view-toggle">
-          <span class="view-label">Live Preview Active</span>
+          <span class="view-label">Preview Mode</span>
           <div class="pulse-dot"></div>
         </div>
         <button class="close-btn" @click="$emit('close')">✕</button>
@@ -18,7 +18,7 @@
         <div class="editor-controls">
           <!-- Hero Section Config -->
           <section class="config-section">
-            <h3>Hero Branding</h3>
+            <h3>Hero Section</h3>
             <div class="form-grid">
               <div class="form-group full">
                 <label>Hero Badge</label>
@@ -38,15 +38,15 @@
           <!-- Solutions Section Config (Service/Product) -->
           <section class="config-section" v-if="['ai-work', 'ai-service', 'ai-enterprise', 'superfitter', 'echo-ai'].includes(pageId)">
             <div class="section-header">
-              <h3>Solutions Framework</h3>
-              <button class="btn-ghost mini" @click="addItem('solutions')">+ Add Solution</button>
+              <h3>Products & Services</h3>
+              <button class="btn-ghost mini" @click="addItem('solutions')">+ Add Service</button>
             </div>
             
             <div class="solutions-list">
               <div v-for="(sol, index) in config.solutions" :key="index" class="solution-item-card card-premium">
                 <div class="item-header">
-                  <h4>Solution #{{ index + 1 }}: {{ sol.title || 'Untitled' }}</h4>
-                  <button class="remove-btn" @click="config.solutions.splice(index, 1)">Purge</button>
+                  <h4>Item #{{ index + 1 }}: {{ sol.title || 'Untitled' }}</h4>
+                  <button class="remove-btn" @click="config.solutions.splice(index, 1)">Delete</button>
                 </div>
                 <!-- ... solution fields ... -->
                 <div class="form-grid">
@@ -78,15 +78,15 @@
           <!-- Ecosystem Section -->
           <section class="config-section" v-if="['ai-work', 'ai-service', 'ai-enterprise', 'superfitter', 'echoai'].includes(pageId)">
             <div class="section-header">
-              <h3>Ecosystem Infrastructure</h3>
+              <h3>Partners & Integrations</h3>
               <button class="btn-ghost mini" @click="addItem('ecosystem')">+ Add Integration</button>
             </div>
             
             <div class="solutions-list">
               <div v-for="(item, index) in config.ecosystem" :key="index" class="solution-item-card card-premium">
                 <div class="item-header">
-                  <h4>Node: {{ item.name || 'Untitled' }}</h4>
-                  <button class="remove-btn" @click="config.ecosystem.splice(index, 1)">Purge</button>
+                  <h4>Item: {{ item.name || 'Untitled' }}</h4>
+                  <button class="remove-btn" @click="config.ecosystem.splice(index, 1)">Delete</button>
                 </div>
                 <div class="form-grid">
                   <div class="form-group"><label>Provider Name</label><input v-model="item.name" type="text" class="input-premium"></div>
@@ -101,9 +101,9 @@
           <template v-if="pageId === 'about'">
             <!-- Approaches -->
             <section class="config-section">
-              <div class="section-header"><h3>Operational Approaches</h3><button class="btn-ghost mini" @click="addItem('approaches')">+ Add Approach</button></div>
+              <div class="section-header"><h3>Our Approach</h3><button class="btn-ghost mini" @click="addItem('approaches')">+ Add Approach</button></div>
               <div v-for="(item, index) in config.approaches" :key="index" class="solution-item-card card-premium">
-                <div class="item-header"><h4>Approach: {{ item.title }}</h4><button class="remove-btn" @click="config.approaches.splice(index, 1)">Purge</button></div>
+                <div class="item-header"><h4>Approach: {{ item.title }}</h4><button class="remove-btn" @click="config.approaches.splice(index, 1)">Delete</button></div>
                 <div class="form-grid">
                   <div class="form-group"><label>Title</label><input v-model="item.title" type="text" class="input-premium"></div>
                   <div class="form-group"><label>Accent (RGBA/Hex)</label><input v-model="item.accent" type="text" class="input-premium"></div>
@@ -115,9 +115,9 @@
 
             <!-- Values -->
             <section class="config-section">
-              <div class="section-header"><h3>Core Principles</h3><button class="btn-ghost mini" @click="addItem('values')">+ Add Value</button></div>
+              <div class="section-header"><h3>Core Principles</h3><button class="btn-ghost mini" @click="addItem('values')">+ Add Principle</button></div>
               <div v-for="(val, index) in config.values" :key="index" class="solution-item-card card-premium">
-                <div class="item-header"><h4>Value: {{ val.title }}</h4><button class="remove-btn" @click="config.values.splice(index, 1)">Purge</button></div>
+                <div class="item-header"><h4>Item: {{ val.title }}</h4><button class="remove-btn" @click="config.values.splice(index, 1)">Delete</button></div>
                 <div class="form-grid">
                   <div class="form-group"><label>Title</label><input v-model="val.title" type="text" class="input-premium"></div>
                   <div class="form-group"><label>Subtitle</label><input v-model="val.subtitle" type="text" class="input-premium"></div>
@@ -132,9 +132,9 @@
           <!-- Leadership Specific Sections -->
           <template v-if="pageId === 'leadership'">
             <section class="config-section">
-              <div class="section-header"><h3>Executive Roster</h3><button class="btn-ghost mini" @click="addItem('team')">+ Add Member</button></div>
+              <div class="section-header"><h3>Team Members</h3><button class="btn-ghost mini" @click="addItem('team')">+ Add Member</button></div>
               <div v-for="(member, index) in config.team" :key="index" class="solution-item-card card-premium">
-                <div class="item-header"><h4>Member: {{ member.name }}</h4><button class="remove-btn" @click="config.team.splice(index, 1)">Purge</button></div>
+                <div class="item-header"><h4>Member: {{ member.name }}</h4><button class="remove-btn" @click="config.team.splice(index, 1)">Delete</button></div>
                 <div class="form-grid">
                   <div class="form-group"><label>Name</label><input v-model="member.name" type="text" class="input-premium"></div>
                   <div class="form-group"><label>Role</label><input v-model="member.role" type="text" class="input-premium"></div>
@@ -171,7 +171,7 @@
             <section class="config-section">
               <div class="section-header"><h3>Strategic Advisors</h3><button class="btn-ghost mini" @click="addItem('advisors')">+ Add Advisor</button></div>
               <div v-for="(adv, index) in config.advisors" :key="index" class="solution-item-card card-premium">
-                <div class="item-header"><h4>Advisor: {{ adv.name }}</h4><button class="remove-btn" @click="config.advisors.splice(index, 1)">Purge</button></div>
+                <div class="item-header"><h4>Advisor: {{ adv.name }}</h4><button class="remove-btn" @click="config.advisors.splice(index, 1)">Delete</button></div>
                 <div class="form-grid">
                   <div class="form-group"><label>Name</label><input v-model="adv.name" type="text" class="input-premium"></div>
                   <div class="form-group"><label>Position</label><input v-model="adv.position" type="text" class="input-premium"></div>
@@ -183,9 +183,9 @@
           <!-- Careers Specific Sections -->
           <template v-if="pageId === 'careers'">
             <section class="config-section">
-              <div class="section-header"><h3>Organizational Perks</h3><button class="btn-ghost mini" @click="addItem('perks')">+ Add Perk</button></div>
+              <div class="section-header"><h3>Benefits & Perks</h3><button class="btn-ghost mini" @click="addItem('perks')">+ Add Benefit</button></div>
               <div v-for="(perk, index) in config.perks" :key="index" class="solution-item-card card-premium">
-                <div class="item-header"><h4>Perk: {{ perk.title }}</h4><button class="remove-btn" @click="config.perks.splice(index, 1)">Purge</button></div>
+                <div class="item-header"><h4>Item: {{ perk.title }}</h4><button class="remove-btn" @click="config.perks.splice(index, 1)">Delete</button></div>
                 <div class="form-grid">
                   <div class="form-group"><label>Title</label><input v-model="perk.title" type="text" class="input-premium"></div>
                   <div class="form-group full"><label>Description</label><textarea v-model="perk.description" rows="2" class="input-premium"></textarea></div>
@@ -256,9 +256,9 @@
       </div>
 
       <footer class="editor-footer">
-        <button class="btn-ghost" @click="$emit('close')">Abandon Changes</button>
+        <button class="btn-ghost" @click="$emit('close')">Cancel</button>
         <button class="btn-primary-luxe" :disabled="loading" @click="saveConfig">
-          <span class="btn-text">{{ loading ? 'Syncing...' : 'Commit Sequence' }}</span>
+          <span class="btn-text">{{ loading ? 'Saving...' : 'Save Changes' }}</span>
         </button>
       </footer>
     </div>

@@ -3,10 +3,10 @@
     <header class="module-header luxury-page-title">
       <div class="header-vessel">
         <div class="section-context">
-          <span class="context-tag">SYSTEM_CORE</span>
+          <span class="context-tag">SETTINGS</span>
         </div>
-        <h1>Global <span class="text-gradient-primary">Configuration</span></h1>
-        <p>Orchestrating site-wide parameters, SEO intelligence, and infrastructure integrity.</p>
+        <h1>System <span class="text-gradient-primary">Settings</span></h1>
+        <p>Manage site identity, SEO, and system settings.</p>
       </div>
       
       <div class="header-actions">
@@ -16,7 +16,7 @@
         </div>
         <button class="btn-primary-luxe" @click="saveSettings">
           <span class="save-icon">💾</span>
-          <span class="btn-text">Commit Changes</span>
+          <span class="btn-text">Save Changes</span>
         </button>
       </div>
     </header>
@@ -48,21 +48,21 @@
             <!-- General -->
             <div v-if="activeTab === 'general'" class="pane-stack">
               <div class="pane-header">
-                <h3>Core Brand Identity</h3>
-                <p>Define the high-level identity nodes for the public network.</p>
+                <h3>Brand Identity</h3>
+                <p>Set your site's name and contact information.</p>
               </div>
               <div class="settings-field-cluster">
                 <div class="field-item">
-                  <label class="luxe-label">Site Brand Designation</label>
+                  <label class="luxe-label">Site Name</label>
                   <input v-model="settings.siteTitle" type="text" class="luxe-input" />
-                  <p class="field-tip">Appears in global title tags and navigational headers.</p>
+                  <p class="field-tip">Appears in browser titles and headers.</p>
                 </div>
                 <div class="field-item">
-                  <label class="luxe-label">Intelligence Tagline</label>
+                  <label class="luxe-label">Tagline</label>
                   <input v-model="settings.tagline" type="text" class="luxe-input" />
                 </div>
                 <div class="field-item">
-                  <label class="luxe-label">Administrative Contact Node</label>
+                  <label class="luxe-label">Contact Email</label>
                   <input v-model="settings.contactEmail" type="email" class="luxe-input" />
                 </div>
               </div>
@@ -72,22 +72,22 @@
             <div v-if="activeTab === 'seo'" class="pane-stack">
               <div class="pane-header">
                 <h3>Search Engine Optimization</h3>
-                <p>Configure how neural indexers interact with your platform.</p>
+                <p>Configure how search engines index your site.</p>
               </div>
               <div class="settings-field-cluster">
                 <div class="field-item">
-                  <label class="luxe-label">Global Meta Narrative</label>
+                  <label class="luxe-label">Meta Description</label>
                   <textarea v-model="settings.seoDescription" class="luxe-input" rows="4"></textarea>
-                  <p class="field-tip">Optimal length for indexers: 155 characters.</p>
+                  <p class="field-tip">Optimal length: 155 characters.</p>
                 </div>
                 <div class="field-item">
-                  <label class="luxe-label">Intelligence Keywords</label>
+                  <label class="luxe-label">Keywords</label>
                   <input v-model="settings.keywords" type="text" class="luxe-input" placeholder="AI, Agents, Future..." />
                 </div>
                 <div class="luxe-toggle-box">
                   <div class="toggle-meta">
-                    <label>Indexer Permission</label>
-                    <p>Allow crawlers to index and rank the current node.</p>
+                    <label>Search Engine Permissions</label>
+                    <p>Allow search engines to index your site.</p>
                   </div>
                   <div class="luxe-switch" :class="{ on: settings.indexRobots }" @click="settings.indexRobots = !settings.indexRobots"></div>
                 </div>
@@ -97,8 +97,8 @@
             <!-- Social -->
             <div v-if="activeTab === 'social'" class="pane-stack">
               <div class="pane-header">
-                <h3>Network Presence</h3>
-                <p>Bind external social nodes to the primary matrix.</p>
+                <h3>Social Presence</h3>
+                <p>Link your social media profiles.</p>
               </div>
               <div class="settings-field-cluster">
                 <div class="social-binding">
@@ -198,8 +198,8 @@
             <!-- Navigation Matrix -->
             <div v-if="activeTab === 'navigation'" class="pane-stack">
               <div class="pane-header">
-                <h3>Navigation & View Control</h3>
-                <p>Manage the visibility of all site modules and their presence in the global navbar.</p>
+                <h3>Navigation & Pages</h3>
+                <p>Control the visibility of pages in the navigation bar.</p>
               </div>
 
               <div class="navigation-matrix">
@@ -233,8 +233,8 @@
               <!-- New Page Modal -->
               <div v-if="showNewPageModal" class="settings-modal-overlay">
                 <div class="settings-modal card-premium">
-                  <h3>Initialize <span class="text-gradient-primary">New Node</span></h3>
-                  <p>Define a new segment for the DREAMACTIC network architecture.</p>
+                  <h3>New <span class="text-gradient-primary">Page</span></h3>
+                  <p>Add a new page to your site.</p>
                   
                   <div class="modal-form">
                     <div class="field-item">
@@ -242,7 +242,7 @@
                       <input v-model="newPageTitle" type="text" class="luxe-input" placeholder="e.g. Quantum Computing" />
                     </div>
                     <div class="field-item">
-                      <label class="luxe-label">Assignment Block</label>
+                      <label class="luxe-label">Assignment Block (Group)</label>
                       <select v-model="newPageGroup" class="luxe-input">
                         <option v-for="group in navStore.groups" :key="group" :value="group">
                           {{ group.toUpperCase() }}
@@ -252,8 +252,8 @@
                   </div>
 
                   <div class="modal-actions">
-                    <button class="btn-text" @click="showNewPageModal = false">Abort</button>
-                    <button class="btn-primary-luxe" @click="createPage" :disabled="!newPageTitle">Deploy Node</button>
+                    <button class="btn-text" @click="showNewPageModal = false">Cancel</button>
+                    <button class="btn-primary-luxe" @click="createPage" :disabled="!newPageTitle">Create Page</button>
                   </div>
                 </div>
               </div>
@@ -368,7 +368,7 @@ const saveSettings = async (event) => {
   
   try {
     await adminAPI.updateSettings(settings.value)
-    btn.innerHTML = '<span>🚀</span> Matrix Updated'
+    btn.innerHTML = '<span>🚀</span> Settings Updated'
     btn.classList.add('success')
   } catch (err) {
     console.error('Update failed:', err)

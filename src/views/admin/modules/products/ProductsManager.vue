@@ -7,8 +7,8 @@
             {{ selectedPageInfo.sub }}
           </span>
         </div>
-        <h1>{{ selectedPageLabel }} <span class="text-gradient-primary">Inventory</span></h1>
-        <p>Orchestrating editorial intelligence for the {{ selectedPageLabel }} node.</p>
+        <h1>{{ selectedPageLabel }} <span class="text-gradient-primary">Insights</span></h1>
+        <p>Manage insights for the {{ selectedPageLabel }} page.</p>
       </div>
       
       <div class="header-actions">
@@ -33,7 +33,7 @@
           </button>
           <button class="btn-primary-luxe" @click="$emit('create')">
             <span class="plus-glyph">+</span>
-            <span class="btn-text">Initialize Node</span>
+            <span class="btn-text">Add Insight</span>
           </button>
         </div>
       </div>
@@ -43,15 +43,15 @@
     <div class="metrics-row">
       <div class="metric-pill">
         <span class="val">{{ insights.length }}</span>
-        <span class="label">Total Nodes</span>
+        <span class="label">Total Insights</span>
       </div>
       <div class="metric-pill">
         <span class="val success">{{ publishedCount }}</span>
-        <span class="label">Operational</span>
+        <span class="label">Published</span>
       </div>
       <div class="metric-pill">
         <span class="val warning">{{ insights.length - publishedCount }}</span>
-        <span class="label">Staged</span>
+        <span class="label">Drafts</span>
       </div>
     </div>
 
@@ -62,8 +62,8 @@
 
     <div v-else-if="filteredInsights.length === 0" class="empty-intelligence card-premium">
       <div class="empty-glyph">🔭</div>
-      <h3>No matching data found</h3>
-      <p>Adjust your parameters to locate the relevant intelligence nodes.</p>
+      <h3>No insights found</h3>
+      <p>Try adjusting your search or filters.</p>
       <button class="btn-ghost" @click="localQuery = ''">Reset Filters</button>
     </div>
 
@@ -72,7 +72,7 @@
       <div v-for="insight in filteredInsights" :key="insight._id" class="intelligence-card card-premium" :class="{ draft: !insight.published }">
         <div class="card-aura"></div>
         <div class="card-status-pip" :class="insight.published ? 'online' : 'staged'">
-          {{ insight.published ? 'ONLINE' : 'STAGED' }}
+          {{ insight.published ? 'PUBLISHED' : 'DRAFT' }}
         </div>
         
         <div class="card-body">
@@ -86,8 +86,8 @@
               <span class="name">{{ insight.author || 'Admin' }}</span>
             </div>
             <div class="node-actions">
-              <button class="node-btn" @click="$emit('edit', insight)" title="Edit Node">✎</button>
-              <button class="node-btn delete" @click="$emit('delete', insight._id)" title="Decommission Node">🗑</button>
+              <button class="node-btn" @click="$emit('edit', insight)" title="Edit">✎</button>
+              <button class="node-btn delete" @click="$emit('delete', insight._id)" title="Delete">🗑</button>
             </div>
           </div>
         </div>
@@ -99,12 +99,12 @@
       <table class="futuristic-table">
         <thead>
           <tr>
-            <th>Node Identity</th>
-            <th>Domain</th>
+            <th>Title</th>
+            <th>Page</th>
             <th>Status</th>
-            <th>Operator</th>
-            <th>Last Delta</th>
-            <th class="text-right">Operations</th>
+            <th>Author</th>
+            <th>Last Modified</th>
+            <th class="text-right">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -117,7 +117,7 @@
             <td>
               <div class="status-indicator" :class="insight.published ? 'online' : 'staged'">
                 <span class="glow-dot"></span>
-                {{ insight.published ? 'Operational' : 'Staged' }}
+                {{ insight.published ? 'Published' : 'Draft' }}
               </div>
             </td>
             <td><span class="operator-id">{{ insight.author || 'ROOT' }}</span></td>

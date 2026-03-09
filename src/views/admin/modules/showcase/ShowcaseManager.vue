@@ -3,26 +3,26 @@
     <header class="module-header luxury-page-title">
       <div class="header-vessel">
         <div class="section-context">
-          <span class="context-tag">CREATIVE_CORE</span>
+          <span class="context-tag">SHOWCASE</span>
         </div>
-        <h1>Creative <span class="text-gradient-primary">Showcase</span></h1>
-        <p>Global architectural visualization cluster management and asset orchestration.</p>
+        <h1>Website <span class="text-gradient-primary">Showcase</span></h1>
+        <p>Manage your website's visual showcase items.</p>
       </div>
       
       <div class="header-actions">
         <div class="intelligence-stats">
           <div class="stat-node">
             <span class="val">{{ showcaseItems.length }}</span>
-            <span class="label">Total Nodes</span>
+            <span class="label">Total Items</span>
           </div>
           <div class="stat-node primary">
             <span class="val">{{ activeItemsCount }}</span>
-            <span class="label">Broadcast Live</span>
+            <span class="label">Published</span>
           </div>
         </div>
         <button class="btn-primary-luxe" @click="$emit('create')">
           <span class="plus-glyph">+</span>
-          <span class="btn-text">Add Asset</span>
+          <span class="btn-text">Add Item</span>
         </button>
       </div>
     </header>
@@ -34,7 +34,7 @@
         <input 
           v-model="searchQuery" 
           type="text" 
-          placeholder="Scan by title or identifier..." 
+          placeholder="Search items..." 
           class="glass-input"
         />
       </div>
@@ -56,17 +56,16 @@
       </div>
     </div>
 
-    <!-- Dynamic Surface -->
     <div v-if="loading && filteredItems.length === 0" class="loading-state-quantum">
       <div class="quantum-loader"></div>
-      <span>Synchronizing Asset Nodes...</span>
+      <span>Loading showcase items...</span>
     </div>
 
     <div v-else-if="filteredItems.length === 0" class="empty-state-quantum">
       <div class="empty-glyph">🧊</div>
-      <h3>Null Vector Detected</h3>
-      <p>No asset nodes match your current search parameters or category filter.</p>
-      <button @click="resetFilters" class="btn-ghost-cyan">Clear Search Filter</button>
+      <h3>No items found</h3>
+      <p>No items found matching your filters.</p>
+      <button @click="resetFilters" class="btn-ghost-cyan">Clear Search</button>
     </div>
 
     <div v-else :class="['assets-dynamic-grid', viewDensity]">
@@ -79,9 +78,9 @@
         <div class="asset-preview-chamber">
           <div class="preview-overlay">
             <div class="overlay-actions">
-              <button class="action-btn zoom" @click="zoomImage(item.mediaUrl)" title="Expand Node">⛶</button>
-              <button class="action-btn edit" @click="$emit('edit-showcase', item)" title="Edit Node">✏️</button>
-              <button class="action-btn terminate" @click="$emit('delete-showcase', item._id)" title="Terminate Node">✕</button>
+              <button class="action-btn zoom" @click="zoomImage(item.mediaUrl)" title="Zoom">⛶</button>
+              <button class="action-btn edit" @click="$emit('edit-showcase', item)" title="Edit">✏️</button>
+              <button class="action-btn terminate" @click="$emit('delete-showcase', item._id)" title="Delete">✕</button>
             </div>
           </div>
           
@@ -115,7 +114,7 @@
             <div class="health-bar">
               <div class="fill" :class="{ active: item.active }"></div>
             </div>
-            <span class="health-label">{{ item.active ? 'OPERATIONAL' : 'DECOMMISSIONED' }}</span>
+            <span class="health-label">{{ item.active ? 'ACTIVE' : 'INACTIVE' }}</span>
           </div>
         </div>
       </div>

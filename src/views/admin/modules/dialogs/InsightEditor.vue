@@ -5,8 +5,8 @@
         <div class="header-vessel">
           <div class="header-glyph">📝</div>
           <div class="header-text">
-            <h2>{{ editing ? 'Modify Intelligence Node' : 'Initialize Intelligence Node' }}</h2>
-            <p>Drafting cognitive architectural data for the global knowledge grid.</p>
+            <h2>{{ editing ? 'Edit Insight' : 'Add Insight' }}</h2>
+            <p>Fill in the details for your insight below.</p>
           </div>
         </div>
         <button class="close-quantum-btn" @click="$emit('close')">✕</button>
@@ -17,19 +17,19 @@
         <div class="surface-form">
           <form @submit.prevent="handleSubmit" class="intelligence-form">
             <div class="form-section">
-              <label class="section-label">Identity Metadata</label>
+              <label class="section-label">General Information</label>
               <div class="input-vessel">
-                <input v-model="form.title" type="text" placeholder="Entry Title (e.g., Neural Networks in Retail)" class="luxury-field" required />
+                <input v-model="form.title" type="text" placeholder="Title (e.g. AI Trends 2024)" class="luxury-field" required />
               </div>
             </div>
 
             <div class="form-row-multi">
               <div class="form-section">
-                <label class="section-label">Lead Analyst</label>
-                <input v-model="form.author" type="text" placeholder="Analyst Name" class="luxury-field" />
+                <label class="section-label">Author</label>
+                <input v-model="form.author" type="text" placeholder="Your Name" class="luxury-field" />
               </div>
               <div class="form-section">
-                <label class="section-label">Neural Node Assignment</label>
+                <label class="section-label">Page Assignment</label>
                 <select v-model="form.page" class="luxury-field select">
                   <option v-for="p in websitePages" :key="p.id" :value="p.id">{{ p.label }}</option>
                   <option value="uncategorized">Uncategorized</option>
@@ -38,20 +38,20 @@
             </div>
 
             <div class="form-section">
-              <label class="section-label">Metadata Excerpt</label>
-              <textarea v-model="form.excerpt" rows="2" placeholder="Brief summary for search indexing & card display..." class="luxury-field" required></textarea>
+              <label class="section-label">Short Description</label>
+              <textarea v-model="form.excerpt" rows="2" placeholder="A brief summary for cards..." class="luxury-field" required></textarea>
             </div>
 
             <div class="form-section contents">
-              <label class="section-label">Core Logic Implementation (Markdown)</label>
-              <textarea v-model="form.content" rows="12" placeholder="# Start typing with Markdown support..." class="luxury-field code-font" required></textarea>
+              <label class="section-label">Content (Markdown)</label>
+              <textarea v-model="form.content" rows="12" placeholder="# Write your content here..." class="luxury-field code-font" required></textarea>
             </div>
 
             <div class="form-section extraction">
-              <label class="section-label">Asset Extraction Method</label>
+              <label class="section-label">Media Upload</label>
               <div class="method-toggles">
-                <button type="button" :class="{ active: mediaSource === 'url' }" @click="mediaSource = 'url'">Network URL</button>
-                <button type="button" :class="{ active: mediaSource === 'upload' }" @click="mediaSource = 'upload'">Physical Upload</button>
+                <button type="button" :class="{ active: mediaSource === 'url' }" @click="mediaSource = 'url'">Image URL</button>
+                <button type="button" :class="{ active: mediaSource === 'upload' }" @click="mediaSource = 'upload'">Upload File</button>
               </div>
               
               <div v-if="mediaSource === 'url'" class="extraction-input-cluster">
@@ -77,24 +77,23 @@
                 <input type="checkbox" id="published" v-model="form.published" class="hidden-check" />
                 <label for="published" class="sync-switch-label">
                   <span class="switch-ui"></span>
-                  <span class="label-text">Synchronize Live to Network</span>
+                  <span class="label-text">Publish Live on Website</span>
                 </label>
               </div>
               
               <div class="main-actions">
-                <button type="button" @click="$emit('close')" class="btn-cancel-quantum">Abort Mission</button>
+                <button type="button" @click="$emit('close')" class="btn-cancel-quantum">Cancel</button>
                 <button type="submit" class="btn-save-quantum" :disabled="loading">
                   <span class="save-icon">{{ loading ? '⏳' : '✅' }}</span>
-                  {{ loading ? 'Synchronizing Node...' : (editing ? 'Apply Delta Changes' : 'Initialize Node') }}
+                  {{ loading ? 'Saving...' : (editing ? 'Save Changes' : 'Create Insight') }}
                 </button>
               </div>
             </div>
           </form>
         </div>
 
-        <!-- Preview Surface -->
         <div class="surface-preview">
-          <label class="section-label sticky">Neural Grid Rendering</label>
+          <label class="section-label sticky">Preview</label>
           <div class="preview-vessel">
             <!-- Card Replica -->
             <div class="preview-card-replica">
@@ -105,23 +104,22 @@
                   <span>No Visual Asset Linked</span>
                 </div>
                 <div class="replica-status" :class="{ online: form.published }">
-                  {{ form.published ? 'ONLINE' : 'STAGED' }}
+                  {{ form.published ? 'PUBLISHED' : 'DRAFT' }}
                 </div>
               </div>
               <div class="replica-content">
                 <div class="domain">{{ form.page.toUpperCase() }}</div>
-                <h4 class="replica-title">{{ form.title || 'Untitled Intelligence Node' }}</h4>
-                <p class="replica-excerpt">{{ form.excerpt || 'Waiting for metadata input...' }}</p>
+                <h4 class="replica-title">{{ form.title || 'Untitled Insight' }}</h4>
+                <p class="replica-excerpt">{{ form.excerpt || 'Write a summary...' }}</p>
                 <div class="replica-footer">
                   <span class="analyst">👤 {{ form.author }}</span>
-                  <span class="read-more">Analyze Node →</span>
+                  <span class="read-more">Read More →</span>
                 </div>
               </div>
             </div>
             
-            <!-- Content Rendering Preview -->
             <div class="content-rendering">
-              <div class="render-header">RAW_LOG_PREVIEW</div>
+              <div class="render-header">CONTENT_PREVIEW</div>
               <div class="rendered-markdown">
                 <h1 v-if="form.title">{{ form.title }}</h1>
                 <p class="analyst-byline">By {{ form.author }}</p>

@@ -3,15 +3,15 @@
     <div class="page-editor-container card-premium shadow-2xl">
       <header class="editor-header">
         <div class="header-meta">
-          <span class="context-tag">{{ pageId.toUpperCase() }} MODULAR NODE</span>
-          <h2>Modular <span class="text-gradient-primary">Architect</span></h2>
+          <span class="context-tag">{{ pageId.toUpperCase() }} PAGE</span>
+          <h2>Page <span class="text-gradient-primary">Builder</span></h2>
         </div>
         <div class="editor-nav">
           <button 
-            v-for="tab in ['Builder', 'Theme']" 
+            v-for="tab in ['Layout', 'Styles']" 
             :key="tab"
-            :class="['tab-btn', { active: activeTab === tab.toLowerCase() }]"
-            @click="activeTab = tab.toLowerCase()"
+            :class="['tab-btn', { active: activeTab === (tab === 'Layout' ? 'builder' : 'theme') }]"
+            @click="activeTab = (tab === 'Layout' ? 'builder' : 'theme')"
           >
             {{ tab }}
           </button>
@@ -26,8 +26,8 @@
           <!-- BUILDER TAB -->
           <div v-show="activeTab === 'builder'" class="pane-stack">
             <div class="section-header">
-              <h3>Page Structure</h3>
-              <p>Drag and drop components to build your page layout.</p>
+              <h3>Page Layout</h3>
+              <p>Drag and drop sections to build your page.</p>
             </div>
 
             <div class="blocks-list">
@@ -81,7 +81,7 @@
 
                   <!-- Stats Block Items -->
                   <div v-if="block.type === 'stats'" class="sub-list">
-                    <label>Statistical Nodes</label>
+                    <label>Statistics</label>
                     <div v-for="(item, iIdx) in block.items" :key="iIdx" class="sub-item card-premium">
                       <input v-model="item.value" type="text" placeholder="Value (e.g. 99%)" class="input-premium">
                       <input v-model="item.label" type="text" placeholder="Label" class="input-premium">
@@ -258,7 +258,7 @@
 
             <!-- Add Component Selector (Grouped) -->
             <div class="add-component-vessel">
-              <h4>Inject Component</h4>
+              <h4>Add Component</h4>
               <div v-for="groupName in componentGroups" :key="groupName" class="comp-group">
                 <div class="comp-group-label">{{ groupName }}</div>
                 <div class="component-grid">
@@ -280,20 +280,20 @@
           <!-- THEME TAB -->
           <div v-show="activeTab === 'theme'" class="pane-stack">
             <div class="section-header">
-              <h3>Chromatic Profile</h3>
-              <p>Configure the global aesthetic for this neural node.</p>
+              <h3>Page Theme</h3>
+              <p>Choose the colors for this page.</p>
             </div>
 
             <div class="theme-form card-premium">
               <div class="field-item">
-                <label>Primary Brand Color</label>
+                <label>Main Brand Color</label>
                 <div class="color-picker-row">
                   <input type="color" v-model="config.theme.primary" class="color-sq">
                   <input type="text" v-model="config.theme.primary" class="input-premium">
                 </div>
               </div>
               <div class="field-item">
-                <label>Accent Secondary</label>
+                <label>Accent Color</label>
                 <div class="color-picker-row">
                   <input type="color" v-model="config.theme.accent" class="color-sq">
                   <input type="text" v-model="config.theme.accent" class="input-premium">
@@ -315,9 +315,9 @@
       </div>
 
       <footer class="editor-footer">
-        <button class="btn-ghost" @click="$emit('close')">Abandon</button>
+        <button class="btn-ghost" @click="$emit('close')">Cancel</button>
         <button class="btn-primary-luxe" @click="saveChanges">
-          <span class="btn-text">Deploy Changes</span>
+          <span class="btn-text">Save & Publish</span>
         </button>
       </footer>
     </div>

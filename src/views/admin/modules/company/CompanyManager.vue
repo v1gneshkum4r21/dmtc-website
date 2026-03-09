@@ -7,8 +7,8 @@
             {{ selectedPageInfo.sub }}
           </span>
         </div>
-        <h1>{{ selectedPageLabel }} <span class="text-gradient-primary">Management</span></h1>
-        <p>Orchestrating the corporate narrative and executive presence for the {{ selectedPageLabel }} node.</p>
+        <h1>{{ selectedPageLabel }} <span class="text-gradient-primary">Overview</span></h1>
+        <p>Overview of your company information for the {{ selectedPageLabel }} page.</p>
       </div>
       
       <div class="header-actions">
@@ -36,11 +36,11 @@
     <div class="metrics-row" v-else-if="selectedPage === 'about' && pageData">
       <div class="metric-pill">
         <span class="val">{{ pageData.approaches?.length ?? 0 }}</span>
-        <span class="label">Operational Pillars</span>
+        <span class="label">Approaches</span>
       </div>
       <div class="metric-pill">
         <span class="val">{{ pageData.values?.length ?? 0 }}</span>
-        <span class="label">Core Values</span>
+        <span class="label">Values</span>
       </div>
     </div>
 
@@ -54,13 +54,13 @@
     <!-- Loading state -->
     <div v-if="loading" class="quantum-loader-vessel">
       <div class="pulse-ring"></div>
-      <p>Synchronizing Corporate Grid...</p>
+      <p>Loading...</p>
     </div>
 
     <!-- Main Viewport -->
     <div v-else class="card-premium structural-preview">
       <div class="preview-header">
-        <span class="preview-label">Live Architectural Blueprint</span>
+        <span class="preview-label">Page Preview</span>
       </div>
       <div class="preview-content">
         <!-- Leadership Team Preview -->
@@ -97,9 +97,9 @@
         <!-- Empty State -->
         <div v-else class="empty-intelligence">
           <div class="empty-glyph">🏢</div>
-          <h3>Corporate Node Active</h3>
-          <p>The neural grid is successfully serving the {{ selectedPageLabel }} architecture.</p>
-          <p class="secondary-info">Use the <strong>Configure Page</strong> protocol to refine hero narratives and structural components.</p>
+          <h3>Page is active</h3>
+          <p>This page is live on the website.</p>
+          <p class="secondary-info">Use the <strong>Configure Page</strong> button to edit the content.</p>
         </div>
       </div>
     </div>
@@ -120,11 +120,11 @@ const isFetching = ref(false)
 
 const selectedPageInfo = computed(() => {
   const defaults = {
-    'about': { label: 'About Us', sub: 'Corporate Narrative', color: '#6366f1' },
-    'leadership': { label: 'Leadership', sub: 'Executive Presence', color: '#10b981' },
-    'careers': { label: 'Careers', sub: 'Talent Orbit', color: '#f59e0b' }
+    'about': { label: 'About Us', sub: 'Company Info', color: '#6366f1' },
+    'leadership': { label: 'Leadership', sub: 'Management Team', color: '#10b981' },
+    'careers': { label: 'Careers', sub: 'Recruitment', color: '#f59e0b' }
   }
-  return defaults[props.selectedPage] || { label: 'Company', sub: 'Corporate Orbit', color: '#94a3b8' }
+  return defaults[props.selectedPage] || { label: 'Company', sub: 'Company Orbit', color: '#94a3b8' }
 })
 
 const selectedPageLabel = computed(() => selectedPageInfo.value.label)

@@ -6,14 +6,14 @@
         <header class="module-header luxury-page-title">
           <div class="header-vessel">
             <div class="section-context">
-              <span class="context-tag">RECRUITMENT_OPS</span>
+              <span class="context-tag">RECRUITMENT</span>
             </div>
-            <h1>Talent <span class="text-gradient-primary">Orbit</span></h1>
-            <p>Global intelligence overview of your recruitment infrastructure.</p>
+            <h1>Careers <span class="text-gradient-primary">Overview</span></h1>
+            <p>Overview of your current job openings and applicants.</p>
           </div>
           <div class="header-actions">
             <button class="btn-primary-luxe" @click="$emit('switch-tab', 'jds')">
-              Manage Protocols
+              Manage Jobs
             </button>
           </div>
         </header>
@@ -22,7 +22,7 @@
           <!-- Funnel Visualization -->
           <div class="funnel-card card-premium">
             <div class="card-aura"></div>
-            <label class="section-label">Recruitment Funnel</label>
+            <label class="section-label">Application Status</label>
             <div class="funnel-visualization">
               <div class="funnel-stage" style="width: 100%;">
                 <div class="stage-bar applied"></div>
@@ -51,7 +51,7 @@
           <!-- Active Roles Summary -->
           <div class="roles-summary card-premium">
             <div class="card-aura secondary"></div>
-            <label class="section-label">Top Talent Magnets</label>
+            <label class="section-label">Popular Roles</label>
             <div class="roles-list">
               <div v-for="role in topRoles" :key="role.title" class="role-stat-item">
                 <div class="role-info">
@@ -67,11 +67,11 @@
 
           <!-- Quick Actions Panel -->
           <div class="quick-ops-panel card-premium">
-            <label class="section-label">Orbital Commands</label>
+            <label class="section-label">Quick Actions</label>
             <div class="ops-grid">
               <button class="op-card" @click="$emit('create')">
                 <span class="icon">✨</span>
-                <span class="text">New Protocol</span>
+                <span class="text">New Job</span>
               </button>
               <button class="op-card" @click="$emit('configure-page', 'careers')">
                 <span class="icon">⚙️</span>
@@ -79,11 +79,11 @@
               </button>
               <button class="op-card" @click="$emit('switch-tab', 'applicants')">
                 <span class="icon">👥</span>
-                <span class="text">Scan Nodes</span>
+                <span class="text">Applicants</span>
               </button>
               <button class="op-card" @click="$emit('switch-tab', 'history')">
                 <span class="icon">📜</span>
-                <span class="text">Audit Ledger</span>
+                <span class="text">History</span>
               </button>
             </div>
           </div>
@@ -91,18 +91,18 @@
 
         <!-- Recent Activity Feed -->
         <div class="recent-mesh-activity card-premium">
-          <label class="section-label">Live Transmission Feed</label>
+          <label class="section-label">Recent Activity</label>
           <div class="activity-list" v-if="recentApplications.length > 0">
             <div v-for="app in recentApplications" :key="app._id" class="activity-node" @click="$emit('preview-app', app)">
               <div class="node-avatar">{{ app.name.charAt(0) }}</div>
               <div class="node-content">
-                <p><strong>{{ app.name }}</strong> linked to <strong>{{ app.role }}</strong></p>
+                <p><strong>{{ app.name }}</strong> applied for <strong>{{ app.role }}</strong></p>
                 <span class="time">{{ formatRelativeTime(app.createdAt) }}</span>
               </div>
               <div class="node-status-badge" :class="app.status.toLowerCase()">{{ app.status }}</div>
             </div>
           </div>
-          <div v-else class="empty-state">No recent transmissions detected.</div>
+          <div v-else class="empty-state">No recent activity.</div>
         </div>
       </div>
 

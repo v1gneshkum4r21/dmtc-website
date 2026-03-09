@@ -9,7 +9,7 @@
       @login="handleLogin" 
     />
 
-    <!-- Operational Dashboard -->
+    <!-- Dashboard -->
     <div v-else class="admin-dashboard">
       <AdminSidebar 
         v-model:activeModule="activeModule"
@@ -65,7 +65,7 @@
         </div>
       </main>
 
-      <!-- Modal Orchestration System -->
+      <!-- Modals -->
       <InsightEditor 
         v-if="showCreateForm || editingInsight"
         :editing="editingInsight"
@@ -243,7 +243,7 @@ const selectedApplication = ref(null)
 const showPageEditor = ref(false)
 let refreshTimer = null
 
-// Computed Orchestrators
+// Computed Properties
 const activeComponent = computed(() => {
   const map = {
     dashboard: markRaw(DashboardHome),
@@ -279,32 +279,32 @@ const componentProps = computed(() => {
 
 const activeModuleTitle = computed(() => {
   if (activeModule.value === 'careers') {
-    if (selectedPage.value === 'jds') return 'Deployment Protocols'
-    if (selectedPage.value === 'applicants') return 'Candidate Network'
-    if (selectedPage.value === 'history') return 'Immutable Ledger'
-    return 'Talent Orbit'
+    if (selectedPage.value === 'jds') return 'Job Openings'
+    if (selectedPage.value === 'applicants') return 'Applicants'
+    if (selectedPage.value === 'history') return 'History'
+    return 'Careers'
   }
   const titles = {
-    dashboard: 'Control Center', 
-    settings: 'Global Settings', 
-    services: 'Services Intelligence', 
-    products: 'Product Inventory', 
-    showcase: 'Museum Curator',
+    dashboard: 'Dashboard', 
+    settings: 'Settings', 
+    services: 'Services', 
+    products: 'Products', 
+    showcase: 'Showcase',
     hero: 'Hero Carousel',
-    contacts: 'Network Comms',
-    company: 'Corporate Strategy',
-    resources: 'Intelligence Unit'
+    contacts: 'Contacts',
+    company: 'Company',
+    resources: 'Resources'
   }
   return titles[activeModule.value] || activeModule.value.toUpperCase()
 })
 
 const createButtonLabel = computed(() => {
   const labels = { 
-    services: '+ Provision Node', 
-    products: '+ Provision Node', 
-    showcase: '+ Add Asset', 
-    careers: '+ Initialize Protocol',
-    resources: '+ Sync Insight' 
+    services: '+ Add Service', 
+    products: '+ Add Product', 
+    showcase: '+ Add Item', 
+    careers: '+ Add Job',
+    resources: '+ Add Insight' 
   }
   return labels[activeModule.value] || '+ Create'
 })
@@ -415,11 +415,11 @@ const startEdit = (i) => {
 const handleDelete = (id) => { 
   const isResearch = activeModule.value === 'resources' && selectedPage.value === 'research'
   confirmConfig.value = {
-    title: isResearch ? 'Purge Scientific Record' : 'Purge Information Node',
+    title: isResearch ? 'Delete Research' : 'Delete Insight',
     message: isResearch 
-      ? 'TERMINATE PUBLICATION: Purge this research record from the system? This action is immutable.'
-      : 'PERMANENT DELETION: Purge this information node from the core database? This action is immutable.',
-    confirmLabel: isResearch ? 'Purge Record' : 'Delete Node',
+      ? 'Are you sure you want to delete this research record? This cannot be undone.'
+      : 'Are you sure you want to delete this insight? This cannot be undone.',
+    confirmLabel: isResearch ? 'Delete' : 'Delete',
     isDanger: true,
     action: async () => {
       loading.value = true
@@ -440,9 +440,9 @@ const handleDelete = (id) => {
 
 const handleDeleteContact = (id) => {
   confirmConfig.value = {
-    title: 'Purge Transmission',
-    message: 'Remove this contact transmission? It cannot be recovered.',
-    confirmLabel: 'Delete Contact',
+    title: 'Delete Contact',
+    message: 'Are you sure you want to delete this contact message?',
+    confirmLabel: 'Delete',
     isDanger: true,
     action: async () => {
       loading.value = true
@@ -479,9 +479,9 @@ const closeShowcaseForm = () => { showShowcaseForm.value = false; editingShowcas
 const startEditShowcase = (item) => { editingShowcase.value = item; showShowcaseForm.value = true }
 const handleDeleteShowcase = (id) => { 
   confirmConfig.value = {
-    title: 'Destroy Media Link',
-    message: 'CRYPTO-PURGE: Destroy this media asset link? All associated metadata will be lost.',
-    confirmLabel: 'Delete Asset',
+    title: 'Delete Item',
+    message: 'Are you sure you want to delete this showcase item?',
+    confirmLabel: 'Delete',
     isDanger: true,
     action: async () => {
       loading.value = true
@@ -507,9 +507,9 @@ const closeJobForm = () => { showJobForm.value = false; editingJob.value = null 
 const startEditJob = (j) => { editingJob.value = j; showJobForm.value = true }
 const handleArchiveJob = (id) => { 
   confirmConfig.value = {
-    title: 'Archive Protocol',
-    message: 'Move this role to the encrypted archive? It will no longer be visible on the public network.',
-    confirmLabel: 'Archive Job',
+    title: 'Archive Job',
+    message: 'Are you sure you want to archive this job? It will be hidden from the website.',
+    confirmLabel: 'Archive',
     isDanger: false,
     action: async () => {
       await adminAPI.updateJob(id, { isArchived: true, active: false })
@@ -522,9 +522,9 @@ const handleArchiveJob = (id) => {
 
 const handleDeleteJob = (id) => { 
   confirmConfig.value = {
-    title: 'Terminate Job Descriptor',
-    message: 'PERMANENT DELETION: Purge this Job Descriptor? This action cannot be undone.',
-    confirmLabel: 'Delete JD',
+    title: 'Delete Job',
+    message: 'Are you sure you want to delete this job? This cannot be undone.',
+    confirmLabel: 'Delete',
     isDanger: true,
     action: async () => {
       await adminAPI.deleteJob(id, true)
@@ -536,9 +536,9 @@ const handleDeleteJob = (id) => {
 }
 const handleRestoreJob = (id) => {
   confirmConfig.value = {
-    title: 'Restore Protocol',
-    message: 'PROTOCOL REACTIVATION: Re-broadcast this Job Descriptor to the public network?',
-    confirmLabel: 'Restore Job',
+    title: 'Restore Job',
+    message: 'Are you sure you want to restore this job to the public network?',
+    confirmLabel: 'Restore',
     isDanger: false,
     action: async () => {
       await adminAPI.updateJob(id, { isArchived: false, active: true })
@@ -552,9 +552,9 @@ const handleRestoreJob = (id) => {
 const openApplicationPreview = (app) => { selectedApplication.value = app }
 const handleUpdateStatus = (id, status) => { 
   confirmConfig.value = {
-    title: 'Protocol Update',
-    message: `SYSTEM LOG: Update candidate status to "${status.toUpperCase()}"?`,
-    confirmLabel: 'Update Status',
+    title: 'Update Status',
+    message: `Are you sure you want to update candidate status to "${status}"?`,
+    confirmLabel: 'Update',
     isDanger: status === 'Rejected',
     action: async () => {
       await adminAPI.updateApplicationStatus(id, status)
@@ -568,9 +568,9 @@ const handleUpdateStatus = (id, status) => {
 
 const handleDeleteApplication = (id) => { 
   confirmConfig.value = {
-    title: 'Purge Applicant Node',
-    message: 'PERMANENT DELETION: Purge applicant data from the system? This action is immutable.',
-    confirmLabel: 'Delete Applicant',
+    title: 'Delete Applicant',
+    message: 'Are you sure you want to delete this applicant? This cannot be undone.',
+    confirmLabel: 'Delete',
     isDanger: true,
     action: async () => {
       await adminAPI.deleteApplication(id, false)
@@ -583,9 +583,9 @@ const handleDeleteApplication = (id) => {
 
 const handleRestoreApplication = (id) => {
   confirmConfig.value = {
-    title: 'Restore Candidate',
-    message: 'RECONSTITUTION: Restore this candidate node to the active recruitment flow? This will reset status to "Applied".',
-    confirmLabel: 'Restore Candidate',
+    title: 'Restore Applicant',
+    message: 'Are you sure you want to restore this applicant? Their status will be reset to "Applied".',
+    confirmLabel: 'Restore',
     isDanger: false,
     action: async () => {
       await adminAPI.restoreApplication(id)
@@ -598,9 +598,9 @@ const handleRestoreApplication = (id) => {
 
 const handleDeleteApplicationPermanent = (id) => {
   confirmConfig.value = {
-    title: 'FINAL PURGE',
-    message: 'CRITICAL: This will permanently destroy the candidate record from the database. This cannot be reversed.',
-    confirmLabel: 'Destroy Permanently',
+    title: 'Permanent Delete',
+    message: 'Are you sure you want to permanently delete this applicant record? This cannot be reversed.',
+    confirmLabel: 'Delete Permanently',
     isDanger: true,
     action: async () => {
       await adminAPI.deleteApplication(id, true)

@@ -5,10 +5,10 @@
     <header class="module-header luxury-page-title">
       <div class="header-vessel">
         <div class="section-context">
-          <span class="context-tag" style="background-color:rgba(34,211,238,0.12);color:#22d3ee;">HERO_MATRIX</span>
+          <span class="context-tag" style="background-color:rgba(34,211,238,0.12);color:#22d3ee;">CAROUSEL</span>
         </div>
         <h1>Hero <span class="text-gradient-primary">Carousel</span></h1>
-        <p>Configure the landing page cinematic slides. Supports videos & images with per-slide timing.</p>
+        <p>Manage your home page slides. Supports videos & images with per-slide timing.</p>
       </div>
       <div class="header-actions">
         <button class="btn-arctic-secondary" @click="addSlide">
@@ -89,7 +89,7 @@
       <div v-if="slides.length === 0" class="empty-state card-premium">
         <div class="empty-icon">🎬</div>
         <h3>No Slides Configured</h3>
-        <p>Add your first cinematic slide to power the landing hero carousel.</p>
+        <p>Add your first slide to show on the landing page.</p>
         <button class="btn-arctic-primary luxe-pulse" @click="addSlide">＋ Add First Slide</button>
       </div>
 

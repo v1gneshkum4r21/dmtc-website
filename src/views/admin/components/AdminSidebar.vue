@@ -2,7 +2,7 @@
   <div :class="['sidebar-mobile-overlay', { show: isOpen }]" @click="$emit('close')"></div>
   <aside :class="['admin-sidebar', 'shadow-2xl', { open: isOpen }]">
     <button class="mobile-close-btn" @click="$emit('close')">✕</button>
-    <!-- Branding Orbit -->
+    <!-- Branding -->
     <div class="sidebar-brand-orbit">
       <div class="brand-wrapper">
         <div class="brand-core-cube">
@@ -12,17 +12,17 @@
           <h2 class="brand-title">DREAMACTIC</h2>
           <div class="brand-pulse">
             <span class="status-indicator"></span>
-            <span class="pulse-label">NEURAL_ADMIN_ACTIVE</span>
+            <span class="pulse-label">ADMIN_ACTIVE</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Nav Synapse -->
+    <!-- Navigation -->
     <nav class="sidebar-synapse">
-      <!-- SYSTEM COMMAND -->
+      <!-- SYSTEM -->
       <div class="synapse-group">
-        <label class="synapse-label">Command Center</label>
+        <label class="synapse-label">System</label>
         <div 
           class="synapse-link"
           :class="{ active: activeModule === 'dashboard' }"
@@ -30,7 +30,7 @@
         >
           <div class="link-glow"></div>
           <span class="link-icon">📊</span>
-          <span class="link-text">Global Snapshot</span>
+          <span class="link-text">Dashboard</span>
         </div>
         <div 
           class="synapse-link"
@@ -39,7 +39,7 @@
         >
           <div class="link-glow"></div>
           <span class="link-icon">📫</span>
-          <span class="link-text">Network Comms</span>
+          <span class="link-text">Contacts</span>
         </div>
         <div 
           class="synapse-link"
@@ -48,13 +48,13 @@
         >
           <div class="link-glow"></div>
           <span class="link-icon">⚙️</span>
-          <span class="link-text">System Config</span>
+          <span class="link-text">Settings</span>
         </div>
       </div>
 
-      <!-- INSIGHT NODES -->
+      <!-- PAGES -->
       <div class="synapse-group">
-        <label class="synapse-label">Intelligence Units</label>
+        <label class="synapse-label">Pages</label>
         
         <!-- Services Sub-group -->
         <div class="sub-synapse">
@@ -73,7 +73,7 @@
             <button 
               class="context-config-btn" 
               @click.stop="$emit('configure-page', service.id)"
-              title="Architect Page"
+              title="Edit Page"
             >
               ⚙️
             </button>
@@ -97,7 +97,7 @@
             <button 
               class="context-config-btn" 
               @click.stop="$emit('configure-page', product.id)"
-              title="Architect Page"
+              title="Edit Page"
             >
               ⚙️
             </button>
@@ -105,9 +105,9 @@
         </div>
       </div>
 
-      <!-- CREATIVE CORE -->
+      <!-- CONTENT -->
       <div class="synapse-group">
-        <label class="synapse-label">Creative Assets</label>
+        <label class="synapse-label">Content</label>
         <div 
           class="synapse-link"
           :class="{ active: activeModule === 'showcase' }"
@@ -115,7 +115,7 @@
         >
           <div class="link-glow"></div>
           <span class="link-icon">🎨</span>
-          <span class="link-text">Media Showcase</span>
+          <span class="link-text">Showcase</span>
         </div>
         <div 
           class="synapse-link"
@@ -128,9 +128,9 @@
         </div>
       </div>
 
-      <!-- CORPORATE ORBIT -->
+      <!-- COMPANY -->
       <div class="synapse-group">
-        <label class="synapse-label">Corporate Orbit</label>
+        <label class="synapse-label">Company</label>
         
         <!-- Company Pages -->
         <div class="sub-synapse">
@@ -149,7 +149,7 @@
             <button 
               class="context-config-btn" 
               @click.stop="$emit('configure-page', page.id)"
-              title="Architect Page"
+              title="Edit Page"
             >
               ⚙️
             </button>
@@ -166,7 +166,7 @@
           >
             <div class="link-content">
               <span class="link-icon">💼</span>
-              <span class="link-text">Active Protocols</span>
+              <span class="link-text">Jobs</span>
             </div>
           </div>
           <div 
@@ -176,7 +176,7 @@
           >
             <div class="link-content">
               <span class="link-icon">👥</span>
-              <span class="link-text">Candidate Mesh</span>
+              <span class="link-text">Applicants</span>
             </div>
           </div>
           <div 
@@ -186,15 +186,15 @@
           >
             <div class="link-content">
               <span class="link-icon">📜</span>
-              <span class="link-text">Audit History</span>
+              <span class="link-text">History</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- KNOWLEDGE UNITS -->
+      <!-- KNOWLEDGE -->
       <div class="synapse-group">
-        <label class="synapse-label">Knowledge Hub</label>
+        <label class="synapse-label">Knowledge</label>
         
         <div class="sub-synapse">
           <header class="sub-header">RESOURCES</header>
@@ -212,7 +212,7 @@
             <button 
               class="context-config-btn" 
               @click.stop="$emit('configure-page', unit.id)"
-              title="Architect Page"
+              title="Edit Page"
             >
               ⚙️
             </button>
@@ -230,10 +230,10 @@
         </div>
         <div class="operator-info">
           <span class="op-name">Administrator</span>
-          <span class="op-status">System_Root</span>
+          <span class="op-status">Root</span>
         </div>
       </div>
-      <button class="terminal-exit-btn" @click="$emit('logout')" title="Terminate Session">
+      <button class="terminal-exit-btn" @click="$emit('logout')" title="Logout">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
       </button>
     </div>

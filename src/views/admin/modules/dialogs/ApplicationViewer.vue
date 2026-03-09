@@ -27,19 +27,19 @@
         <div class="info-mesh-grid">
           <!-- Primary Intelligence -->
           <div class="intelligence-card">
-            <label class="section-label">Contact Payload</label>
+            <label class="section-label">Contact Information</label>
             <div class="data-group">
               <div class="data-item clickable" @click="copyToClipboard(application.email)">
                 <span class="icon">📧</span>
                 <div class="val-wrap">
-                  <span class="val-label">Node Email</span>
+                  <span class="val-label">Email Address</span>
                   <span class="val">{{ application.email }}</span>
                 </div>
               </div>
               <div class="data-item clickable" @click="copyToClipboard(application.phone)">
                 <span class="icon">📱</span>
                 <div class="val-wrap">
-                  <span class="val-label">Logic Line</span>
+                  <span class="val-label">Phone Number</span>
                   <span class="val">{{ application.phone || 'N/A' }}</span>
                 </div>
               </div>
@@ -47,19 +47,19 @@
           </div>
 
           <div class="intelligence-card">
-            <label class="section-label">Temporal Matrix</label>
+            <label class="section-label">Experience & Notice</label>
             <div class="data-group">
               <div class="data-item">
                 <span class="icon">⏳</span>
                 <div class="val-wrap">
-                  <span class="val-label">Experience Tier</span>
+                  <span class="val-label">Experience Level</span>
                   <span class="val">{{ formatExperience(application.experience) }}</span>
                 </div>
               </div>
               <div class="data-item">
                 <span class="icon">🗓️</span>
                 <div class="val-wrap">
-                  <span class="val-label">Notice Sequence</span>
+                  <span class="val-label">Notice Period</span>
                   <span class="val">{{ formatNotice(application.notice) }}</span>
                 </div>
               </div>
@@ -67,19 +67,19 @@
           </div>
 
           <div class="intelligence-card">
-            <label class="section-label">Asset Requirements</label>
+            <label class="section-label">Salary & Location</label>
             <div class="data-group">
               <div class="data-item">
                 <span class="icon">💎</span>
                 <div class="val-wrap">
-                  <span class="val-label">Salary Spec</span>
+                  <span class="val-label">Expected Salary</span>
                   <span class="val">{{ application.salary || 'Unspecified' }}</span>
                 </div>
               </div>
               <div class="data-item">
                 <span class="icon">📍</span>
                 <div class="val-wrap">
-                  <span class="val-label">Hub Origin</span>
+                  <span class="val-label">Location</span>
                   <span class="val">{{ application.location }}</span>
                 </div>
               </div>
@@ -88,27 +88,27 @@
 
           <!-- Digital Artifacts -->
           <div class="intelligence-card full-width">
-            <label class="section-label">Neural Artifacts & Documents</label>
+            <label class="section-label">Attachments</label>
             <div class="artifacts-row">
               <a v-if="application.resume" :href="application.resume" target="_blank" class="artifact-link resume">
                 <span class="art-icon">📄</span>
                 <div class="art-text">
-                  <span class="main">FULL_RESUME_BLOB</span>
-                  <span class="sub">View Protocol Document</span>
+                  <span class="main">RESUME</span>
+                  <span class="sub">View Resume File</span>
                 </div>
               </a>
               <a v-if="application.linkedin" :href="application.linkedin" target="_blank" class="artifact-link linkedin">
                 <span class="art-icon">🔗</span>
                 <div class="art-text">
-                  <span class="main">LINKEDIN_PROFILE</span>
-                  <span class="sub">Professional Neural Map</span>
+                  <span class="main">LINKEDIN</span>
+                  <span class="sub">View LinkedIn Profile</span>
                 </div>
               </a>
               <a v-if="application.portfolio" :href="application.portfolio" target="_blank" class="artifact-link portfolio">
                 <span class="art-icon">🎨</span>
                 <div class="art-text">
-                  <span class="main">ARTIFACT_PORTFOLIO</span>
-                  <span class="sub">Visual Proof of Work</span>
+                  <span class="main">PORTFOLIO</span>
+                  <span class="sub">View Portfolio</span>
                 </div>
               </a>
             </div>
@@ -117,7 +117,7 @@
 
         <!-- Intent Logic -->
         <section class="intent-logic-chamber">
-          <label class="section-label">Candidate Vision Statement</label>
+          <label class="section-label">Message from Candidate</label>
           <div class="logic-vessel">
             <div class="vessel-aura"></div>
             <p class="mission-text">{{ application.message || 'No mission statement provided.' }}</p>
@@ -129,21 +129,21 @@
           <template v-if="!application.isDeleted">
             <button @click="$emit('updateStatus', 'Selected')" class="op-btn-quantum admit">
               <span class="glow"></span>
-              INITIALIZE ADMISSION
+              SELECT CANDIDATE
             </button>
             <button @click="$emit('updateStatus', 'Waiting List')" class="op-btn-quantum secondary">
-              MOVE TO QUEUE
+              MOVE TO WAITING LIST
             </button>
             <button @click="$emit('updateStatus', 'Rejected')" class="op-btn-quantum restrict">
-              RESTRICT ACCESS
+              REJECT CANDIDATE
             </button>
           </template>
           <template v-else>
             <button @click="$emit('restore')" class="op-btn-quantum restore">
-              REINTEGRATE NODE
+              RESTORE APPLICATION
             </button>
             <button @click="$emit('deletePermanent')" class="op-btn-quantum restrict purge-perm">
-              PERMANENT_PURGE
+              DELETE FOREVER
             </button>
           </template>
         </footer>

@@ -1,17 +1,17 @@
 <template>
   <div class="dashboard-home">
 
-    <!-- ── HERO COMMAND BANNER ──────────────────────────────── -->
+    <!-- ── WELCOME BANNER ──────────────────────────────── -->
     <div class="hero-banner">
       <div class="hero-bg-glow"></div>
       <div class="hero-content">
         <div class="hero-left">
           <div class="command-badge">
             <span class="badge-dot"></span>
-            COMMAND_CORE // SYSTEM LIVE
+            ADMIN DASHBOARD
           </div>
-          <h1>Command <span class="text-gradient-primary">Center</span></h1>
-          <p>Global Intelligence Orchestration &amp; Ecosystem Monitoring. All systems nominal.</p>
+          <h1>Welcome <span class="text-gradient-primary">Back</span></h1>
+          <p>Everything is running smoothly. Manage your website below.</p>
         </div>
         <div class="hero-right">
           <div class="time-block">
@@ -23,15 +23,15 @@
               <polyline points="0,20 20,20 25,10 35,30 40,20 60,20 65,5 75,35 80,20 100,20" class="pulse-line" />
             </svg>
             <div>
-              <span class="int-label">System Integrity</span>
-              <span class="int-status">OPTIMAL // 99.8%</span>
+              <span class="int-label">System Status</span>
+              <span class="int-status">Running Smoothly</span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ── METRICS MATRIX ──────────────────────────────────── -->
+    <!-- ── METRICS ──────────────────────────────────── -->
     <div class="metrics-matrix">
       <div
         v-for="stat in metrics" :key="stat.label"
@@ -60,7 +60,7 @@
 
     <!-- ── QUICK ACCESS GRID ──────────────────────────────── -->
     <div class="section-divider">
-      <span class="divider-label">⚡ QUICK ACCESS</span>
+      <span class="divider-label">⚡ QUICK ACTIONS</span>
     </div>
     <div class="quick-access-grid">
       <div v-for="nav in quickLinks" :key="nav.label"
@@ -81,9 +81,9 @@
       </div>
     </div>
 
-    <!-- ── NODE INVENTORY BY PAGE ─────────────────────────── -->
+    <!-- ── INSIGHTS BY PAGE ─────────────────────────── -->
     <div class="section-divider">
-      <span class="divider-label">📁 NODE INVENTORY BY PAGE</span>
+      <span class="divider-label">📁 PAGE OVERVIEWS</span>
     </div>
     <div class="inventory-grid">
       <div 
@@ -97,7 +97,7 @@
             <span class="inv-icon">{{ p.icon }}</span>
             <h4>{{ p.label }}</h4>
           </div>
-          <div class="inv-date">MODIFIED: {{ formatDateShort(p.updatedAt) }}</div>
+          <div class="inv-date">Updated: {{ formatDateShort(p.updatedAt) }}</div>
         </div>
         <div class="inv-metrics">
           <div class="inv-stat">
@@ -105,11 +105,11 @@
             <span class="is-val">{{ p.total }}</span>
           </div>
           <div class="inv-stat">
-            <span class="is-label">Broadcast Active</span>
+            <span class="is-label">Published</span>
             <span class="is-val success">{{ p.live }}</span>
           </div>
           <div class="inv-stat">
-            <span class="is-label">Encrypted Drafts</span>
+            <span class="is-label">Drafts</span>
             <span class="is-val warning">{{ p.draft }}</span>
           </div>
         </div>
@@ -117,25 +117,28 @@
           <div class="inv-bar" :style="{ width: (p.live / p.total) * 100 + '%' }"></div>
         </div>
         <div class="inv-footer">
-          Navigate to Intelligence Unit →
+          Open Page →
         </div>
       </div>
       <div v-if="pageInventory.length === 0" class="empty-inventory">
-        <p>No active intelligence nodes found across the network pages.</p>
+        <p>No insights found across the website pages.</p>
       </div>
     </div>
 
     <!-- ── LIVE FEED GRID ─────────────────────────────────── -->
     <div class="live-feed-grid">
+      <div class="section-divider full-width">
+        <span class="divider-label">🕒 RECENT ACTIVITY</span>
+      </div>
 
-      <!-- Network Comms Feed -->
+      <!-- Contacts Feed -->
       <div class="card-premium feed-card">
         <div class="feed-header">
           <div class="feed-title">
             <div class="feed-badge" style="background: rgba(34,211,238,0.15); color: #22d3ee;">📫</div>
             <div>
-              <h3>Network Comms</h3>
-              <span class="feed-subtitle">{{ unseenContacts }} unseen transmissions</span>
+              <h3>Contacts</h3>
+              <span class="feed-subtitle">{{ unseenContacts }} new messages</span>
             </div>
           </div>
           <button class="feed-action-btn" @click="$emit('switch', 'contacts')">
@@ -155,23 +158,23 @@
             <div class="fi-date">{{ formatDateShort(c.createdAt) }}</div>
           </div>
           <div v-if="recentContacts.length === 0" class="feed-empty">
-            <span>📭</span> No transmissions yet
+            <span>📭</span> No messages yet
           </div>
         </div>
       </div>
 
-      <!-- Talent Pipeline Feed -->
+      <!-- Applicants Feed -->
       <div class="card-premium feed-card">
         <div class="feed-header">
           <div class="feed-title">
             <div class="feed-badge" style="background: rgba(59,130,246,0.15); color: #3b82f6;">👥</div>
             <div>
-              <h3>Talent Pipeline</h3>
+              <h3>Applicants</h3>
               <span class="feed-subtitle">{{ recentApplications.length }} recent candidates</span>
             </div>
           </div>
           <button class="feed-action-btn" @click="$emit('switch', 'careers', 'applicants')">
-            Review →
+            View Candidates →
           </button>
         </div>
         <div class="feed-list">
@@ -198,7 +201,7 @@
 
       <!-- Latest Showcase -->
       <div class="card-premium showcase-card" @click="$emit('switch', 'showcase')" style="cursor:pointer">
-        <div class="sc-label">LATEST SHOWCASE</div>
+        <div class="sc-label">NEWEST SHOWCASE ITEM</div>
         <div class="sc-body" v-if="latestShowcase">
           <div class="sc-image">
             <img v-if="latestShowcase.mediaType === 'image'" :src="latestShowcase.mediaUrl" alt="" />
@@ -207,26 +210,26 @@
           <div class="sc-info">
             <h4>{{ latestShowcase.title }}</h4>
             <p>{{ latestShowcase.description || latestShowcase.tag }}</p>
-            <span class="sc-link">Open Museum Curator →</span>
+            <span class="sc-link">View Showcase →</span>
           </div>
         </div>
-        <div v-else class="sc-empty">No showcase media yet. Start adding masterpieces.</div>
+        <div v-else class="sc-empty">No showcase items yet. Add your first item.</div>
       </div>
 
       <!-- System Quick Tools -->
       <div class="card-premium tools-card">
         <div class="tools-header">
-          <h3>⚙️ System Tools</h3>
-          <span class="tools-sub">Quick administrative actions</span>
+          <h3>⚙️ Settings & Tools</h3>
+          <span class="tools-sub">Manage your system.</span>
         </div>
         <div class="tools-grid">
           <button class="tool-btn" @click="$emit('switch', 'settings')">
             <span class="tb-icon">⚙️</span>
-            <span class="tb-label">System Config</span>
+            <span class="tb-label">Settings</span>
           </button>
           <button class="tool-btn" @click="$emit('switch', 'showcase')">
             <span class="tb-icon">🎨</span>
-            <span class="tb-label">Media Curator</span>
+            <span class="tb-label">Showcase</span>
           </button>
           <button class="tool-btn" @click="$emit('switch', 'careers', 'jds')">
             <span class="tb-icon">💼</span>
@@ -234,15 +237,15 @@
           </button>
           <button class="tool-btn" @click="$emit('switch', 'careers', 'history')">
             <span class="tb-icon">📜</span>
-            <span class="tb-label">Audit History</span>
+            <span class="tb-label">Activity Log</span>
           </button>
           <button class="tool-btn" @click="$emit('switch', 'hero')">
             <span class="tb-icon">🎬</span>
-            <span class="tb-label">Hero Manager</span>
+            <span class="tb-label">Carousel</span>
           </button>
           <button class="tool-btn" @click="$emit('switch', 'contacts')">
             <span class="tb-icon">📫</span>
-            <span class="tb-label">Network Comms</span>
+            <span class="tb-label">Contacts</span>
           </button>
           <button class="tool-btn" @click="$emit('switch', 'careers', 'applicants')">
             <span class="tb-icon">👥</span>
@@ -310,24 +313,24 @@ onUnmounted(() => clearInterval(timer))
 
 // Metrics
 const metrics = computed(() => [
-  { label: 'Intelligence Nodes', value: props.insights.length, icon: '💎', bg: 'rgba(14,165,233,0.12)', color: '#0ea5e9', trend: 12, module: 'insights' },
-  { label: 'Network Comms', value: props.contacts.length, icon: '📫', bg: 'rgba(34,211,238,0.12)', color: '#22d3ee', trend: 0, module: 'contacts' },
-  { label: 'Candidate Mesh', value: props.applications.length, icon: '🚀', bg: 'rgba(59,130,246,0.12)', color: '#3b82f6', trend: 2, module: 'careers' },
-  { label: 'Visual Archive', value: props.showcase.length, icon: '✨', bg: 'rgba(6,182,212,0.12)', color: '#06b6d4', trend: 5, module: 'showcase' }
+  { label: 'Insights', value: props.insights.length, icon: '💎', bg: 'rgba(14,165,233,0.12)', color: '#0ea5e9', trend: 12, module: 'insights' },
+  { label: 'Contacts', value: props.contacts.length, icon: '📫', bg: 'rgba(34,211,238,0.12)', color: '#22d3ee', trend: 0, module: 'contacts' },
+  { label: 'Applicants', value: props.applications.length, icon: '🚀', bg: 'rgba(59,130,246,0.12)', color: '#3b82f6', trend: 2, module: 'careers' },
+  { label: 'Showcase', value: props.showcase.length, icon: '✨', bg: 'rgba(6,182,212,0.12)', color: '#06b6d4', trend: 5, module: 'showcase' }
 ])
 
 // Quick access links
 const quickLinks = [
-  { label: 'Services Intel', desc: 'AI Work · Service · Enterprise', icon: '💡', color: '#0ea5e9', module: 'insights' },
-  { label: 'Products Intel', desc: 'Superfitter · EchoAI pages', icon: '📦', color: '#3b82f6', module: 'insights' },
-  { label: 'Company Strategy', desc: 'About Us · Leadership pages', icon: '🏢', color: '#22d3ee', module: 'company' },
-  { label: 'Active Protocols', desc: 'Manage open job listings', icon: '💼', color: '#0ea5e9', module: 'careers', sub: 'jds' },
-  { label: 'Candidate Mesh', desc: 'Review applications & talent', icon: '👥', color: '#06b6d4', module: 'careers', sub: 'applicants' },
+  { label: 'Services', desc: 'AI Work · Service · Enterprise', icon: '💡', color: '#0ea5e9', module: 'insights' },
+  { label: 'Products', desc: 'Superfitter · EchoAI pages', icon: '📦', color: '#3b82f6', module: 'insights' },
+  { label: 'Company', desc: 'About Us · Leadership pages', icon: '🏢', color: '#22d3ee', module: 'company' },
+  { label: 'Jobs', desc: 'Manage open job listings', icon: '💼', color: '#0ea5e9', module: 'careers', sub: 'jds' },
+  { label: 'Applicants', desc: 'Review applications & talent', icon: '👥', color: '#06b6d4', module: 'careers', sub: 'applicants' },
   { label: 'Knowledge Hub', desc: 'Blog · Research · Resources', icon: '📚', color: '#3b82f6', module: 'resources' },
-  { label: 'Hero Matrix', desc: 'Cinematic landing carousel', icon: '🎬', color: '#22d3ee', module: 'hero' },
-  { label: 'Media Showcase', desc: 'Visual masterpieces archive', icon: '🎨', color: '#0ea5e9', module: 'showcase' },
-  { label: 'Network Comms', desc: 'Incoming contact transmissions', icon: '📫', color: '#22d3ee', module: 'contacts' },
-  { label: 'System Config', desc: 'SEO · Identity · Social settings', icon: '⚙️', color: '#94a3b8', module: 'settings' },
+  { label: 'Hero Carousel', desc: 'Landing page carousel', icon: '🎬', color: '#22d3ee', module: 'hero' },
+  { label: 'Showcase', desc: 'Website showcase items', icon: '🎨', color: '#0ea5e9', module: 'showcase' },
+  { label: 'Contacts', desc: 'Incoming contact messages', icon: '📫', color: '#22d3ee', module: 'contacts' },
+  { label: 'Settings', desc: 'SEO · Identity · Social settings', icon: '⚙️', color: '#94a3b8', module: 'settings' },
 ]
 
 // Live data
