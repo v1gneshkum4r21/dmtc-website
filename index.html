@@ -9,9 +9,20 @@
   <meta http-equiv="Content-Security-Policy"
     content="default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https:; font-src 'self' https://fonts.gstatic.com https: data:; img-src 'self' https: data: blob:; connect-src 'self' https: wss:; worker-src 'self' blob:;">
   <link rel="icon" type="image/svg+xml" href="/logo/120226_LogoV2_01.svg">
+  <!-- Resource Hints: DNS prefetch for external video/media CDNs -->
+  <link rel="dns-prefetch" href="https://videos.pexels.com">
+  <link rel="dns-prefetch" href="https://images.pexels.com">
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+  <!-- Preconnect for Google Fonts (critical path) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Preload the logo — it is the first visible brand element (LCP candidate) -->
+  <link rel="preload" href="/logo/120226_LogoV2_02.svg" as="image" type="image/svg+xml">
+  <!-- Inter Font — fetchpriority=high to eliminate FOUT (Flash of Unstyled Text) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"
+    fetchpriority="high">
+
   <meta name="description"
     content="DREAMACTIC (formerly Dreamatic) provides autonomous AI infrastructure, multi-agent swarms, and neural orchestration for global enterprises.">
   <meta name="keywords"

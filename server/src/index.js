@@ -46,8 +46,21 @@ app.use((req, res, next) => {
 const UPLOAD_DIR = path.join(__dirname, '../uploads');
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
-app.use('/static', express.static(path.join(__dirname, '../static')));
-app.use('/uploads', express.static(UPLOAD_DIR));
+app.use('/static', express.static(path.join(__dirname, '../static'), {
+    maxAge: '7d',
+    etag: true
+}));
+app.use('/uploads', express.static(UPLOAD_DIR, {
+    maxAge: '7d',
+    etag: true,
+    setHeaders: (res, filePath) => {
+        // Images and videos get 7-day cache
+        if (/\.(jpg|jpeg|png|gif|webp|svg|mp4|webm|ogg)$/i.test(filePath)) {
+            res.setHeader('Cache-Control', 'public, max-age=604800, stale-while-revalidate=86400');
+        }
+    }
+}));
+
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, UPLOAD_DIR),
@@ -586,13 +599,32 @@ async function startServer() {
 
     if (DIST_DIR) {
         console.log(`🌐 Serving frontend from: ${DIST_DIR}`);
-        app.use(express.static(DIST_DIR));
+        // Serve hashed assets (/assets/) with max 1-year cache (safe because filenames include content hash)
+        app.use('/assets', express.static(path.join(DIST_DIR, 'assets'), {
+            maxAge: '1y',
+            immutable: true,
+            etag: false
+        }));
+        // Serve other static files (logos, manifest, robots.txt) with 1-day cache
+        app.use(express.static(DIST_DIR, {
+            maxAge: '1d',
+            etag: true,
+            setHeaders: (res, filePath) => {
+                // HTML files must never be cached — always re-validate
+                if (filePath.endsWith('.html')) {
+                    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+                }
+            }
+        }));
         app.get('*', (req, res) => {
             if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path.startsWith('/static')) {
                 return res.status(404).json({ detail: 'Not Found' });
             }
+            // index.html must never be cached
+            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
             res.sendFile(path.join(DIST_DIR, 'index.html'));
         });
+
     } else {
         console.warn('⚠️ Warning: dist folder not found.');
         const listDir = (dir) => {

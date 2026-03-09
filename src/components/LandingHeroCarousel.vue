@@ -24,20 +24,22 @@
           @mouseleave="startAutoPlay"
         >
           <div class="landing-slide-content-wrapper">
-            <div class="landing-slide-video-container">
+          <div class="landing-slide-video-container">
               <video
                 v-if="slide.mediaType !== 'image'"
                 :ref="el => videoRefs[index] = el"
-                :src="slide.url || slide.video"
+                :src="index === currentIndex ? (slide.url || slide.video) : undefined"
                 class="landing-slide-video"
                 muted
                 playsinline
                 loop
+                preload="none"
               />
               <img
                 v-else
                 :src="slide.url"
                 class="landing-slide-video"
+                loading="lazy"
                 alt=""
               />
               <div class="landing-slide-overlay" />
@@ -182,13 +184,32 @@ watch(currentIndex, (newIndex) => {
   videoRefs.value.forEach((video, index) => {
     if (!video) return;
     if (index === newIndex) {
+      // Ensure src is set (reactive binding sets undefined for non-active slides)
+      const targetSrc = slides.value[index]?.url || slides.value[index]?.video;
+      if (targetSrc && video.src !== targetSrc) {
+        video.src = targetSrc;
+        video.load();
+      }
       video.play().catch(() => {});
     } else {
       video.pause();
       video.currentTime = 0;
     }
   });
+
+  // Smart preload: queue the next slide's video to buffer just-in-time
+  const nextIndex = (newIndex + 1) % slides.value.length;
+  const nextVideo = videoRefs.value[nextIndex];
+  if (nextVideo && slides.value[nextIndex]?.mediaType !== 'image') {
+    const nextSrc = slides.value[nextIndex]?.url || slides.value[nextIndex]?.video;
+    if (nextSrc && !nextVideo.src) {
+      nextVideo.preload = 'auto';
+      nextVideo.src = nextSrc;
+      nextVideo.load();
+    }
+  }
 }, { immediate: true });
+
 
 onUnmounted(() => {
   stopAutoPlay();
