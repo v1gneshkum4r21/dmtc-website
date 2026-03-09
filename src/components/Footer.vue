@@ -72,7 +72,7 @@
 
       <div class="footer-bottom">
         <div class="bottom-legal">
-          <span>© 2026 Dreamactic</span>
+          <span>© 2026 DREAMACTIC</span>
           <div class="legal-dots">
             <a href="#">Privacy</a>
             <span class="dot">•</span>

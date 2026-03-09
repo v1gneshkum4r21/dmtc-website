@@ -166,6 +166,26 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`;
     res.send(robots);
 });
 
+// SEO Redirect Mapping (modular duplicates -> static professional pages)
+const REDIRECT_MAP = {
+    '/p/about': '/company/about',
+    '/p/blog': '/resources/blog',
+    '/p/careers': '/company/careers',
+    '/p/echo-ai': '/products/echoai',
+    '/p/hub': '/resources/hub',
+    '/p/research': '/resources/research',
+    '/p/leadership': '/company/leadership',
+    '/p/superfitter': '/products/superfitter'
+};
+
+app.get('/p/:id', (req, res, next) => {
+    const target = REDIRECT_MAP[req.path];
+    if (target) {
+        return res.redirect(301, target);
+    }
+    next();
+});
+
 app.get(['/sitemap.xml', '/sitemap.xml/'], async (req, res, next) => {
     try {
         const baseUrl = `${req.protocol}://${req.get('host')}`;
@@ -211,15 +231,21 @@ app.get(['/sitemap.xml', '/sitemap.xml/'], async (req, res, next) => {
   </url>`;
         });
 
-        // Add Custom Pages
-        pages.filter(p => p.visible).forEach(p => {
-            const path = (p.path && p.path.startsWith('/')) ? p.path : `/p/${p.page_id}`;
-            // Explicitly exclude admin or api paths from sitemap
-            if (path.startsWith('/admin') || path.startsWith('/api')) return;
+        // Add Custom Pages (Filtered for quality and duplicates)
+        const staticSet = new Set(staticPaths);
+        pages.filter(p => p.visible && p.isCustom).forEach(p => {
+            const pagePath = (p.path && p.path.startsWith('/')) ? p.path : `/p/${p.page_id}`;
+
+            // Exclude admin/api, already static routes, or mapped redirects
+            if (pagePath.startsWith('/admin') || pagePath.startsWith('/api')) return;
+            if (staticSet.has(pagePath) || REDIRECT_MAP[pagePath]) return;
+
+            // Exclude unconfigured "Ghost" pages
+            if (!p.hero_title && (!p.content || p.content === '[]' || p.content === 'null')) return;
 
             xml += `
   <url>
-    <loc>${baseUrl}${path}</loc>
+    <loc>${baseUrl}${pagePath}</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>`;
@@ -264,6 +290,7 @@ app.get(['/sitemap.xml', '/sitemap.xml/'], async (req, res, next) => {
         next(e);
     }
 });
+
 
 // Auth
 app.post('/api/auth/login', upload.none(), async (req, res, next) => {
